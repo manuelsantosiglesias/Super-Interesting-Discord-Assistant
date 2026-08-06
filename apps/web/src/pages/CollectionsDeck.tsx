@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '../api/client.js';
@@ -119,6 +119,7 @@ export const CollectionsDeck: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedSlotIndex, setSelectedSlotIndex] = useState<number | null>(null);
@@ -416,11 +417,21 @@ export const CollectionsDeck: React.FC = () => {
         })}
       </div>
 
-      {/* Modal: Studio Config / Editar Pad (REDISEÑO OSCURO ELEGANTE FIX) */}
+      {/* Modal: Studio Config / Editar Pad (100% OPACO CON ESTILOS INLINE DE CORRECCIÓN) */}
       {selectedSlotIndex !== null && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999] animate-fade-in">
-          <div className="bg-[#12151e] border-2 border-[#2b3245] rounded-3xl w-full max-w-lg p-6 sm:p-8 shadow-[0_0_50px_rgba(0,0,0,0.9)] relative text-white text-left">
-            
+        <div 
+          className="fixed inset-0 flex items-center justify-center p-4 z-[99999]"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.85)', backdropFilter: 'blur(8px)' }}
+        >
+          <div 
+            className="rounded-3xl w-full max-w-lg p-6 sm:p-8 relative text-white text-left overflow-y-auto max-h-[90vh]"
+            style={{ 
+              backgroundColor: '#12151e', 
+              border: '2px solid #2b3245',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.95)',
+              opacity: 1
+            }}
+          >
             {/* Modal Header */}
             <div className="flex justify-between items-start mb-6 pb-4 border-b border-[#242b3d]">
               <div>
@@ -434,7 +445,7 @@ export const CollectionsDeck: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedSlotIndex(null)}
-                className="p-1.5 bg-[#1a1f2c] border border-[#2b3245] hover:border-cyan-500 text-slate-400 hover:text-white rounded-xl transition-all"
+                className="p-2 bg-[#1c2232] border border-[#2e374d] hover:border-cyan-500 text-slate-300 hover:text-white rounded-xl transition-all"
               >
                 <X size={18} />
               </button>
@@ -449,11 +460,12 @@ export const CollectionsDeck: React.FC = () => {
                 <select
                   value={slotSoundId}
                   onChange={(e) => setSlotSoundId(e.target.value)}
-                  className="w-full bg-[#0b0d13] border border-[#282f42] focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl px-4 py-3 text-sm text-white outline-none cursor-pointer"
+                  style={{ backgroundColor: '#0b0d13', color: '#ffffff', borderColor: '#282f42' }}
+                  className="w-full border focus:border-cyan-500 rounded-xl px-4 py-3 text-sm outline-none cursor-pointer"
                 >
-                  <option value="" className="bg-[#12151e] text-white">-- Sin sonido (Pad vacío) --</option>
+                  <option value="" style={{ backgroundColor: '#12151e', color: '#ffffff' }}>-- Sin sonido (Pad vacío) --</option>
                   {soundsData?.items?.map((s: any) => (
-                    <option key={s.id} value={s.id} className="bg-[#12151e] text-white">
+                    <option key={s.id} value={s.id} style={{ backgroundColor: '#12151e', color: '#ffffff' }}>
                       {s.displayName} ({s.commandName}) - {(s.durationMs / 1000).toFixed(1)}s
                     </option>
                   ))}
@@ -470,7 +482,8 @@ export const CollectionsDeck: React.FC = () => {
                   value={slotLabel}
                   onChange={(e) => setSlotLabel(e.target.value)}
                   placeholder="Ej: autista, baronbaron, Risa..."
-                  className="w-full bg-[#0b0d13] border border-[#282f42] focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all"
+                  style={{ backgroundColor: '#0b0d13', color: '#ffffff', borderColor: '#282f42' }}
+                  className="w-full border focus:border-cyan-500 rounded-xl px-4 py-3 text-sm placeholder-slate-500 outline-none transition-all"
                 />
               </div>
 
@@ -485,13 +498,25 @@ export const CollectionsDeck: React.FC = () => {
                     value={slotImageUrl}
                     onChange={(e) => setSlotImageUrl(e.target.value)}
                     placeholder="URL de imagen https://..."
-                    className="flex-1 bg-[#0b0d13] border border-[#282f42] focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all"
+                    style={{ backgroundColor: '#0b0d13', color: '#ffffff', borderColor: '#282f42' }}
+                    className="flex-1 border focus:border-cyan-500 rounded-xl px-4 py-3 text-sm placeholder-slate-500 outline-none transition-all"
                   />
-                  <label className="px-4 py-3 bg-[#1c2232] border border-[#2e374d] hover:border-cyan-500 text-slate-200 hover:text-white rounded-xl text-xs font-semibold cursor-pointer flex items-center gap-2 shrink-0 transition-all">
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    accept="image/*" 
+                    onChange={handleImageFileChange} 
+                    style={{ display: 'none' }} 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{ backgroundColor: '#1c2232', color: '#ffffff', borderColor: '#2e374d' }}
+                    className="px-4 py-3 border hover:border-cyan-500 rounded-xl text-xs font-semibold cursor-pointer flex items-center gap-2 shrink-0 transition-all"
+                  >
                     <ImageIcon size={16} />
-                    <span>Subir</span>
-                    <input type="file" accept="image/*" onChange={handleImageFileChange} className="hidden" />
-                  </label>
+                    <span>Subir Archivo</span>
+                  </button>
                 </div>
                 {slotImageUrl && (
                   <div className="flex items-center gap-3 mt-3 p-2 bg-[#0b0d13] border border-[#282f42] rounded-xl">
@@ -549,7 +574,8 @@ export const CollectionsDeck: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedSlotIndex(null)}
-                    className="px-4 py-2.5 bg-[#1c2232] hover:bg-[#282f42] border border-[#2e374d] rounded-xl text-slate-300 hover:text-white text-xs font-semibold transition-all"
+                    style={{ backgroundColor: '#1c2232', color: '#ffffff', borderColor: '#2e374d' }}
+                    className="px-4 py-2.5 border rounded-xl text-xs font-semibold transition-all"
                   >
                     Cancelar
                   </button>
