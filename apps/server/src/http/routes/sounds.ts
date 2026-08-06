@@ -11,7 +11,7 @@ const SoundListQuerySchema = z.object({
   search: z.string().optional(),
   active: z.preprocess((val) => val === 'true' || val === '1' ? true : val === 'false' || val === '0' ? false : undefined, z.boolean().optional()),
   page: z.coerce.number().min(1).default(1),
-  pageSize: z.coerce.number().min(1).max(100).default(20),
+  pageSize: z.coerce.number().min(1).max(500).default(20),
   sort: z.enum(['displayName', 'commandName', 'createdAt', 'durationMs', 'sizeBytes']).default('createdAt'),
   direction: z.enum(['asc', 'desc']).default('desc')
 });

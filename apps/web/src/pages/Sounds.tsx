@@ -24,6 +24,7 @@ export const Sounds: React.FC = () => {
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [sort, setSort] = useState<'displayName' | 'commandName' | 'createdAt' | 'durationMs'>('createdAt');
   const [direction, setDirection] = useState<'asc' | 'desc'>('desc');
   
@@ -42,8 +43,8 @@ export const Sounds: React.FC = () => {
   // 1. Cargar sonidos con filtros
   const activeParam = activeFilter === 'active' ? 'true' : activeFilter === 'inactive' ? 'false' : undefined;
   const { data: soundsRes, isLoading } = useQuery({
-    queryKey: ['sounds', search, activeFilter, page, sort, direction],
-    queryFn: () => apiRequest(`/api/sounds?search=${search}&page=${page}&pageSize=8&sort=${sort}&direction=${direction}${activeParam !== undefined ? `&active=${activeParam}` : ''}`)
+    queryKey: ['sounds', search, activeFilter, page, pageSize, sort, direction],
+    queryFn: () => apiRequest(`/api/sounds?search=${search}&page=${page}&pageSize=${pageSize}&sort=${sort}&direction=${direction}${activeParam !== undefined ? `&active=${activeParam}` : ''}`)
   });
 
   // 2. Cargar servidores del bot para el modal de Discord
@@ -164,10 +165,9 @@ export const Sounds: React.FC = () => {
   const handleQuickPlay = async (soundId: string) => {
     try {
       setQuickPlayingId(soundId);
-      const res = await apiRequest(`/api/sounds/${soundId}/quick-play`, { method: 'POST' });
-      alert(`Sonido encolado en canal de voz activo (${res.humanMembers} usuario(s) conectados).`);
+      await apiRequest(`/api/sounds/${soundId}/quick-play`, { method: 'POST' });
     } catch (err: any) {
-      alert(`Error al reproducir: ${err.message}`);
+      console.error('Error al reproducir rápido:', err);
     } finally {
       setQuickPlayingId(null);
     }
@@ -240,21 +240,38 @@ export const Sounds: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2">Estado:</span>
-          {(['all', 'active', 'inactive'] as const).map((filter) => (
-            <button
-              key={filter}
-              onClick={() => { setActiveFilter(filter); setPage(1); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize border transition-all ${
-                activeFilter === filter
-                  ? 'bg-primary border-primary text-white'
-                  : 'bg-darkbg border-darkborder text-slate-400 hover:text-white'
-              }`}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">Mostrar:</span>
+            <select
+              value={pageSize}
+              onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+              className="bg-darkbg border border-darkborder focus:border-primary rounded-lg px-2.5 py-1 text-xs font-semibold text-white outline-none cursor-pointer"
             >
-              {filter === 'all' ? 'Todos' : filter === 'active' ? 'Activos' : 'Inactivos'}
-            </button>
-          ))}
+              <option value={10}>10 por pág.</option>
+              <option value={20}>20 por pág.</option>
+              <option value={50}>50 por pág.</option>
+              <option value={100}>100 por pág.</option>
+              <option value={250}>250 por pág.</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">Estado:</span>
+            {(['all', 'active', 'inactive'] as const).map((filter) => (
+              <button
+                key={filter}
+                onClick={() => { setActiveFilter(filter); setPage(1); }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize border transition-all ${
+                  activeFilter === filter
+                    ? 'bg-primary border-primary text-white'
+                    : 'bg-darkbg border-darkborder text-slate-400 hover:text-white'
+                }`}
+              >
+                {filter === 'all' ? 'Todos' : filter === 'active' ? 'Activos' : 'Inactivos'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -279,6 +296,11 @@ export const Sounds: React.FC = () => {
                     Duración <ArrowUpDown size={14} />
                   </button>
                 </th>
+                <th className="p-4">
+                  <button onClick={() => handleSort('createdAt')} className="flex items-center gap-1 hover:text-white transition-colors">
+                    Fecha Añadido <ArrowUpDown size={14} />
+                  </button>
+                </th>
                 <th className="p-4">Volumen</th>
                 <th className="p-4">Estado</th>
                 <th className="p-4">Acciones</th>
@@ -287,7 +309,7 @@ export const Sounds: React.FC = () => {
             <tbody className="divide-y divide-darkborder">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-500 text-sm">
+                  <td colSpan={7} className="p-8 text-center text-slate-500 text-sm">
                     Cargando sonidos...
                   </td>
                 </tr>
@@ -297,6 +319,9 @@ export const Sounds: React.FC = () => {
                     <td className="p-4 font-semibold text-white">{sound.displayName}</td>
                     <td className="p-4 font-mono text-xs text-slate-400">{sound.commandName}</td>
                     <td className="p-4 text-slate-400">{(sound.durationMs / 1000).toFixed(2)}s</td>
+                    <td className="p-4 text-slate-400 text-xs font-mono">
+                      {sound.createdAt ? new Date(sound.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
+                    </td>
                     <td className="p-4 text-slate-400">{sound.volume.toFixed(2)}</td>
                     <td className="p-4">
                       <button
@@ -392,7 +417,7 @@ export const Sounds: React.FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="p-12 text-center text-slate-500 text-sm">
+                  <td colSpan={7} className="p-12 text-center text-slate-500 text-sm">
                     No se encontraron sonidos en la base de datos.
                   </td>
                 </tr>
@@ -402,40 +427,45 @@ export const Sounds: React.FC = () => {
         </div>
 
         {/* Pagination Footer */}
-        {soundsRes?.pagination && soundsRes.pagination.totalPages > 1 && (
-          <div className="bg-darkbg/25 border-t border-darkborder px-4 py-4 flex items-center justify-between">
-            <span className="text-xs text-slate-400 font-medium">
-              Mostrando página {soundsRes.pagination.page} de {soundsRes.pagination.totalPages} ({soundsRes.pagination.totalItems} sonidos)
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                disabled={page === 1}
-                className="px-3 py-1.5 bg-darkbg border border-darkborder rounded-lg text-xs font-semibold text-slate-400 hover:text-white disabled:opacity-40 disabled:hover:text-slate-400"
-              >
-                Anterior
-              </button>
-              {Array.from({ length: soundsRes.pagination.totalPages }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setPage(i + 1)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
-                    page === i + 1
-                      ? 'bg-primary border-primary text-white'
-                      : 'bg-darkbg border-darkborder text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                onClick={() => setPage((p) => Math.min(p + 1, soundsRes.pagination.totalPages))}
-                disabled={page === soundsRes.pagination.totalPages}
-                className="px-3 py-1.5 bg-darkbg border border-darkborder rounded-lg text-xs font-semibold text-slate-400 hover:text-white disabled:opacity-40 disabled:hover:text-slate-400"
-              >
-                Siguiente
-              </button>
+        {soundsRes?.pagination && (
+          <div className="bg-darkbg/25 border-t border-darkborder px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-400 font-medium">
+                Mostrando página {soundsRes.pagination.page} de {soundsRes.pagination.totalPages} ({soundsRes.pagination.totalItems} sonidos en total)
+              </span>
             </div>
+
+            {soundsRes.pagination.totalPages > 1 && (
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                  disabled={page === 1}
+                  className="px-3 py-1.5 bg-darkbg border border-darkborder rounded-lg text-xs font-semibold text-slate-400 hover:text-white disabled:opacity-40 disabled:hover:text-slate-400"
+                >
+                  Anterior
+                </button>
+                {Array.from({ length: Math.min(soundsRes.pagination.totalPages, 10) }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPage(i + 1)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
+                      page === i + 1
+                        ? 'bg-primary border-primary text-white'
+                        : 'bg-darkbg border-darkborder text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setPage((p) => Math.min(p + 1, soundsRes.pagination.totalPages))}
+                  disabled={page === soundsRes.pagination.totalPages}
+                  className="px-3 py-1.5 bg-darkbg border border-darkborder rounded-lg text-xs font-semibold text-slate-400 hover:text-white disabled:opacity-40 disabled:hover:text-slate-400"
+                >
+                  Siguiente
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
