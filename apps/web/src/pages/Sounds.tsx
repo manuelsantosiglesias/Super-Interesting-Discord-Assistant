@@ -24,7 +24,7 @@ export const Sounds: React.FC = () => {
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(100);
   const [sort, setSort] = useState<'displayName' | 'commandName' | 'createdAt' | 'durationMs'>('createdAt');
   const [direction, setDirection] = useState<'asc' | 'desc'>('desc');
   
@@ -248,11 +248,11 @@ export const Sounds: React.FC = () => {
               onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
               className="bg-darkbg border border-darkborder focus:border-primary rounded-lg px-2.5 py-1 text-xs font-semibold text-white outline-none cursor-pointer"
             >
-              <option value={10}>10 por pág.</option>
-              <option value={20}>20 por pág.</option>
-              <option value={50}>50 por pág.</option>
-              <option value={100}>100 por pág.</option>
-              <option value={250}>250 por pág.</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={250}>250</option>
             </select>
           </div>
 
