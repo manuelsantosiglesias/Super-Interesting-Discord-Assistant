@@ -11,7 +11,8 @@ import {
   Image as ImageIcon,
   Check,
   Music,
-  Zap
+  Zap,
+  Edit
 } from 'lucide-react';
 
 interface SlotData {
@@ -220,30 +221,32 @@ export const CollectionsDeck: React.FC = () => {
       {/* Stream Deck Surface Container */}
       <div className="bg-gradient-to-b from-slate-900 via-darkcard to-darkbg border-2 border-darkborder p-6 sm:p-8 rounded-3xl shadow-2xl shadow-black/80 relative overflow-hidden">
         {/* Decorative Deck Bezel Header */}
-        <div className="flex justify-between items-center mb-6 pb-4 border-b border-darkborder/60">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 pb-4 border-b border-darkborder/60">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-md shadow-emerald-500/50"></div>
-            <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-widest">STREAM DECK INTERACTIVO</span>
+            <span className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-widest">
+              STREAM DECK INTERACTIVO (CUADRÍCULA 4x5 - 20 BOTONES)
+            </span>
           </div>
-          <span className="text-[11px] font-mono text-slate-500 uppercase">
-            {isEditMode ? 'Haga clic en un botón para configurar' : 'Clic en un botón para reproducir directo'}
+          <span className="text-[11px] font-mono text-amber-400 font-semibold uppercase">
+            {isEditMode ? '⚙️ Modo Edición: haz clic en cualquier tecla para configurar' : '⚡ Modo Reproducción: clic directo para sonar en Discord'}
           </span>
         </div>
 
-        {/* Matrix Grid: 4 Filas x 5 Columnas = 20 Botones */}
-        <div className="grid grid-cols-5 gap-3.5 sm:gap-5">
+        {/* Matrix Grid: Estricta Cuadrícula 4 Filas x 5 Columnas = 20 Botones */}
+        <div className="grid grid-cols-5 gap-3 sm:gap-4 max-w-4xl mx-auto">
           {collection?.slots?.map((slot: SlotData) => {
             const hasSound = Boolean(slot.soundId);
             const isTriggered = activeTriggerIndex === slot.slotIndex;
             const themeClass = hasSound ? themeStyles[slot.colorTheme] || themeStyles.emerald : 'border-darkborder/60 text-slate-600 hover:border-slate-500 bg-darkbg/40';
 
             return (
-              <button
+              <div
                 key={slot.slotIndex}
+                className={`group relative aspect-square rounded-2xl border-2 flex flex-col items-center justify-between p-2.5 transition-all duration-150 shadow-xl overflow-hidden select-none cursor-pointer ${themeClass} ${
+                  isTriggered ? 'ring-4 ring-white scale-95 shadow-2xl' : 'hover:scale-[1.02]'
+                } ${isEditMode ? 'ring-2 ring-primary/40' : ''}`}
                 onClick={() => handleSlotClick(slot)}
-                className={`group relative aspect-square rounded-2xl border-2 flex flex-col items-center justify-between p-2.5 transition-all duration-150 shadow-xl overflow-hidden active:scale-95 select-none ${themeClass} ${
-                  isTriggered ? 'ring-4 ring-white scale-95 shadow-2xl' : ''
-                }`}
               >
                 {/* Background Image if set */}
                 {slot.customImageUrl ? (
@@ -257,14 +260,30 @@ export const CollectionsDeck: React.FC = () => {
                   </div>
                 ) : null}
 
-                {/* Top Status Icon */}
+                {/* Top Status & Edit Icon */}
                 <div className="w-full flex justify-between items-center z-10">
-                  <span className="text-[10px] font-mono text-slate-400 font-bold opacity-60">#{slot.slotIndex + 1}</span>
-                  {isEditMode ? (
-                    <Settings2 size={12} className="text-primary opacity-80" />
-                  ) : hasSound ? (
-                    <Play size={12} className="opacity-80 group-hover:scale-125 transition-transform" />
-                  ) : null}
+                  <span className="text-[10px] font-mono text-slate-400 font-bold opacity-70">#{slot.slotIndex + 1}</span>
+                  
+                  <div className="flex items-center gap-1">
+                    {/* Direct Edit Button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenSlotModal(slot);
+                      }}
+                      className="p-1 rounded-md bg-darkbg/80 hover:bg-primary hover:text-white text-slate-400 opacity-0 group-hover:opacity-100 transition-all shadow-md"
+                      title="Editar este botón"
+                    >
+                      <Edit size={12} />
+                    </button>
+
+                    {isEditMode ? (
+                      <Settings2 size={12} className="text-primary opacity-90 animate-spin-slow" />
+                    ) : hasSound ? (
+                      <Play size={12} className="opacity-80 group-hover:scale-125 transition-transform text-white" />
+                    ) : null}
+                  </div>
                 </div>
 
                 {/* Center Content / Icon */}
@@ -289,9 +308,9 @@ export const CollectionsDeck: React.FC = () => {
 
                 {/* Active Sound Wave Glow animation on trigger */}
                 {isTriggered && (
-                  <div className="absolute inset-0 z-20 bg-primary/30 backdrop-blur-xs flex items-center justify-center animate-ping"></div>
+                  <div className="absolute inset-0 z-20 bg-primary/40 backdrop-blur-xs flex items-center justify-center animate-ping"></div>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>
