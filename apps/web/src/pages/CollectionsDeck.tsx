@@ -14,7 +14,8 @@ import {
   Zap,
   Edit,
   SlidersHorizontal,
-  Volume2
+  Volume2,
+  X
 } from 'lucide-react';
 
 interface SlotData {
@@ -31,42 +32,42 @@ interface SlotData {
 }
 
 const themeStyles = {
-  emerald: 'border-emerald-500/40 text-emerald-400 bg-emerald-950/20 hover:border-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]',
-  cyan: 'border-cyan-500/40 text-cyan-400 bg-cyan-950/20 hover:border-cyan-400 hover:shadow-[0_0_15px_rgba(6,182,212,0.25)]',
-  pink: 'border-pink-500/40 text-pink-400 bg-pink-950/20 hover:border-pink-400 hover:shadow-[0_0_15px_rgba(236,72,153,0.2)]',
-  gold: 'border-amber-500/40 text-amber-400 bg-amber-950/20 hover:border-amber-400 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]',
-  red: 'border-rose-500/40 text-rose-400 bg-rose-950/20 hover:border-rose-400 hover:shadow-[0_0_15px_rgba(244,63,94,0.2)]',
-  violet: 'border-violet-500/40 text-violet-400 bg-violet-950/20 hover:border-violet-400 hover:shadow-[0_0_15px_rgba(139,92,246,0.2)]'
+  emerald: 'border-emerald-500/50 text-emerald-400 bg-emerald-950/20 hover:border-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',
+  cyan: 'border-cyan-500/50 text-cyan-400 bg-cyan-950/20 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.35)]',
+  pink: 'border-pink-500/50 text-pink-400 bg-pink-950/20 hover:border-pink-400 hover:shadow-[0_0_20px_rgba(236,72,153,0.3)]',
+  gold: 'border-amber-500/50 text-amber-400 bg-amber-950/20 hover:border-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]',
+  red: 'border-rose-500/50 text-rose-400 bg-rose-950/20 hover:border-rose-400 hover:shadow-[0_0_20px_rgba(244,63,94,0.3)]',
+  violet: 'border-violet-500/50 text-violet-400 bg-violet-950/20 hover:border-violet-400 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)]'
 };
 
 // Componente Visualizador del Ecualizador Master Out
 const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: string | null }> = ({ isPlaying, activeSoundName }) => {
-  const [heights, setHeights] = useState<number[]>(Array.from({ length: 42 }, () => 15));
+  const [heights, setHeights] = useState<number[]>(Array.from({ length: 44 }, () => 20));
 
   useEffect(() => {
     let interval: any;
     if (isPlaying) {
       interval = setInterval(() => {
-        setHeights(Array.from({ length: 42 }, () => Math.floor(Math.random() * 85) + 15));
-      }, 90);
+        setHeights(Array.from({ length: 44 }, () => Math.floor(Math.random() * 80) + 20));
+      }, 80);
     } else {
       interval = setInterval(() => {
-        setHeights(Array.from({ length: 42 }, (_, i) => Math.floor(Math.sin(Date.now() / 400 + i * 0.3) * 10) + 15));
-      }, 200);
+        setHeights(Array.from({ length: 44 }, (_, i) => Math.floor(Math.sin(Date.now() / 350 + i * 0.4) * 12) + 22));
+      }, 150);
     }
     return () => clearInterval(interval);
   }, [isPlaying]);
 
   return (
-    <div className="bg-[#0a0c10] border border-[#1b1f28] rounded-2xl p-4 sm:p-5 relative overflow-hidden shadow-2xl">
+    <div className="bg-[#080a0e] border-2 border-[#1c2230] rounded-2xl p-4 sm:p-5 relative overflow-hidden shadow-2xl">
       {/* Visualizer Top Bar */}
-      <div className="flex items-center justify-between mb-4 z-10 relative">
+      <div className="flex items-center justify-between mb-3 z-10 relative">
         <div className="flex items-center gap-2">
-          <span className="bg-cyan-950/80 border border-cyan-500/50 text-cyan-400 text-[10px] font-mono px-2.5 py-0.5 rounded-md font-bold tracking-widest uppercase shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+          <span className="bg-cyan-950/90 border border-cyan-500/60 text-cyan-400 text-[10px] font-mono px-2.5 py-0.5 rounded-md font-bold tracking-widest uppercase shadow-[0_0_12px_rgba(6,182,212,0.4)]">
             MASTER OUT
           </span>
           {isPlaying && (
-            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 rounded-md">
+            <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-500/15 border border-emerald-500/40 rounded-md">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
               <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider">REPRODUCIENDO</span>
             </div>
@@ -74,37 +75,36 @@ const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: strin
         </div>
 
         <div className="text-right">
-          <span className="text-xs font-mono text-slate-400 truncate max-w-[200px] block">
+          <span className="text-xs font-mono text-cyan-300 font-semibold truncate max-w-[250px] block">
             {activeSoundName ? `🎵 ${activeSoundName}` : 'STANDBY • ESPERANDO AUDIO'}
           </span>
         </div>
       </div>
 
       {/* Audio Spectrum Equalizer Bars Container */}
-      <div className="h-24 sm:h-28 flex items-end justify-between gap-[3px] px-1 overflow-hidden relative">
+      <div className="h-20 sm:h-24 flex items-end justify-between gap-[3px] px-1 overflow-hidden relative">
         {/* Background Grid Lines */}
-        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-15">
           <div className="border-b border-cyan-400"></div>
           <div className="border-b border-cyan-400"></div>
           <div className="border-b border-cyan-400"></div>
         </div>
 
         {heights.map((h, idx) => (
-          <div key={idx} className="flex-1 flex flex-col justify-end items-center h-full group">
+          <div key={idx} className="flex-1 flex flex-col justify-end items-center h-full">
             {/* Top Cap */}
             <div 
               className={`w-full h-1 rounded-xs mb-1 transition-all duration-75 ${
-                isPlaying ? 'bg-cyan-300 shadow-[0_0_8px_#06b6d4]' : 'bg-cyan-900/60'
+                isPlaying ? 'bg-cyan-200 shadow-[0_0_10px_#06b6d4]' : 'bg-cyan-700/60'
               }`}
-              style={{ transform: `translateY(-${h}% * 0.2)` }}
             ></div>
 
             {/* Main Bar */}
             <div 
               className={`w-full rounded-t-xs transition-all duration-100 ${
                 isPlaying 
-                  ? 'bg-gradient-to-t from-cyan-950 via-cyan-600 to-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.6)]' 
-                  : 'bg-gradient-to-t from-cyan-950/30 to-cyan-900/40'
+                  ? 'bg-gradient-to-t from-cyan-950 via-cyan-500 to-cyan-300 shadow-[0_0_14px_rgba(6,182,212,0.7)]' 
+                  : 'bg-gradient-to-t from-cyan-950/40 via-cyan-900/40 to-cyan-800/50'
               }`}
               style={{ height: `${h}%` }}
             ></div>
@@ -237,7 +237,6 @@ export const CollectionsDeck: React.FC = () => {
     } catch (err: any) {
       console.error('Error al reproducir desde mesa:', err);
     } finally {
-      // Mantener la animación durante la duración estimada del sonido o 2.5s
       const duration = slot.soundDurationMs || 2500;
       setTimeout(() => {
         setPlayingSlotIndex((current) => (current === slot.slotIndex ? null : current));
@@ -295,12 +294,12 @@ export const CollectionsDeck: React.FC = () => {
             onClick={() => setIsEditMode(false)}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               !isEditMode 
-                ? 'bg-cyan-950/60 border border-cyan-500/70 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)]' 
+                ? 'bg-cyan-950/70 border border-cyan-500/80 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]' 
                 : 'bg-[#14161b] border border-[#22252e] text-slate-400 hover:text-white'
             }`}
           >
             <Zap size={14} className={!isEditMode ? 'text-cyan-400' : ''} />
-            Performance Mode
+            Performance Mode (Modo Reproducción)
           </button>
 
           <button
@@ -312,12 +311,12 @@ export const CollectionsDeck: React.FC = () => {
             }`}
           >
             <SlidersHorizontal size={14} />
-            Studio Config
+            Studio Config (Modo Configuración)
           </button>
         </div>
       </div>
 
-      {/* Matrix Grid: Exacta Cuadrícula 4 Filas x 5 Columnas = 20 Botones Pad Pro */}
+      {/* Matrix Grid: Exacta Cuadrícula 4 Filas x 5 Columnas de Pads CUADRADOS */}
       <div 
         className="w-full max-w-5xl mx-auto"
         style={{ 
@@ -329,19 +328,20 @@ export const CollectionsDeck: React.FC = () => {
         {collection?.slots?.map((slot: SlotData) => {
           const hasSound = Boolean(slot.soundId);
           const isPlayingThis = playingSlotIndex === slot.slotIndex;
-          const themeClass = hasSound ? themeStyles[slot.colorTheme] || themeStyles.cyan : 'border-[#22252e] text-slate-600 bg-[#121418] hover:border-slate-600';
+          const themeClass = hasSound ? themeStyles[slot.colorTheme] || themeStyles.cyan : 'border-[#22252e] text-slate-600 bg-[#121418] hover:border-slate-500';
 
           return (
             <div
               key={slot.slotIndex}
               onClick={() => handleSlotClick(slot)}
-              className={`group relative rounded-2xl border-2 flex flex-col justify-between p-3.5 transition-all duration-200 shadow-xl overflow-hidden select-none cursor-pointer aspect-square ${
+              style={{ aspectRatio: '1 / 1' }}
+              className={`group relative rounded-2xl border-2 flex flex-col justify-between p-3 sm:p-4 transition-all duration-200 shadow-xl overflow-hidden select-none cursor-pointer w-full h-full ${
                 hasSound ? 'bg-[#14161b]' : 'bg-[#101216]'
               } ${themeClass} ${
                 isPlayingThis 
-                  ? 'ring-2 ring-cyan-400 shadow-[0_0_30px_rgba(6,182,212,0.8)] scale-[0.98] border-cyan-400 bg-cyan-950/40' 
+                  ? 'ring-2 ring-cyan-400 shadow-[0_0_35px_rgba(6,182,212,0.9)] scale-[0.97] border-cyan-400 bg-cyan-950/40' 
                   : 'hover:scale-[1.02]'
-              } ${isEditMode ? 'ring-1 ring-primary/50' : ''}`}
+              } ${isEditMode ? 'ring-2 ring-primary/50' : ''}`}
             >
               {/* Background Cover Image if configured */}
               {slot.customImageUrl ? (
@@ -355,9 +355,9 @@ export const CollectionsDeck: React.FC = () => {
                 </div>
               ) : null}
 
-              {/* Top Row: Pad Number & Play Indicator */}
+              {/* Top Row: Pad Number & Indicators */}
               <div className="w-full flex justify-between items-center z-10">
-                <span className="text-[11px] font-mono text-slate-500 font-semibold">
+                <span className="text-[11px] font-mono text-slate-500 font-bold">
                   #{slot.slotIndex + 1}
                 </span>
 
@@ -370,76 +370,90 @@ export const CollectionsDeck: React.FC = () => {
                       handleOpenSlotModal(slot);
                     }}
                     className="p-1 rounded-md bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-400 opacity-0 group-hover:opacity-100 transition-all shadow-md"
-                    title="Configurar botón"
+                    title="Configurar pad"
                   >
-                    <Edit size={11} />
+                    <Edit size={12} />
                   </button>
 
                   {isPlayingThis ? (
-                    <Volume2 size={13} className="text-cyan-400 animate-bounce" />
+                    <Volume2 size={14} className="text-cyan-400 animate-bounce" />
                   ) : hasSound ? (
-                    <Play size={11} className="text-slate-500 group-hover:text-cyan-400 transition-colors" />
+                    <Play size={12} className="text-slate-500 group-hover:text-cyan-400 transition-colors" />
                   ) : null}
                 </div>
               </div>
 
-              {/* Center Content: Circular Icon Badge */}
-              <div className="my-auto z-10 flex items-center justify-center">
+              {/* Center Content: LARGE Prominent Icon Badge */}
+              <div className="my-auto z-10 flex items-center justify-center w-full">
                 {!hasSound ? (
-                  <div className="w-9 h-9 rounded-full border border-dashed border-slate-700 text-slate-600 flex items-center justify-center group-hover:border-cyan-500 group-hover:text-cyan-400 transition-all">
-                    <Plus size={16} />
+                  <div className="w-14 h-14 rounded-full border-2 border-dashed border-slate-700 text-slate-600 flex items-center justify-center group-hover:border-cyan-500 group-hover:text-cyan-400 transition-all">
+                    <Plus size={24} />
                   </div>
                 ) : !slot.customImageUrl ? (
-                  <div className={`w-11 h-11 rounded-full flex items-center justify-center border transition-all ${
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center border-2 transition-all ${
                     isPlayingThis 
-                      ? 'bg-cyan-500 text-white border-cyan-300 shadow-[0_0_20px_#06b6d4] animate-pulse' 
-                      : 'bg-[#0c1218] border-cyan-500/30 text-cyan-400 group-hover:border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
+                      ? 'bg-cyan-500 text-white border-cyan-300 shadow-[0_0_25px_#06b6d4] animate-pulse' 
+                      : 'bg-[#09111a] border-cyan-500/50 text-cyan-400 group-hover:border-cyan-400 shadow-[0_0_18px_rgba(6,182,212,0.25)]'
                   }`}>
-                    <Music size={18} />
+                    <Music size={32} />
                   </div>
                 ) : null}
               </div>
 
               {/* Bottom Label */}
               <div className="w-full z-10 text-center">
-                <p className="text-xs font-bold text-white group-hover:text-cyan-300 truncate drop-shadow-md">
+                <p className="text-xs font-extrabold text-white group-hover:text-cyan-300 truncate drop-shadow-md tracking-wide">
                   {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
                 </p>
               </div>
 
               {/* Ripple Animation overlay when triggering audio */}
               {isPlayingThis && (
-                <div className="absolute inset-0 z-20 bg-cyan-500/20 backdrop-blur-xs flex items-center justify-center animate-ping pointer-events-none"></div>
+                <div className="absolute inset-0 z-20 bg-cyan-500/25 backdrop-blur-xs flex items-center justify-center animate-ping pointer-events-none"></div>
               )}
             </div>
           );
         })}
       </div>
 
-      {/* Modal: Studio Config / Editar Pad */}
+      {/* Modal: Studio Config / Editar Pad (REDISEÑO OSCURO ELEGANTE FIX) */}
       {selectedSlotIndex !== null && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-[#12141a] border border-[#262a36] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
-            <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
-              <Settings2 size={20} className="text-cyan-400" />
-              Configurar Pad #{selectedSlotIndex + 1}
-            </h3>
-            <p className="text-xs text-slate-400 mb-6">Personaliza el sonido asignado, nombre, imagen y color LED del pad.</p>
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999] animate-fade-in">
+          <div className="bg-[#12151e] border-2 border-[#2b3245] rounded-3xl w-full max-w-lg p-6 sm:p-8 shadow-[0_0_50px_rgba(0,0,0,0.9)] relative text-white text-left">
+            
+            {/* Modal Header */}
+            <div className="flex justify-between items-start mb-6 pb-4 border-b border-[#242b3d]">
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Settings2 size={20} className="text-cyan-400" />
+                  Configurar Pad #{selectedSlotIndex + 1}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">Asigna el sonido, etiqueta, imagen y color del pad.</p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedSlotIndex(null)}
+                className="p-1.5 bg-[#1a1f2c] border border-[#2b3245] hover:border-cyan-500 text-slate-400 hover:text-white rounded-xl transition-all"
+              >
+                <X size={18} />
+              </button>
+            </div>
 
             <form onSubmit={handleSaveSlot} className="space-y-5">
               {/* Selector de Sonido */}
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">
                   Sonido Asignado
                 </label>
                 <select
                   value={slotSoundId}
                   onChange={(e) => setSlotSoundId(e.target.value)}
-                  className="w-full bg-[#0a0c10] border border-[#222632] focus:border-cyan-500 rounded-xl px-4 py-2.5 text-sm text-white outline-none"
+                  className="w-full bg-[#0b0d13] border border-[#282f42] focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl px-4 py-3 text-sm text-white outline-none cursor-pointer"
                 >
-                  <option value="">-- Sin sonido (Pad vacío) --</option>
+                  <option value="" className="bg-[#12151e] text-white">-- Sin sonido (Pad vacío) --</option>
                   {soundsData?.items?.map((s: any) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={s.id} value={s.id} className="bg-[#12151e] text-white">
                       {s.displayName} ({s.commandName}) - {(s.durationMs / 1000).toFixed(1)}s
                     </option>
                   ))}
@@ -448,7 +462,7 @@ export const CollectionsDeck: React.FC = () => {
 
               {/* Etiqueta Personalizada */}
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">
                   Etiqueta del Pad (Texto visible)
                 </label>
                 <input
@@ -456,38 +470,39 @@ export const CollectionsDeck: React.FC = () => {
                   value={slotLabel}
                   onChange={(e) => setSlotLabel(e.target.value)}
                   placeholder="Ej: autista, baronbaron, Risa..."
-                  className="w-full bg-[#0a0c10] border border-[#222632] focus:border-cyan-500 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none"
+                  className="w-full bg-[#0b0d13] border border-[#282f42] focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all"
                 />
               </div>
 
               {/* Imagen del Botón */}
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">
                   Imagen de Fondo del Pad
                 </label>
-                <div className="flex gap-2 mb-2">
+                <div className="flex gap-2.5 mb-2">
                   <input
                     type="text"
                     value={slotImageUrl}
                     onChange={(e) => setSlotImageUrl(e.target.value)}
                     placeholder="URL de imagen https://..."
-                    className="flex-1 bg-[#0a0c10] border border-[#222632] focus:border-cyan-500 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none"
+                    className="flex-1 bg-[#0b0d13] border border-[#282f42] focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all"
                   />
-                  <label className="px-3.5 py-2.5 bg-[#181b24] border border-[#282d3c] hover:border-cyan-500 text-slate-300 hover:text-white rounded-xl text-xs font-semibold cursor-pointer flex items-center gap-1.5 shrink-0">
+                  <label className="px-4 py-3 bg-[#1c2232] border border-[#2e374d] hover:border-cyan-500 text-slate-200 hover:text-white rounded-xl text-xs font-semibold cursor-pointer flex items-center gap-2 shrink-0 transition-all">
                     <ImageIcon size={16} />
                     <span>Subir</span>
                     <input type="file" accept="image/*" onChange={handleImageFileChange} className="hidden" />
                   </label>
                 </div>
                 {slotImageUrl && (
-                  <div className="flex items-center gap-3 mt-2">
-                    <img src={slotImageUrl} alt="preview" className="w-10 h-10 rounded-lg object-cover border border-[#282d3c]" />
+                  <div className="flex items-center gap-3 mt-3 p-2 bg-[#0b0d13] border border-[#282f42] rounded-xl">
+                    <img src={slotImageUrl} alt="preview" className="w-10 h-10 rounded-lg object-cover border border-[#2e374d]" />
+                    <span className="text-xs text-slate-300 truncate flex-1">Imagen configurada</span>
                     <button
                       type="button"
                       onClick={() => setSlotImageUrl('')}
-                      className="text-xs text-rose-400 hover:underline"
+                      className="text-xs text-rose-400 hover:underline font-semibold"
                     >
-                      Quitar imagen
+                      Quitar
                     </button>
                   </div>
                 )}
@@ -495,7 +510,7 @@ export const CollectionsDeck: React.FC = () => {
 
               {/* Tema de Color LED */}
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">
                   Color Retroiluminación LED
                 </label>
                 <div className="flex flex-wrap gap-3">
@@ -504,7 +519,7 @@ export const CollectionsDeck: React.FC = () => {
                       key={t}
                       type="button"
                       onClick={() => setSlotColorTheme(t)}
-                      className={`w-9 h-9 rounded-xl border-2 flex items-center justify-center transition-all ${
+                      className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all ${
                         t === 'cyan' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' :
                         t === 'emerald' ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' :
                         t === 'pink' ? 'bg-pink-500/20 border-pink-500 text-pink-400' :
@@ -513,18 +528,18 @@ export const CollectionsDeck: React.FC = () => {
                         'bg-violet-500/20 border-violet-500 text-violet-400'
                       } ${slotColorTheme === t ? 'ring-2 ring-white scale-110' : 'opacity-70 hover:opacity-100'}`}
                     >
-                      {slotColorTheme === t && <Check size={16} />}
+                      {slotColorTheme === t && <Check size={18} />}
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-5 border-t border-[#222632]">
+              <div className="flex items-center justify-between pt-6 border-t border-[#242b3d]">
                 <button
                   type="button"
                   onClick={handleClearSlot}
-                  className="px-3.5 py-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl text-xs font-semibold flex items-center gap-1.5"
+                  className="px-4 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all"
                 >
                   <Trash2 size={14} />
                   Vaciar Pad
@@ -534,14 +549,14 @@ export const CollectionsDeck: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedSlotIndex(null)}
-                    className="px-4 py-2 bg-[#181b24] hover:bg-[#222632] border border-[#282d3c] rounded-xl text-slate-300 hover:text-white text-xs font-semibold"
+                    className="px-4 py-2.5 bg-[#1c2232] hover:bg-[#282f42] border border-[#2e374d] rounded-xl text-slate-300 hover:text-white text-xs font-semibold transition-all"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={saveSlotMutation.isPending}
-                    className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-cyan-500/20"
+                    className="px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold rounded-xl text-xs shadow-lg shadow-cyan-500/25 transition-all"
                   >
                     {saveSlotMutation.isPending ? 'Guardando...' : 'Guardar Pad'}
                   </button>
