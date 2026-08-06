@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest } from '../api/client.js';
-import { ArrowLeft, Check, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Check, AlertCircle, Download, Loader2 } from 'lucide-react';
 
 export const SoundsEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +13,7 @@ export const SoundsEdit: React.FC = () => {
   const [description, setDescription] = useState('');
   const [volume, setVolume] = useState(1.0);
   const [isActive, setIsActive] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Estados de validación del comando
   const [commandAvailable, setCommandAvailable] = useState<boolean | null>(null);
@@ -80,6 +81,31 @@ export const SoundsEdit: React.FC = () => {
     }
   });
 
+  const handleDownloadSound = async () => {
+    if (!id) return;
+    try {
+      setIsDownloading(true);
+      const audioUrl = `/api/sounds/${id}/audio`;
+      const response = await fetch(audioUrl, { credentials: 'include' });
+      if (!response.ok) throw new Error('Error al descargar el archivo.');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      const downloadName = sound?.originalFilename || sound?.displayName || `sound-${id}.ogg`;
+      a.download = downloadName.includes('.') ? downloadName : `${downloadName}.ogg`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      alert(`Error al descargar el sonido: ${err.message}`);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!displayName || !commandName || commandAvailable === false) {
@@ -116,9 +142,20 @@ export const SoundsEdit: React.FC = () => {
       </button>
 
       {/* Title */}
-      <div>
-        <h2 className="text-2xl font-bold text-white">Editar Sonido</h2>
-        <p className="text-slate-400 text-sm mt-1">Modifica los detalles, volumen o estado del sonido.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Editar Sonido</h2>
+          <p className="text-slate-400 text-sm mt-1">Modifica los detalles, volumen o estado del sonido.</p>
+        </div>
+        <button
+          type="button"
+          onClick={handleDownloadSound}
+          disabled={isDownloading}
+          className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 shrink-0"
+        >
+          {isDownloading ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
+          <span>Descargar Sonido</span>
+        </button>
       </div>
 
       {/* Form Card */}
