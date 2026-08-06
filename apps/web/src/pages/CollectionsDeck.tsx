@@ -109,11 +109,11 @@ const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: strin
       {/* Visualizer Top Bar */}
       <div className="flex items-center justify-between mb-2.5 z-10 relative">
         <div className="flex items-center gap-2">
-          <span className={`border text-[9px] font-mono px-2 py-0.5 rounded-md font-bold tracking-widest uppercase shadow-sm ${activeColor.badge}`}>
-            MASTER OUT
+          <span className={`border text-[9px] font-mono px-2.5 py-0.5 rounded-md font-bold tracking-widest uppercase shadow-sm ${activeColor.badge}`}>
+            REPRODUCCIÓN
           </span>
           {isPlaying && (
-            <div className={`flex items-center gap-1.5 px-2 py-0.5 border rounded-md ${activeColor.pill}`}>
+            <div className={`flex items-center gap-1.5 px-2.5 py-0.5 border rounded-md ${activeColor.pill}`}>
               <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping"></span>
               <span className="text-[9px] font-mono font-bold uppercase tracking-wider">REPRODUCIENDO</span>
             </div>
@@ -122,7 +122,7 @@ const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: strin
 
         <div className="text-right">
           <span className="text-[10px] font-mono text-cyan-300 font-semibold truncate max-w-[180px] block">
-            {activeSoundName ? `🎵 ${activeSoundName}` : 'STANDBY'}
+            {activeSoundName ? `🎵 ${activeSoundName}` : 'EN ESPERA'}
           </span>
         </div>
       </div>
@@ -343,7 +343,7 @@ export const CollectionsDeck: React.FC = () => {
         <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
         {/* Top Section: Master Out Equalizer Visualizer Screen */}
-        <div className="w-full mb-3.5">
+        <div className="w-full mb-5">
           <MasterOutVisualizer 
             isPlaying={playingSlotIndex !== null} 
             activeSoundName={activeSoundName} 
@@ -352,37 +352,37 @@ export const CollectionsDeck: React.FC = () => {
         </div>
 
         {/* Console Header Bar */}
-        <div className="w-full flex items-center justify-between gap-4 mb-6 px-1">
+        <div className="w-full flex items-center justify-between gap-4 mb-7 px-1">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#06b6d4] animate-pulse"></span>
             <span className="text-xs font-mono font-extrabold text-slate-200 tracking-widest uppercase">
-              PRO SOUNDBOARD CONSOLE
+              POLLOPERAS MESA DE MEZCLAS
             </span>
           </div>
 
-          {/* Mode Switch Buttons Pill */}
-          <div className="bg-[#05070a] border border-[#1b2333] p-1 rounded-xl flex gap-1.5 shadow-inner">
+          {/* Mode Switch Buttons Pill (Con más espacio vertical y horizontal) */}
+          <div className="bg-[#05070a] border border-[#1b2333] p-1.5 rounded-2xl flex gap-2 shadow-inner">
             <button
               onClick={() => setIsEditMode(false)}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 !isEditMode 
                   ? 'bg-cyan-950 border border-cyan-500/80 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.4)]' 
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Zap size={13} className={!isEditMode ? 'text-cyan-400' : ''} />
+              <Zap size={14} className={!isEditMode ? 'text-cyan-400' : ''} />
               Reproducción
             </button>
 
             <button
               onClick={() => setIsEditMode(true)}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 isEditMode 
                   ? 'bg-primary border border-primary text-white shadow-md shadow-primary/30' 
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <SlidersHorizontal size={13} />
+              <SlidersHorizontal size={14} />
               Configuración
             </button>
           </div>
