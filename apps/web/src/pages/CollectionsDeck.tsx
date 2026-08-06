@@ -33,33 +33,33 @@ interface SlotData {
 
 const themeConfig = {
   cyan: {
-    padClass: 'border-cyan-400/90 text-cyan-300 bg-gradient-to-b from-[#0e2133] to-[#08121c] shadow-[0_4px_16px_rgba(6,182,212,0.3)] hover:border-cyan-300 hover:shadow-[0_6px_22px_rgba(6,182,212,0.6)]',
-    badgeClass: 'bg-[#092b40] border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.4)]',
+    padClass: 'border-2 border-cyan-400/80 text-cyan-300 bg-gradient-to-b from-[#0e2133] to-[#08121c] shadow-[0_4px_16px_rgba(6,182,212,0.3)] hover:border-cyan-300 hover:shadow-[0_6px_22px_rgba(6,182,212,0.6)]',
+    badgeClass: 'bg-cyan-500/20 border-2 border-cyan-400 text-cyan-300 shadow-[0_0_14px_rgba(6,182,212,0.5)]',
     colorHex: '#06b6d4'
   },
   emerald: {
-    padClass: 'border-emerald-400/90 text-emerald-300 bg-gradient-to-b from-[#09261d] to-[#05140f] shadow-[0_4px_16px_rgba(16,185,129,0.3)] hover:border-emerald-300 hover:shadow-[0_6px_22px_rgba(16,185,129,0.6)]',
-    badgeClass: 'bg-[#093829] border-emerald-400 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.4)]',
+    padClass: 'border-2 border-emerald-400/80 text-emerald-300 bg-gradient-to-b from-[#09261d] to-[#05140f] shadow-[0_4px_16px_rgba(16,185,129,0.3)] hover:border-emerald-300 hover:shadow-[0_6px_22px_rgba(16,185,129,0.6)]',
+    badgeClass: 'bg-emerald-500/20 border-2 border-emerald-400 text-emerald-300 shadow-[0_0_14px_rgba(16,185,129,0.5)]',
     colorHex: '#10b981'
   },
   pink: {
-    padClass: 'border-pink-400/90 text-pink-300 bg-gradient-to-b from-[#2b0e23] to-[#170613] shadow-[0_4px_16px_rgba(236,72,153,0.3)] hover:border-pink-300 hover:shadow-[0_6px_22px_rgba(236,72,153,0.6)]',
-    badgeClass: 'bg-[#401234] border-pink-400 text-pink-300 shadow-[0_0_12px_rgba(236,72,153,0.4)]',
+    padClass: 'border-2 border-pink-400/80 text-pink-300 bg-gradient-to-b from-[#2b0e23] to-[#170613] shadow-[0_4px_16px_rgba(236,72,153,0.3)] hover:border-pink-300 hover:shadow-[0_6px_22px_rgba(236,72,153,0.6)]',
+    badgeClass: 'bg-pink-500/20 border-2 border-pink-400 text-pink-300 shadow-[0_0_14px_rgba(236,72,153,0.5)]',
     colorHex: '#ec4899'
   },
   gold: {
-    padClass: 'border-amber-400/90 text-amber-300 bg-gradient-to-b from-[#2b200b] to-[#171004] shadow-[0_4px_16px_rgba(245,158,11,0.3)] hover:border-amber-300 hover:shadow-[0_6px_22px_rgba(245,158,11,0.6)]',
-    badgeClass: 'bg-[#402f0d] border-amber-400 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.4)]',
+    padClass: 'border-2 border-amber-400/80 text-amber-300 bg-gradient-to-b from-[#2b200b] to-[#171004] shadow-[0_4px_16px_rgba(245,158,11,0.3)] hover:border-amber-300 hover:shadow-[0_6px_22px_rgba(245,158,11,0.6)]',
+    badgeClass: 'bg-amber-500/20 border-2 border-amber-400 text-amber-300 shadow-[0_0_14px_rgba(245,158,11,0.5)]',
     colorHex: '#f59e0b'
   },
   red: {
-    padClass: 'border-rose-400/90 text-rose-300 bg-gradient-to-b from-[#2e0b14] to-[#1a040a] shadow-[0_4px_16px_rgba(244,63,94,0.3)] hover:border-rose-300 hover:shadow-[0_6px_22px_rgba(244,63,94,0.6)]',
-    badgeClass: 'bg-[#470d1d] border-rose-400 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.4)]',
+    padClass: 'border-2 border-rose-400/80 text-rose-300 bg-gradient-to-b from-[#2e0b14] to-[#1a040a] shadow-[0_4px_16px_rgba(244,63,94,0.3)] hover:border-rose-300 hover:shadow-[0_6px_22px_rgba(244,63,94,0.6)]',
+    badgeClass: 'bg-rose-500/20 border-2 border-rose-400 text-rose-300 shadow-[0_0_14px_rgba(244,63,94,0.5)]',
     colorHex: '#f43f5e'
   },
   violet: {
-    padClass: 'border-violet-400/90 text-violet-300 bg-gradient-to-b from-[#1e0e33] to-[#10061c] shadow-[0_4px_16px_rgba(139,92,246,0.3)] hover:border-violet-300 hover:shadow-[0_6px_22px_rgba(139,92,246,0.6)]',
-    badgeClass: 'bg-[#311354] border-violet-400 text-violet-300 shadow-[0_0_12px_rgba(139,92,246,0.4)]',
+    padClass: 'border-2 border-violet-400/80 text-violet-300 bg-gradient-to-b from-[#1e0e33] to-[#10061c] shadow-[0_4px_16px_rgba(139,92,246,0.3)] hover:border-violet-300 hover:shadow-[0_6px_22px_rgba(139,92,246,0.6)]',
+    badgeClass: 'bg-violet-500/20 border-2 border-violet-400 text-violet-300 shadow-[0_0_14px_rgba(139,92,246,0.5)]',
     colorHex: '#8b5cf6'
   }
 };
@@ -328,49 +328,49 @@ export const CollectionsDeck: React.FC = () => {
         </div>
 
         {/* Console Header Bar */}
-        <div className="w-full flex items-center justify-between gap-4 mb-3.5 px-0.5">
+        <div className="w-full flex items-center justify-between gap-4 mb-6 px-1">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#06b6d4]"></span>
-            <span className="text-xs font-mono font-extrabold text-slate-300 tracking-wider uppercase">
+            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#06b6d4] animate-pulse"></span>
+            <span className="text-xs font-mono font-extrabold text-slate-200 tracking-widest uppercase">
               PRO SOUNDBOARD CONSOLE
             </span>
           </div>
 
           {/* Mode Switch Buttons Pill */}
-          <div className="bg-[#07090e] border border-[#1b2333] p-1 rounded-xl flex gap-1 shadow-inner">
+          <div className="bg-[#05070a] border border-[#1b2333] p-1 rounded-xl flex gap-1.5 shadow-inner">
             <button
               onClick={() => setIsEditMode(false)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 !isEditMode 
-                  ? 'bg-cyan-950 border border-cyan-500/80 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.4)]' 
+                  ? 'bg-cyan-950 border border-cyan-500/80 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.4)]' 
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Zap size={12} className={!isEditMode ? 'text-cyan-400' : ''} />
+              <Zap size={13} className={!isEditMode ? 'text-cyan-400' : ''} />
               Reproducción
             </button>
 
             <button
               onClick={() => setIsEditMode(true)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 isEditMode 
                   ? 'bg-primary border border-primary text-white shadow-md shadow-primary/30' 
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <SlidersHorizontal size={12} />
+              <SlidersHorizontal size={13} />
               Configuración
             </button>
           </div>
         </div>
 
-        {/* Matrix Grid: 5 Columnas x 4 Filas de Teclas Estilo 3D Stream Deck (76px x 76px) */}
+        {/* Matrix Grid: 5 Columnas x 4 Filas de Teclas Ampliadas (84px x 84px) */}
         <div 
           style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(5, 76px)', 
-            gridTemplateRows: 'repeat(4, 76px)', 
-            gap: '10px',
+            gridTemplateColumns: 'repeat(5, 84px)', 
+            gridTemplateRows: 'repeat(4, 84px)', 
+            gap: '12px',
             justifyContent: 'center' 
           }}
         >
@@ -387,11 +387,11 @@ export const CollectionsDeck: React.FC = () => {
               <div
                 key={slot.slotIndex}
                 onClick={() => handleSlotClick(slot)}
-                style={{ width: '76px', height: '76px' }}
-                className={`group relative rounded-2xl border-2 flex flex-col justify-between p-1.5 transition-all duration-150 shadow-lg overflow-hidden select-none cursor-pointer active:scale-95 ${padClass} ${
+                style={{ width: '84px', height: '84px' }}
+                className={`group relative rounded-2xl flex flex-col justify-between p-2 transition-all duration-150 shadow-xl overflow-hidden select-none cursor-pointer active:scale-95 ${padClass} ${
                   isPlayingThis 
-                    ? 'ring-4 ring-white shadow-[0_0_25px_rgba(255,255,255,0.95)] scale-[0.96] z-10' 
-                    : 'hover:-translate-y-0.5'
+                    ? 'ring-4 ring-white shadow-[0_0_30px_rgba(255,255,255,0.95)] scale-[0.96] z-10' 
+                    : 'hover:-translate-y-1 hover:shadow-2xl'
                 } ${isEditMode ? 'ring-2 ring-primary/80' : ''} before:absolute before:inset-x-0 before:top-0 before:h-1/2 before:bg-gradient-to-b before:from-white/10 before:to-transparent before:rounded-t-2xl pointer-events-auto`}
               >
                 {/* Background Cover Image if configured */}
@@ -408,11 +408,11 @@ export const CollectionsDeck: React.FC = () => {
 
                 {/* Top Row: Pad Number & Indicators */}
                 <div className="w-full flex justify-between items-center z-10 leading-none">
-                  <span className="text-[9px] font-mono text-slate-400 font-bold drop-shadow">
+                  <span className="text-[10px] font-mono text-slate-400 font-extrabold drop-shadow">
                     #{slot.slotIndex + 1}
                   </span>
 
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-1">
                     {/* Botón directo de edición en cada pad */}
                     <button
                       type="button"
@@ -423,13 +423,13 @@ export const CollectionsDeck: React.FC = () => {
                       className="p-0.5 rounded bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-300 opacity-0 group-hover:opacity-100 transition-all shadow"
                       title="Configurar pad"
                     >
-                      <Edit size={9} />
+                      <Edit size={10} />
                     </button>
 
                     {isPlayingThis ? (
-                      <Volume2 size={11} className="text-white animate-bounce" />
+                      <Volume2 size={12} className="text-white animate-bounce" />
                     ) : hasSound ? (
-                      <Play size={8} className="text-slate-400 group-hover:text-white transition-colors" />
+                      <Play size={9} className="text-slate-400 group-hover:text-white transition-colors" />
                     ) : null}
                   </div>
                 </div>
@@ -437,23 +437,23 @@ export const CollectionsDeck: React.FC = () => {
                 {/* Center Content: Icon Badge Matching the Theme Color */}
                 <div className="my-auto z-10 flex items-center justify-center w-full">
                   {!hasSound ? (
-                    <div className="w-7 h-7 rounded-full border border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
-                      <Plus size={14} />
+                    <div className="w-8 h-8 rounded-full border-2 border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
+                      <Plus size={16} />
                     </div>
                   ) : !slot.customImageUrl ? (
-                    <div className={`w-9.5 h-9.5 rounded-xl flex items-center justify-center border-2 transition-all ${
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center border-2 transition-all ${
                       isPlayingThis 
-                        ? 'bg-white text-black border-white shadow-[0_0_18px_#ffffff] animate-pulse' 
+                        ? 'bg-white text-black border-white shadow-[0_0_20px_#ffffff] animate-pulse scale-105' 
                         : currentTheme.badgeClass
                     }`}>
-                      <Music size={19} />
+                      <Music size={22} />
                     </div>
                   ) : null}
                 </div>
 
                 {/* Bottom Label */}
                 <div className="w-full z-10 text-center leading-none">
-                  <p className="text-[9px] font-extrabold text-white truncate drop-shadow-md tracking-tight">
+                  <p className="text-[10px] font-bold text-white truncate drop-shadow-md tracking-tight px-0.5">
                     {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
                   </p>
                 </div>
