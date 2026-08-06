@@ -233,6 +233,10 @@ export class PlaybackQueueManager {
     return queue;
   }
 
+  public getQueues(): Map<string, GuildVoiceQueue> {
+    return this.queues;
+  }
+
   public shutdown(): void {
     for (const queue of this.queues.values()) {
       queue.disconnect();

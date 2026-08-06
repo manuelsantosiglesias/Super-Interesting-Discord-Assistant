@@ -8,6 +8,7 @@ import {
   Pause, 
   Edit, 
   Trash2, 
+  Volume2,
   Disc,
   ArrowUpDown,
   CheckCircle,
@@ -30,6 +31,7 @@ export const Sounds: React.FC = () => {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [audioObj, setAudioObj] = useState<HTMLAudioElement | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [quickPlayingId, setQuickPlayingId] = useState<string | null>(null);
 
   // Reproducción remota en Discord
   const [showDiscordModal, setShowDiscordModal] = useState(false);
@@ -156,6 +158,18 @@ export const Sounds: React.FC = () => {
       alert(`Error al descargar el sonido: ${err.message}`);
     } finally {
       setDownloadingId(null);
+    }
+  };
+
+  const handleQuickPlay = async (soundId: string) => {
+    try {
+      setQuickPlayingId(soundId);
+      const res = await apiRequest(`/api/sounds/${soundId}/quick-play`, { method: 'POST' });
+      alert(`Sonido encolado en canal de voz activo (${res.humanMembers} usuario(s) conectados).`);
+    } catch (err: any) {
+      alert(`Error al reproducir: ${err.message}`);
+    } finally {
+      setQuickPlayingId(null);
     }
   };
 
@@ -308,7 +322,7 @@ export const Sounds: React.FC = () => {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
-                        {/* Play Web Preview */}
+                        {/* 1. Play Web Preview */}
                         <button
                           onClick={() => handlePlayPreview(sound.id)}
                           className="p-2 bg-darkbg border border-darkborder hover:border-primary text-slate-300 hover:text-white rounded-lg transition-all"
@@ -317,21 +331,35 @@ export const Sounds: React.FC = () => {
                           {playingId === sound.id ? <Pause size={16} /> : <Play size={16} />}
                         </button>
 
-                        {/* Quick Play Discord Server */}
+                        {/* 2. Quick Play Discord (Automático en el canal con más personas o último activo) */}
                         <button
-                          onClick={() => handleOpenDiscordPlay(sound.id)}
-                          disabled={!sound.isActive}
+                          onClick={() => handleQuickPlay(sound.id)}
+                          disabled={!sound.isActive || quickPlayingId === sound.id}
                           className={`p-2 border rounded-lg transition-all ${
                             sound.isActive
                               ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-white'
                               : 'bg-slate-800/10 border-slate-700/20 text-slate-600 cursor-not-allowed'
                           }`}
-                          title={sound.isActive ? 'Reproducción rápida en Discord' : 'Sonido desactivado'}
+                          title={sound.isActive ? 'Reproducción rápida (reproduce en el canal con más gente o el último usado)' : 'Sonido desactivado'}
                         >
-                          <Zap size={16} />
+                          {quickPlayingId === sound.id ? <Loader2 className="animate-spin" size={16} /> : <Zap size={16} />}
                         </button>
 
-                        {/* Edit */}
+                        {/* 3. Seleccionar canal y reproducir en Discord (Antes de editar) */}
+                        <button
+                          onClick={() => handleOpenDiscordPlay(sound.id)}
+                          disabled={!sound.isActive}
+                          className={`p-2 border rounded-lg transition-all ${
+                            sound.isActive
+                              ? 'bg-primary/10 border-primary/20 text-primary hover:bg-primary hover:text-white'
+                              : 'bg-slate-800/10 border-slate-700/20 text-slate-600 cursor-not-allowed'
+                          }`}
+                          title={sound.isActive ? 'Seleccionar servidor y canal de voz para reproducir' : 'Sonido desactivado'}
+                        >
+                          <Volume2 size={16} />
+                        </button>
+
+                        {/* 4. Edit */}
                         <Link
                           to={`/sounds/${sound.id}`}
                           className="p-2 bg-darkbg border border-darkborder hover:border-blue-500 text-slate-300 hover:text-white rounded-lg transition-all"
@@ -340,7 +368,7 @@ export const Sounds: React.FC = () => {
                           <Edit size={16} />
                         </Link>
 
-                        {/* Delete */}
+                        {/* 5. Delete */}
                         <button
                           onClick={() => handleDeleteSound(sound.id, sound.displayName)}
                           className="p-2 bg-darkbg border border-darkborder hover:border-accentred text-slate-300 hover:text-accentred rounded-lg transition-all"
@@ -349,7 +377,7 @@ export const Sounds: React.FC = () => {
                           <Trash2 size={16} />
                         </button>
 
-                        {/* Download Sound (At the very end) */}
+                        {/* 6. Download Sound (Al final del todo) */}
                         <button
                           onClick={() => handleDownloadSound(sound.id, sound.originalFilename || sound.displayName)}
                           disabled={downloadingId === sound.id}

@@ -277,4 +277,79 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
 
     return { success: true };
   });
+
+  // 9. Reproducción rápida automática (en el canal con más personas o el último usado)
+  fastify.post('/api/sounds/:id/quick-play', async (request, reply) => {
+    const params = z.object({ id: z.string() }).parse(request.params);
+    const client = container.discordBot;
+
+    if (!client || !client.readyAt) {
+      reply.code(400).send({ error: { code: 'BOT_NOT_READY', message: 'El bot de Discord no está conectado actualmente.' } });
+      return;
+    }
+
+    let bestGuildId = '';
+    let bestChannelId = '';
+    let maxHumanMembers = 0;
+
+    // Recorrer servidores y canales de voz para buscar el canal con más usuarios humanos
+    for (const [, guild] of client.guilds.cache) {
+      for (const [, channel] of guild.channels.cache) {
+        if (channel.isVoiceBased()) {
+          const humanCount = channel.members.filter((m) => !m.user.bot).size;
+          if (humanCount > maxHumanMembers) {
+            maxHumanMembers = humanCount;
+            bestGuildId = guild.id;
+            bestChannelId = channel.id;
+          }
+        }
+      }
+    }
+
+    // Si no hay usuarios en ningún canal, buscar el último canal donde el bot se unió/reprodujo
+    if (!bestChannelId) {
+      const queues = container.queueManager.getQueues();
+      for (const [guildId, queue] of queues) {
+        const currentCh = queue.getCurrentChannel();
+        if (currentCh) {
+          bestGuildId = guildId;
+          bestChannelId = currentCh;
+          break;
+        }
+      }
+    }
+
+    if (!bestChannelId) {
+      reply.code(400).send({
+        error: {
+          code: 'NO_ACTIVE_VOICE_CHANNEL',
+          message: 'No hay usuarios conectados a canales de voz ni canales activos recientes.'
+        }
+      });
+      return;
+    }
+
+    await container.playSoundFromWeb.execute({
+      soundId: params.id,
+      discordGuildId: bestGuildId,
+      voiceChannelId: bestChannelId,
+      webUserId: request.user!.id.toString()
+    });
+
+    await container.writeAuditEvent.execute({
+      userId: request.user!.id.toString(),
+      action: 'SOUND_QUICK_PLAYED',
+      entityType: 'Sound',
+      entityId: params.id,
+      metadataJson: { guildId: bestGuildId, voiceChannelId: bestChannelId, membersCount: maxHumanMembers },
+      ipAddress: request.ip
+    });
+
+    return {
+      success: true,
+      guildId: bestGuildId,
+      voiceChannelId: bestChannelId,
+      humanMembers: maxHumanMembers
+    };
+  });
 }
