@@ -33,43 +33,43 @@ interface SlotData {
 
 const themeConfig = {
   cyan: {
-    padClass: 'border-2 border-cyan-400 text-cyan-300 bg-gradient-to-b from-[#0e2133] to-[#08121c] shadow-[0_4px_16px_rgba(6,182,212,0.4)] hover:border-cyan-300 hover:shadow-[0_6px_22px_rgba(6,182,212,0.7)]',
-    badgeClass: 'bg-cyan-500/30 border-2 border-cyan-400 text-cyan-300 shadow-[0_0_14px_rgba(6,182,212,0.6)]',
+    padBg: 'bg-gradient-to-b from-[#0b2133] via-[#071724] to-[#040d14]',
+    badgeBg: 'bg-cyan-500/25 border-cyan-400 text-cyan-300',
     colorHex: '#06b6d4'
   },
   emerald: {
-    padClass: 'border-2 border-emerald-400 text-emerald-300 bg-gradient-to-b from-[#09261d] to-[#05140f] shadow-[0_4px_16px_rgba(16,185,129,0.4)] hover:border-emerald-300 hover:shadow-[0_6px_22px_rgba(16,185,129,0.7)]',
-    badgeClass: 'bg-emerald-500/30 border-2 border-emerald-400 text-emerald-300 shadow-[0_0_14px_rgba(16,185,129,0.6)]',
+    padBg: 'bg-gradient-to-b from-[#08291f] via-[#051c15] to-[#03100b]',
+    badgeBg: 'bg-emerald-500/25 border-emerald-400 text-emerald-300',
     colorHex: '#10b981'
   },
   pink: {
-    padClass: 'border-2 border-pink-400 text-pink-300 bg-gradient-to-b from-[#2b0e23] to-[#170613] shadow-[0_4px_16px_rgba(236,72,153,0.4)] hover:border-pink-300 hover:shadow-[0_6px_22px_rgba(236,72,153,0.7)]',
-    badgeClass: 'bg-pink-500/30 border-2 border-pink-400 text-pink-300 shadow-[0_0_14px_rgba(236,72,153,0.6)]',
+    padBg: 'bg-gradient-to-b from-[#2e0e26] via-[#20091a] to-[#12040f]',
+    badgeBg: 'bg-pink-500/25 border-pink-400 text-pink-300',
     colorHex: '#ec4899'
   },
   gold: {
-    padClass: 'border-2 border-amber-400 text-amber-300 bg-gradient-to-b from-[#2b200b] to-[#171004] shadow-[0_4px_16px_rgba(245,158,11,0.4)] hover:border-amber-300 hover:shadow-[0_6px_22px_rgba(245,158,11,0.7)]',
-    badgeClass: 'bg-amber-500/30 border-2 border-amber-400 text-amber-300 shadow-[0_0_14px_rgba(245,158,11,0.6)]',
+    padBg: 'bg-gradient-to-b from-[#2b210c] via-[#1f1708] to-[#120d03]',
+    badgeBg: 'bg-amber-500/25 border-amber-400 text-amber-300',
     colorHex: '#f59e0b'
   },
   red: {
-    padClass: 'border-2 border-rose-400 text-rose-300 bg-gradient-to-b from-[#2e0b14] to-[#1a040a] shadow-[0_4px_16px_rgba(244,63,94,0.4)] hover:border-rose-300 hover:shadow-[0_6px_22px_rgba(244,63,94,0.7)]',
-    badgeClass: 'bg-rose-500/30 border-2 border-rose-400 text-rose-300 shadow-[0_0_14px_rgba(244,63,94,0.6)]',
+    padBg: 'bg-gradient-to-b from-[#300a14] via-[#21060d] to-[#120307]',
+    badgeBg: 'bg-rose-500/25 border-rose-400 text-rose-300',
     colorHex: '#f43f5e'
   },
   violet: {
-    padClass: 'border-2 border-violet-400 text-violet-300 bg-gradient-to-b from-[#1e0e33] to-[#10061c] shadow-[0_4px_16px_rgba(139,92,246,0.4)] hover:border-violet-300 hover:shadow-[0_6px_22px_rgba(139,92,246,0.7)]',
-    badgeClass: 'bg-violet-500/30 border-2 border-violet-400 text-violet-300 shadow-[0_0_14px_rgba(139,92,246,0.6)]',
+    padBg: 'bg-gradient-to-b from-[#200e36] via-[#150924] to-[#0c0414]',
+    badgeBg: 'bg-violet-500/25 border-violet-400 text-violet-300',
     colorHex: '#8b5cf6'
   },
   blue: {
-    padClass: 'border-2 border-blue-400 text-blue-300 bg-gradient-to-b from-[#0e1b33] to-[#060c1c] shadow-[0_4px_16px_rgba(59,130,246,0.4)] hover:border-blue-300 hover:shadow-[0_6px_22px_rgba(59,130,246,0.7)]',
-    badgeClass: 'bg-blue-500/30 border-2 border-blue-400 text-blue-300 shadow-[0_0_14px_rgba(59,130,246,0.6)]',
+    padBg: 'bg-gradient-to-b from-[#0e1d38] via-[#081226] to-[#040917]',
+    badgeBg: 'bg-blue-500/25 border-blue-400 text-blue-300',
     colorHex: '#3b82f6'
   },
   orange: {
-    padClass: 'border-2 border-orange-400 text-orange-300 bg-gradient-to-b from-[#2b170b] to-[#170a04] shadow-[0_4px_16px_rgba(249,115,22,0.4)] hover:border-orange-300 hover:shadow-[0_6px_22px_rgba(249,115,22,0.7)]',
-    badgeClass: 'bg-orange-500/30 border-2 border-orange-400 text-orange-300 shadow-[0_0_14px_rgba(249,115,22,0.6)]',
+    padBg: 'bg-gradient-to-b from-[#30190b] via-[#211107] to-[#120803]',
+    badgeBg: 'bg-orange-500/25 border-orange-400 text-orange-300',
     colorHex: '#f97316'
   }
 };
@@ -84,8 +84,6 @@ const equalizerThemeColors = {
   blue: { topCap: 'bg-blue-200 shadow-[0_0_8px_#3b82f6]', bar: 'bg-gradient-to-t from-blue-950 via-blue-500 to-blue-300 shadow-[0_0_12px_rgba(59,130,246,0.7)]', badge: 'bg-blue-950/90 border-blue-500/60 text-blue-400', pill: 'bg-blue-500/15 border-blue-500/40 text-blue-400' },
   orange: { topCap: 'bg-orange-200 shadow-[0_0_8px_#f97316]', bar: 'bg-gradient-to-t from-orange-950 via-orange-500 to-orange-300 shadow-[0_0_12px_rgba(249,115,22,0.7)]', badge: 'bg-orange-950/90 border-orange-500/60 text-orange-400', pill: 'bg-orange-500/15 border-orange-500/40 text-orange-400' }
 };
-
-
 
 // Componente Visualizador del Ecualizador Master Out
 const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: string | null; activeColorTheme?: 'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet' | 'blue' | 'orange' }> = ({ isPlaying, activeSoundName, activeColorTheme = 'cyan' }) => {
@@ -305,8 +303,20 @@ export const CollectionsDeck: React.FC = () => {
 
   return (
     <div className="min-h-[82vh] flex flex-col items-center justify-center space-y-5 px-2 py-4">
+      {/* Keyframe Animations for Slow Neon Breathe & Fast Strobe Ignition */}
+      <style>{`
+        @keyframes neonBreatheSlow {
+          0%, 100% { filter: brightness(1) drop-shadow(0 0 4px var(--neon-color)); }
+          50% { filter: brightness(1.35) drop-shadow(0 0 14px var(--neon-color)); }
+        }
+        @keyframes neonStrobeFast {
+          0%, 100% { filter: brightness(1.8) drop-shadow(0 0 24px var(--neon-color)); transform: scale(1.03); }
+          50% { filter: brightness(0.85) drop-shadow(0 0 6px var(--neon-color)); transform: scale(0.97); }
+        }
+      `}</style>
+
       {/* Navigation Bar (Centrada arriba de la mesa) */}
-      <div className="w-full max-w-[460px] flex items-center justify-between">
+      <div className="w-full max-w-[520px] flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/collections')}
@@ -378,12 +388,12 @@ export const CollectionsDeck: React.FC = () => {
           </div>
         </div>
 
-        {/* Matrix Grid: 5 Columnas x 4 Filas de Teclas Ampliadas (84px x 84px) */}
+        {/* Matrix Grid: 5 Columnas x 4 Filas de Teclas Ampliadas (94px x 94px) */}
         <div 
           style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(5, 84px)', 
-            gridTemplateRows: 'repeat(4, 84px)', 
+            gridTemplateColumns: 'repeat(5, 94px)', 
+            gridTemplateRows: 'repeat(4, 94px)', 
             gap: '12px',
             justifyContent: 'center' 
           }}
@@ -393,20 +403,29 @@ export const CollectionsDeck: React.FC = () => {
             const isPlayingThis = playingSlotIndex === slot.slotIndex;
             const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
 
-            const padClass = hasSound 
-              ? currentTheme.padClass 
-              : 'border-2 border-[#1e2536] text-slate-500 bg-[#090b10] hover:border-slate-500 hover:text-slate-300';
-
             return (
               <div
                 key={slot.slotIndex}
                 onClick={() => handleSlotClick(slot)}
-                style={{ width: '84px', height: '84px' }}
-                className={`group relative rounded-2xl flex flex-col justify-between p-2 transition-all duration-150 shadow-xl overflow-hidden select-none cursor-pointer active:scale-95 ${padClass} ${
-                  isPlayingThis 
-                    ? 'ring-4 ring-white shadow-[0_0_30px_rgba(255,255,255,0.95)] scale-[0.96] z-10' 
-                    : 'hover:-translate-y-1 hover:shadow-2xl'
-                } ${isEditMode ? 'ring-2 ring-primary/80' : ''} before:absolute before:inset-x-0 before:top-0 before:h-1/2 before:bg-gradient-to-b before:from-white/10 before:to-transparent before:rounded-t-2xl pointer-events-auto`}
+                style={{ 
+                  width: '94px', 
+                  height: '94px',
+                  borderColor: hasSound ? currentTheme.colorHex : '#1e2536',
+                  ['--neon-color' as any]: currentTheme.colorHex,
+                  animation: isPlayingThis 
+                    ? 'neonStrobeFast 0.35s ease-in-out infinite' 
+                    : hasSound 
+                      ? 'neonBreatheSlow 3s ease-in-out infinite' 
+                      : 'none',
+                  boxShadow: isPlayingThis 
+                    ? `0 0 28px ${currentTheme.colorHex}, inset 0 0 15px ${currentTheme.colorHex}` 
+                    : hasSound 
+                      ? `0 0 12px ${currentTheme.colorHex}55` 
+                      : 'none'
+                }}
+                className={`group relative rounded-2xl border-2 flex flex-col justify-between p-2 transition-all duration-150 overflow-hidden select-none cursor-pointer active:scale-95 ${
+                  hasSound ? currentTheme.padBg : 'bg-[#090b10] hover:border-slate-500'
+                } ${isEditMode ? 'ring-2 ring-primary/80' : ''} before:absolute before:inset-x-0 before:top-0 before:h-1/2 before:bg-gradient-to-b before:from-white/15 before:to-transparent before:rounded-t-2xl pointer-events-auto`}
               >
                 {/* Background Cover Image if configured */}
                 {slot.customImageUrl ? (
@@ -443,32 +462,44 @@ export const CollectionsDeck: React.FC = () => {
                     {isPlayingThis ? (
                       <Volume2 size={12} className="text-white animate-bounce" />
                     ) : hasSound ? (
-                      <Play size={9} className="text-slate-400 group-hover:text-white transition-colors" />
+                      <Play size={9} style={{ color: currentTheme.colorHex }} className="transition-colors" />
                     ) : null}
                   </div>
                 </div>
 
-                {/* Center Content: Icon Badge Matching the Theme Color */}
+                {/* Center Content: Icon Badge Matching the Theme Color (Con suficiente espacio) */}
                 <div className="my-auto z-10 flex items-center justify-center w-full">
                   {!hasSound ? (
                     <div className="w-8 h-8 rounded-full border-2 border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
                       <Plus size={16} />
                     </div>
                   ) : !slot.customImageUrl ? (
-                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center border-2 transition-all ${
-                      isPlayingThis 
-                        ? 'bg-white text-black border-white shadow-[0_0_20px_#ffffff] animate-pulse scale-105' 
-                        : currentTheme.badgeClass
-                    }`}>
-                      <Music size={22} />
+                    <div 
+                      style={{ 
+                        borderColor: currentTheme.colorHex,
+                        backgroundColor: `${currentTheme.colorHex}25`,
+                        boxShadow: `0 0 10px ${currentTheme.colorHex}55`
+                      }}
+                      className={`w-11.5 h-11.5 p-1 rounded-xl flex items-center justify-center border-2 transition-all ${
+                        isPlayingThis ? 'bg-white text-black border-white shadow-[0_0_22px_#ffffff] scale-105' : ''
+                      }`}
+                    >
+                      <Music size={22} style={{ color: isPlayingThis ? '#000000' : currentTheme.colorHex }} />
                     </div>
                   ) : null}
                 </div>
 
                 {/* Bottom Label (2 líneas ajustadas con ellipsis ...) */}
-                <div className="w-full z-10 text-center leading-tight min-h-[22px] flex items-center justify-center">
+                <div className="w-full z-10 text-center leading-tight min-h-[26px] flex items-center justify-center">
                   <p 
-                    className="text-[9.5px] leading-[1.15] font-bold text-white text-center line-clamp-2 break-words px-0.5 drop-shadow-md"
+                    className="text-[9.5px] leading-[1.18] font-bold text-white text-center line-clamp-2 break-words px-0.5 drop-shadow-md"
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}
                     title={slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
                   >
                     {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
