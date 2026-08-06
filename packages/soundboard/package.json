@@ -1,0 +1,16 @@
+{
+  "name": "@super-assistant/soundboard",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@super-assistant/shared-kernel": "*",
+    "@super-assistant/config": "*",
+    "kysely": "^0.27.4",
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0"
+  }
+}

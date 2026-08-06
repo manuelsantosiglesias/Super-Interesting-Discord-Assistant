@@ -1,0 +1,44 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "./dist/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "setup": "tsx src/bootstrap/setup.ts",
+    "db:create": "tsx src/bootstrap/db-create.ts",
+    "db:migrate": "tsx src/bootstrap/db-migrate.ts",
+    "db:rollback": "tsx src/bootstrap/db-rollback.ts",
+    "db:status": "tsx src/bootstrap/db-status.ts",
+    "admin:create": "tsx src/bootstrap/admin-create.ts",
+    "discord:register": "tsx src/bootstrap/discord-register.ts"
+  },
+  "dependencies": {
+    "@super-assistant/shared-kernel": "*",
+    "@super-assistant/config": "*",
+    "@super-assistant/identity": "*",
+    "@super-assistant/soundboard": "*",
+    "@super-assistant/guild-management": "*",
+    "@super-assistant/discord-integration": "*",
+    "@super-assistant/audit": "*",
+    "@super-assistant/future-voice-assistant": "*",
+    "fastify": "^4.28.1",
+    "@fastify/cookie": "^9.3.1",
+    "@fastify/multipart": "^8.3.0",
+    "@fastify/rate-limit": "^9.1.0",
+    "@fastify/helmet": "^11.1.1",
+    "@fastify/swagger": "^8.15.0",
+    "@fastify/swagger-ui": "^4.0.0",
+    "zod": "^3.23.8",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.3.0",
+    "mysql2": "^3.11.5",
+    "kysely": "^0.27.4",
+    "ini": "^5.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  }
+}

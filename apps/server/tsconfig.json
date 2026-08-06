@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../packages/shared-kernel" },
+    { "path": "../../packages/config" },
+    { "path": "../../packages/identity" },
+    { "path": "../../packages/soundboard" },
+    { "path": "../../packages/guild-management" },
+    { "path": "../../packages/discord-integration" },
+    { "path": "../../packages/audit" },
+    { "path": "../../packages/future-voice-assistant" }
+  ]
+}

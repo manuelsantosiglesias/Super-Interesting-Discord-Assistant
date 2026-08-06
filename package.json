@@ -1,0 +1,44 @@
+{
+  "name": "super-interesting-discord-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:web\"",
+    "dev:server": "npm run dev --workspace=server",
+    "dev:web": "npm run dev --workspace=web",
+    "build": "npm run build --workspaces --if-present",
+    "start": "npm run start --workspace=server",
+    "setup": "npm run setup --workspace=server",
+    "db:create": "npm run db:create --workspace=server",
+    "db:migrate": "npm run db:migrate --workspace=server",
+    "db:rollback": "npm run db:rollback --workspace=server",
+    "db:status": "npm run db:status --workspace=server",
+    "admin:create": "npm run admin:create --workspace=server",
+    "discord:register": "npm run discord:register --workspace=server",
+    "test": "vitest run",
+    "test:unit": "vitest run --dir packages",
+    "test:integration": "vitest run --dir apps/server/test/integration",
+    "test:e2e": "vitest run --dir apps/server/test/e2e",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --build",
+    "clean": "rimraf node_modules **/dist **/node_modules"
+  },
+  "devDependencies": {
+    "@types/ini": "^4.1.1",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.16.0",
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
