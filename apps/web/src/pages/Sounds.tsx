@@ -8,14 +8,14 @@ import {
   Pause, 
   Edit, 
   Trash2, 
-  Volume2, 
   Disc,
   ArrowUpDown,
   CheckCircle,
   XCircle,
   Plus,
   Download,
-  Loader2
+  Loader2,
+  Zap
 } from 'lucide-react';
 
 export const Sounds: React.FC = () => {
@@ -316,29 +316,19 @@ export const Sounds: React.FC = () => {
                         >
                           {playingId === sound.id ? <Pause size={16} /> : <Play size={16} />}
                         </button>
-                        
-                        {/* Download Sound */}
-                        <button
-                          onClick={() => handleDownloadSound(sound.id, sound.originalFilename || sound.displayName)}
-                          disabled={downloadingId === sound.id}
-                          className="p-2 bg-darkbg border border-darkborder hover:border-emerald-500 text-slate-300 hover:text-emerald-400 rounded-lg transition-all disabled:opacity-50"
-                          title="Descargar Sonido"
-                        >
-                          {downloadingId === sound.id ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
-                        </button>
-                        
-                        {/* Play Discord Server */}
+
+                        {/* Quick Play Discord Server */}
                         <button
                           onClick={() => handleOpenDiscordPlay(sound.id)}
                           disabled={!sound.isActive}
                           className={`p-2 border rounded-lg transition-all ${
                             sound.isActive
-                              ? 'bg-primary/10 border-primary/20 text-primary hover:bg-primary hover:text-white'
+                              ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-white'
                               : 'bg-slate-800/10 border-slate-700/20 text-slate-600 cursor-not-allowed'
                           }`}
-                          title={sound.isActive ? 'Reproducir en Discord' : 'Sonido desactivado'}
+                          title={sound.isActive ? 'Reproducción rápida en Discord' : 'Sonido desactivado'}
                         >
-                          <Volume2 size={16} />
+                          <Zap size={16} />
                         </button>
 
                         {/* Edit */}
@@ -357,6 +347,16 @@ export const Sounds: React.FC = () => {
                           title="Eliminar"
                         >
                           <Trash2 size={16} />
+                        </button>
+
+                        {/* Download Sound (At the very end) */}
+                        <button
+                          onClick={() => handleDownloadSound(sound.id, sound.originalFilename || sound.displayName)}
+                          disabled={downloadingId === sound.id}
+                          className="p-2 bg-darkbg border border-darkborder hover:border-emerald-500 text-slate-300 hover:text-emerald-400 rounded-lg transition-all disabled:opacity-50"
+                          title="Descargar Sonido"
+                        >
+                          {downloadingId === sound.id ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
                         </button>
                       </div>
                     </td>
