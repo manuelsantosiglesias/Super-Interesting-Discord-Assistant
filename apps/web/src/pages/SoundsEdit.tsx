@@ -151,10 +151,10 @@ export const SoundsEdit: React.FC = () => {
           type="button"
           onClick={handleDownloadSound}
           disabled={isDownloading}
-          className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 shrink-0"
+          className="p-2.5 bg-darkbg border border-darkborder hover:border-emerald-500 text-slate-300 hover:text-emerald-400 rounded-xl transition-all disabled:opacity-50 shrink-0"
+          title="Descargar Sonido"
         >
-          {isDownloading ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
-          <span>Descargar Sonido</span>
+          {isDownloading ? <Loader2 className="animate-spin" size={18} /> : <Download size={18} />}
         </button>
       </div>
 

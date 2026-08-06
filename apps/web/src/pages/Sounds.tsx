@@ -321,11 +321,10 @@ export const Sounds: React.FC = () => {
                         <button
                           onClick={() => handleDownloadSound(sound.id, sound.originalFilename || sound.displayName)}
                           disabled={downloadingId === sound.id}
-                          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-lg text-xs font-semibold transition-all disabled:opacity-50"
+                          className="p-2 bg-darkbg border border-darkborder hover:border-emerald-500 text-slate-300 hover:text-emerald-400 rounded-lg transition-all disabled:opacity-50"
                           title="Descargar Sonido"
                         >
-                          {downloadingId === sound.id ? <Loader2 className="animate-spin" size={14} /> : <Download size={14} />}
-                          <span>Descargar</span>
+                          {downloadingId === sound.id ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
                         </button>
                         
                         {/* Play Discord Server */}
