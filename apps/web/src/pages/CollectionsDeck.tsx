@@ -28,39 +28,49 @@ interface SlotData {
   soundIsActive: boolean;
   customLabel: string | null;
   customImageUrl: string | null;
-  colorTheme: 'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet';
+  colorTheme: 'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet' | 'blue' | 'orange';
 }
 
 const themeConfig = {
   cyan: {
-    padClass: 'border-2 border-cyan-400/80 text-cyan-300 bg-gradient-to-b from-[#0e2133] to-[#08121c] shadow-[0_4px_16px_rgba(6,182,212,0.3)] hover:border-cyan-300 hover:shadow-[0_6px_22px_rgba(6,182,212,0.6)]',
-    badgeClass: 'bg-cyan-500/20 border-2 border-cyan-400 text-cyan-300 shadow-[0_0_14px_rgba(6,182,212,0.5)]',
+    padClass: 'border-2 border-cyan-400 text-cyan-300 bg-gradient-to-b from-[#0e2133] to-[#08121c] shadow-[0_4px_16px_rgba(6,182,212,0.4)] hover:border-cyan-300 hover:shadow-[0_6px_22px_rgba(6,182,212,0.7)]',
+    badgeClass: 'bg-cyan-500/30 border-2 border-cyan-400 text-cyan-300 shadow-[0_0_14px_rgba(6,182,212,0.6)]',
     colorHex: '#06b6d4'
   },
   emerald: {
-    padClass: 'border-2 border-emerald-400/80 text-emerald-300 bg-gradient-to-b from-[#09261d] to-[#05140f] shadow-[0_4px_16px_rgba(16,185,129,0.3)] hover:border-emerald-300 hover:shadow-[0_6px_22px_rgba(16,185,129,0.6)]',
-    badgeClass: 'bg-emerald-500/20 border-2 border-emerald-400 text-emerald-300 shadow-[0_0_14px_rgba(16,185,129,0.5)]',
+    padClass: 'border-2 border-emerald-400 text-emerald-300 bg-gradient-to-b from-[#09261d] to-[#05140f] shadow-[0_4px_16px_rgba(16,185,129,0.4)] hover:border-emerald-300 hover:shadow-[0_6px_22px_rgba(16,185,129,0.7)]',
+    badgeClass: 'bg-emerald-500/30 border-2 border-emerald-400 text-emerald-300 shadow-[0_0_14px_rgba(16,185,129,0.6)]',
     colorHex: '#10b981'
   },
   pink: {
-    padClass: 'border-2 border-pink-400/80 text-pink-300 bg-gradient-to-b from-[#2b0e23] to-[#170613] shadow-[0_4px_16px_rgba(236,72,153,0.3)] hover:border-pink-300 hover:shadow-[0_6px_22px_rgba(236,72,153,0.6)]',
-    badgeClass: 'bg-pink-500/20 border-2 border-pink-400 text-pink-300 shadow-[0_0_14px_rgba(236,72,153,0.5)]',
+    padClass: 'border-2 border-pink-400 text-pink-300 bg-gradient-to-b from-[#2b0e23] to-[#170613] shadow-[0_4px_16px_rgba(236,72,153,0.4)] hover:border-pink-300 hover:shadow-[0_6px_22px_rgba(236,72,153,0.7)]',
+    badgeClass: 'bg-pink-500/30 border-2 border-pink-400 text-pink-300 shadow-[0_0_14px_rgba(236,72,153,0.6)]',
     colorHex: '#ec4899'
   },
   gold: {
-    padClass: 'border-2 border-amber-400/80 text-amber-300 bg-gradient-to-b from-[#2b200b] to-[#171004] shadow-[0_4px_16px_rgba(245,158,11,0.3)] hover:border-amber-300 hover:shadow-[0_6px_22px_rgba(245,158,11,0.6)]',
-    badgeClass: 'bg-amber-500/20 border-2 border-amber-400 text-amber-300 shadow-[0_0_14px_rgba(245,158,11,0.5)]',
+    padClass: 'border-2 border-amber-400 text-amber-300 bg-gradient-to-b from-[#2b200b] to-[#171004] shadow-[0_4px_16px_rgba(245,158,11,0.4)] hover:border-amber-300 hover:shadow-[0_6px_22px_rgba(245,158,11,0.7)]',
+    badgeClass: 'bg-amber-500/30 border-2 border-amber-400 text-amber-300 shadow-[0_0_14px_rgba(245,158,11,0.6)]',
     colorHex: '#f59e0b'
   },
   red: {
-    padClass: 'border-2 border-rose-400/80 text-rose-300 bg-gradient-to-b from-[#2e0b14] to-[#1a040a] shadow-[0_4px_16px_rgba(244,63,94,0.3)] hover:border-rose-300 hover:shadow-[0_6px_22px_rgba(244,63,94,0.6)]',
-    badgeClass: 'bg-rose-500/20 border-2 border-rose-400 text-rose-300 shadow-[0_0_14px_rgba(244,63,94,0.5)]',
+    padClass: 'border-2 border-rose-400 text-rose-300 bg-gradient-to-b from-[#2e0b14] to-[#1a040a] shadow-[0_4px_16px_rgba(244,63,94,0.4)] hover:border-rose-300 hover:shadow-[0_6px_22px_rgba(244,63,94,0.7)]',
+    badgeClass: 'bg-rose-500/30 border-2 border-rose-400 text-rose-300 shadow-[0_0_14px_rgba(244,63,94,0.6)]',
     colorHex: '#f43f5e'
   },
   violet: {
-    padClass: 'border-2 border-violet-400/80 text-violet-300 bg-gradient-to-b from-[#1e0e33] to-[#10061c] shadow-[0_4px_16px_rgba(139,92,246,0.3)] hover:border-violet-300 hover:shadow-[0_6px_22px_rgba(139,92,246,0.6)]',
-    badgeClass: 'bg-violet-500/20 border-2 border-violet-400 text-violet-300 shadow-[0_0_14px_rgba(139,92,246,0.5)]',
+    padClass: 'border-2 border-violet-400 text-violet-300 bg-gradient-to-b from-[#1e0e33] to-[#10061c] shadow-[0_4px_16px_rgba(139,92,246,0.4)] hover:border-violet-300 hover:shadow-[0_6px_22px_rgba(139,92,246,0.7)]',
+    badgeClass: 'bg-violet-500/30 border-2 border-violet-400 text-violet-300 shadow-[0_0_14px_rgba(139,92,246,0.6)]',
     colorHex: '#8b5cf6'
+  },
+  blue: {
+    padClass: 'border-2 border-blue-400 text-blue-300 bg-gradient-to-b from-[#0e1b33] to-[#060c1c] shadow-[0_4px_16px_rgba(59,130,246,0.4)] hover:border-blue-300 hover:shadow-[0_6px_22px_rgba(59,130,246,0.7)]',
+    badgeClass: 'bg-blue-500/30 border-2 border-blue-400 text-blue-300 shadow-[0_0_14px_rgba(59,130,246,0.6)]',
+    colorHex: '#3b82f6'
+  },
+  orange: {
+    padClass: 'border-2 border-orange-400 text-orange-300 bg-gradient-to-b from-[#2b170b] to-[#170a04] shadow-[0_4px_16px_rgba(249,115,22,0.4)] hover:border-orange-300 hover:shadow-[0_6px_22px_rgba(249,115,22,0.7)]',
+    badgeClass: 'bg-orange-500/30 border-2 border-orange-400 text-orange-300 shadow-[0_0_14px_rgba(249,115,22,0.6)]',
+    colorHex: '#f97316'
   }
 };
 
@@ -70,11 +80,15 @@ const equalizerThemeColors = {
   pink: { topCap: 'bg-pink-200 shadow-[0_0_8px_#ec4899]', bar: 'bg-gradient-to-t from-pink-950 via-pink-500 to-pink-300 shadow-[0_0_12px_rgba(236,72,153,0.7)]', badge: 'bg-pink-950/90 border-pink-500/60 text-pink-400', pill: 'bg-pink-500/15 border-pink-500/40 text-pink-400' },
   gold: { topCap: 'bg-amber-200 shadow-[0_0_8px_#f59e0b]', bar: 'bg-gradient-to-t from-amber-950 via-amber-500 to-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.7)]', badge: 'bg-amber-950/90 border-amber-500/60 text-amber-400', pill: 'bg-amber-500/15 border-amber-500/40 text-amber-400' },
   red: { topCap: 'bg-rose-200 shadow-[0_0_8px_#f43f5e]', bar: 'bg-gradient-to-t from-rose-950 via-rose-500 to-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.7)]', badge: 'bg-rose-950/90 border-rose-500/60 text-rose-400', pill: 'bg-rose-500/15 border-rose-500/40 text-rose-400' },
-  violet: { topCap: 'bg-violet-200 shadow-[0_0_8px_#8b5cf6]', bar: 'bg-gradient-to-t from-violet-950 via-violet-500 to-violet-300 shadow-[0_0_12px_rgba(139,92,246,0.7)]', badge: 'bg-violet-950/90 border-violet-500/60 text-violet-400', pill: 'bg-violet-500/15 border-violet-500/40 text-violet-400' }
+  violet: { topCap: 'bg-violet-200 shadow-[0_0_8px_#8b5cf6]', bar: 'bg-gradient-to-t from-violet-950 via-violet-500 to-violet-300 shadow-[0_0_12px_rgba(139,92,246,0.7)]', badge: 'bg-violet-950/90 border-violet-500/60 text-violet-400', pill: 'bg-violet-500/15 border-violet-500/40 text-violet-400' },
+  blue: { topCap: 'bg-blue-200 shadow-[0_0_8px_#3b82f6]', bar: 'bg-gradient-to-t from-blue-950 via-blue-500 to-blue-300 shadow-[0_0_12px_rgba(59,130,246,0.7)]', badge: 'bg-blue-950/90 border-blue-500/60 text-blue-400', pill: 'bg-blue-500/15 border-blue-500/40 text-blue-400' },
+  orange: { topCap: 'bg-orange-200 shadow-[0_0_8px_#f97316]', bar: 'bg-gradient-to-t from-orange-950 via-orange-500 to-orange-300 shadow-[0_0_12px_rgba(249,115,22,0.7)]', badge: 'bg-orange-950/90 border-orange-500/60 text-orange-400', pill: 'bg-orange-500/15 border-orange-500/40 text-orange-400' }
 };
 
+
+
 // Componente Visualizador del Ecualizador Master Out
-const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: string | null; activeColorTheme?: 'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet' }> = ({ isPlaying, activeSoundName, activeColorTheme = 'cyan' }) => {
+const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: string | null; activeColorTheme?: 'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet' | 'blue' | 'orange' }> = ({ isPlaying, activeSoundName, activeColorTheme = 'cyan' }) => {
   const [heights, setHeights] = useState<number[]>(Array.from({ length: 40 }, () => 20));
   const activeColor = isPlaying ? (equalizerThemeColors[activeColorTheme] || equalizerThemeColors.cyan) : equalizerThemeColors.cyan;
 
@@ -158,13 +172,13 @@ export const CollectionsDeck: React.FC = () => {
   const [selectedSlotIndex, setSelectedSlotIndex] = useState<number | null>(null);
   const [playingSlotIndex, setPlayingSlotIndex] = useState<number | null>(null);
   const [activeSoundName, setActiveSoundName] = useState<string | null>(null);
-  const [activeColorTheme, setActiveColorTheme] = useState<'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet'>('cyan');
+  const [activeColorTheme, setActiveColorTheme] = useState<'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet' | 'blue' | 'orange'>('cyan');
 
   // Form states del slot seleccionado
   const [slotSoundId, setSlotSoundId] = useState<string>('');
   const [slotLabel, setSlotLabel] = useState<string>('');
   const [slotImageUrl, setSlotImageUrl] = useState<string>('');
-  const [slotColorTheme, setSlotColorTheme] = useState<'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet'>('cyan');
+  const [slotColorTheme, setSlotColorTheme] = useState<'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet' | 'blue' | 'orange'>('cyan');
 
   // 1. Cargar detalles de la colección y sus 20 slots
   const { data: collection, isLoading } = useQuery({
@@ -451,9 +465,12 @@ export const CollectionsDeck: React.FC = () => {
                   ) : null}
                 </div>
 
-                {/* Bottom Label */}
-                <div className="w-full z-10 text-center leading-none">
-                  <p className="text-[10px] font-bold text-white truncate drop-shadow-md tracking-tight px-0.5">
+                {/* Bottom Label (2 líneas ajustadas con ellipsis ...) */}
+                <div className="w-full z-10 text-center leading-tight min-h-[22px] flex items-center justify-center">
+                  <p 
+                    className="text-[9.5px] leading-[1.15] font-bold text-white text-center line-clamp-2 break-words px-0.5 drop-shadow-md"
+                    title={slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
+                  >
                     {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
                   </p>
                 </div>
@@ -584,29 +601,34 @@ export const CollectionsDeck: React.FC = () => {
                 )}
               </div>
 
-              {/* Tema de Color LED */}
+              {/* Tema de Color LED (8 Colores Vivos y Brillantes) */}
               <div>
                 <label className="block text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">
-                  Color Retroiluminación LED
+                  Color Retroiluminación LED (8 Colores)
                 </label>
                 <div className="flex flex-wrap gap-3">
-                  {(['cyan', 'emerald', 'pink', 'gold', 'red', 'violet'] as const).map((t) => (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => setSlotColorTheme(t)}
-                      className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all ${
-                        t === 'cyan' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' :
-                        t === 'emerald' ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' :
-                        t === 'pink' ? 'bg-pink-500/20 border-pink-500 text-pink-400' :
-                        t === 'gold' ? 'bg-amber-500/20 border-amber-500 text-amber-400' :
-                        t === 'red' ? 'bg-rose-500/20 border-rose-500 text-rose-400' :
-                        'bg-violet-500/20 border-violet-500 text-violet-400'
-                      } ${slotColorTheme === t ? 'ring-2 ring-white scale-110' : 'opacity-70 hover:opacity-100'}`}
-                    >
-                      {slotColorTheme === t && <Check size={18} />}
-                    </button>
-                  ))}
+                  {(['cyan', 'emerald', 'pink', 'gold', 'red', 'violet', 'blue', 'orange'] as const).map((t) => {
+                    const theme = themeConfig[t];
+                    const isSelected = slotColorTheme === t;
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setSlotColorTheme(t)}
+                        style={{
+                          backgroundColor: theme.colorHex,
+                          borderColor: '#ffffff',
+                          boxShadow: isSelected ? `0 0 16px ${theme.colorHex}` : 'none'
+                        }}
+                        className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center text-black font-black transition-all ${
+                          isSelected ? 'ring-4 ring-white scale-110 shadow-lg' : 'opacity-85 hover:opacity-100 hover:scale-105'
+                        }`}
+                        title={t}
+                      >
+                        {isSelected && <Check size={20} className="text-black drop-shadow-md stroke-[3]" />}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
