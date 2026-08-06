@@ -33,34 +33,34 @@ interface SlotData {
 
 const themeConfig = {
   cyan: {
-    padClass: 'border-2 border-cyan-400 text-cyan-300 bg-[#091724] shadow-[0_0_14px_rgba(6,182,212,0.4)] hover:border-cyan-300 hover:shadow-[0_0_22px_rgba(6,182,212,0.7)]',
-    badgeClass: 'bg-[#092536] border-2 border-cyan-400 text-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.4)]',
-    iconColor: 'text-cyan-300'
+    padClass: 'border-cyan-400/90 text-cyan-300 bg-gradient-to-b from-[#0e2133] to-[#08121c] shadow-[0_4px_16px_rgba(6,182,212,0.3)] hover:border-cyan-300 hover:shadow-[0_6px_22px_rgba(6,182,212,0.6)]',
+    badgeClass: 'bg-[#092b40] border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.4)]',
+    colorHex: '#06b6d4'
   },
   emerald: {
-    padClass: 'border-2 border-emerald-400 text-emerald-300 bg-[#071c16] shadow-[0_0_14px_rgba(16,185,129,0.4)] hover:border-emerald-300 hover:shadow-[0_0_22px_rgba(16,185,129,0.7)]',
-    badgeClass: 'bg-[#073024] border-2 border-emerald-400 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.4)]',
-    iconColor: 'text-emerald-300'
+    padClass: 'border-emerald-400/90 text-emerald-300 bg-gradient-to-b from-[#09261d] to-[#05140f] shadow-[0_4px_16px_rgba(16,185,129,0.3)] hover:border-emerald-300 hover:shadow-[0_6px_22px_rgba(16,185,129,0.6)]',
+    badgeClass: 'bg-[#093829] border-emerald-400 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.4)]',
+    colorHex: '#10b981'
   },
   pink: {
-    padClass: 'border-2 border-pink-400 text-pink-300 bg-[#210a1b] shadow-[0_0_14px_rgba(236,72,153,0.4)] hover:border-pink-300 hover:shadow-[0_0_22px_rgba(236,72,153,0.7)]',
-    badgeClass: 'bg-[#3b0f2e] border-2 border-pink-400 text-pink-300 shadow-[0_0_10px_rgba(236,72,153,0.4)]',
-    iconColor: 'text-pink-300'
+    padClass: 'border-pink-400/90 text-pink-300 bg-gradient-to-b from-[#2b0e23] to-[#170613] shadow-[0_4px_16px_rgba(236,72,153,0.3)] hover:border-pink-300 hover:shadow-[0_6px_22px_rgba(236,72,153,0.6)]',
+    badgeClass: 'bg-[#401234] border-pink-400 text-pink-300 shadow-[0_0_12px_rgba(236,72,153,0.4)]',
+    colorHex: '#ec4899'
   },
   gold: {
-    padClass: 'border-2 border-amber-400 text-amber-300 bg-[#211808] shadow-[0_0_14px_rgba(245,158,11,0.4)] hover:border-amber-300 hover:shadow-[0_0_22px_rgba(245,158,11,0.7)]',
-    badgeClass: 'bg-[#3b2a0c] border-2 border-amber-400 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.4)]',
-    iconColor: 'text-amber-300'
+    padClass: 'border-amber-400/90 text-amber-300 bg-gradient-to-b from-[#2b200b] to-[#171004] shadow-[0_4px_16px_rgba(245,158,11,0.3)] hover:border-amber-300 hover:shadow-[0_6px_22px_rgba(245,158,11,0.6)]',
+    badgeClass: 'bg-[#402f0d] border-amber-400 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.4)]',
+    colorHex: '#f59e0b'
   },
   red: {
-    padClass: 'border-2 border-rose-400 text-rose-300 bg-[#240a11] shadow-[0_0_14px_rgba(244,63,94,0.4)] hover:border-rose-300 hover:shadow-[0_0_22px_rgba(244,63,94,0.7)]',
-    badgeClass: 'bg-[#400e1b] border-2 border-rose-400 text-rose-300 shadow-[0_0_10px_rgba(244,63,94,0.4)]',
-    iconColor: 'text-rose-300'
+    padClass: 'border-rose-400/90 text-rose-300 bg-gradient-to-b from-[#2e0b14] to-[#1a040a] shadow-[0_4px_16px_rgba(244,63,94,0.3)] hover:border-rose-300 hover:shadow-[0_6px_22px_rgba(244,63,94,0.6)]',
+    badgeClass: 'bg-[#470d1d] border-rose-400 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.4)]',
+    colorHex: '#f43f5e'
   },
   violet: {
-    padClass: 'border-2 border-violet-400 text-violet-300 bg-[#160c26] shadow-[0_0_14px_rgba(139,92,246,0.4)] hover:border-violet-300 hover:shadow-[0_0_22px_rgba(139,92,246,0.7)]',
-    badgeClass: 'bg-[#29134a] border-2 border-violet-400 text-violet-300 shadow-[0_0_10px_rgba(139,92,246,0.4)]',
-    iconColor: 'text-violet-300'
+    padClass: 'border-violet-400/90 text-violet-300 bg-gradient-to-b from-[#1e0e33] to-[#10061c] shadow-[0_4px_16px_rgba(139,92,246,0.3)] hover:border-violet-300 hover:shadow-[0_6px_22px_rgba(139,92,246,0.6)]',
+    badgeClass: 'bg-[#311354] border-violet-400 text-violet-300 shadow-[0_0_12px_rgba(139,92,246,0.4)]',
+    colorHex: '#8b5cf6'
   }
 };
 
@@ -75,48 +75,48 @@ const equalizerThemeColors = {
 
 // Componente Visualizador del Ecualizador Master Out
 const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: string | null; activeColorTheme?: 'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet' }> = ({ isPlaying, activeSoundName, activeColorTheme = 'cyan' }) => {
-  const [heights, setHeights] = useState<number[]>(Array.from({ length: 44 }, () => 20));
+  const [heights, setHeights] = useState<number[]>(Array.from({ length: 40 }, () => 20));
   const activeColor = isPlaying ? (equalizerThemeColors[activeColorTheme] || equalizerThemeColors.cyan) : equalizerThemeColors.cyan;
 
   useEffect(() => {
     let interval: any;
     if (isPlaying) {
       interval = setInterval(() => {
-        setHeights(Array.from({ length: 44 }, () => Math.floor(Math.random() * 80) + 20));
-      }, 80);
+        setHeights(Array.from({ length: 40 }, () => Math.floor(Math.random() * 80) + 20));
+      }, 70);
     } else {
       interval = setInterval(() => {
-        setHeights(Array.from({ length: 44 }, (_, i) => Math.floor(Math.sin(Date.now() / 350 + i * 0.4) * 12) + 22));
-      }, 150);
+        setHeights(Array.from({ length: 40 }, (_, i) => Math.floor(Math.sin(Date.now() / 350 + i * 0.45) * 14) + 24));
+      }, 140);
     }
     return () => clearInterval(interval);
   }, [isPlaying]);
 
   return (
-    <div className="bg-[#080a0e] border-2 border-[#1c2230] rounded-2xl p-4 sm:p-5 relative overflow-hidden shadow-2xl">
+    <div className="bg-[#05070a] border border-[#1b2333] rounded-2xl p-3.5 relative overflow-hidden shadow-inner w-full">
       {/* Visualizer Top Bar */}
-      <div className="flex items-center justify-between mb-3 z-10 relative">
+      <div className="flex items-center justify-between mb-2.5 z-10 relative">
         <div className="flex items-center gap-2">
-          <span className={`border text-[10px] font-mono px-2.5 py-0.5 rounded-md font-bold tracking-widest uppercase shadow-md ${activeColor.badge}`}>
+          <span className={`border text-[9px] font-mono px-2 py-0.5 rounded-md font-bold tracking-widest uppercase shadow-sm ${activeColor.badge}`}>
             MASTER OUT
           </span>
           {isPlaying && (
-            <div className={`flex items-center gap-1.5 px-2.5 py-0.5 border rounded-md ${activeColor.pill}`}>
-              <span className="w-2 h-2 rounded-full bg-current animate-ping"></span>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider">REPRODUCIENDO</span>
+            <div className={`flex items-center gap-1.5 px-2 py-0.5 border rounded-md ${activeColor.pill}`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping"></span>
+              <span className="text-[9px] font-mono font-bold uppercase tracking-wider">REPRODUCIENDO</span>
             </div>
           )}
         </div>
 
         <div className="text-right">
-          <span className="text-[10px] font-mono text-cyan-300 font-semibold truncate max-w-[200px] block">
+          <span className="text-[10px] font-mono text-cyan-300 font-semibold truncate max-w-[180px] block">
             {activeSoundName ? `🎵 ${activeSoundName}` : 'STANDBY'}
           </span>
         </div>
       </div>
 
       {/* Audio Spectrum Equalizer Bars Container */}
-      <div className="h-14 sm:h-16 flex items-end justify-between gap-[2px] px-1 overflow-hidden relative">
+      <div className="h-12 flex items-end justify-between gap-[2px] px-1 overflow-hidden relative">
         {/* Background Grid Lines */}
         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-15">
           <div className="border-b border-cyan-400"></div>
@@ -290,177 +290,181 @@ export const CollectionsDeck: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      {/* Navigation & Header */}
-      <div className="flex items-center justify-between">
+    <div className="min-h-[82vh] flex flex-col items-center justify-center space-y-5 px-2 py-4">
+      {/* Navigation Bar (Centrada arriba de la mesa) */}
+      <div className="w-full max-w-[460px] flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/collections')}
-            className="p-2.5 bg-darkcard border border-darkborder hover:border-cyan-500 text-slate-300 hover:text-white rounded-xl transition-all"
+            className="p-2 bg-[#121622] border border-[#202738] hover:border-cyan-500 text-slate-300 hover:text-white rounded-xl transition-all shadow-md"
             title="Volver a Colecciones"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={16} />
           </button>
           <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
               {collection?.name}
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">{collection?.description || 'Mesa interactiva de sonidos'}</p>
+            <p className="text-xs text-slate-400">{collection?.description || 'Mesa interactiva de sonidos'}</p>
           </div>
         </div>
       </div>
 
-      {/* Stream Deck Console Frame Container (Centrado y Compacto) */}
-      <div className="flex flex-col items-center justify-center my-2">
-        <div 
-          className="bg-[#0a0c10] border-2 border-[#1c2230] p-5 sm:p-6 rounded-3xl shadow-2xl flex flex-col items-center"
-          style={{ width: 'fit-content', minWidth: '420px' }}
-        >
-          {/* Top Section: Master Out Equalizer Visualizer Screen */}
-          <div className="w-full mb-4">
-            <MasterOutVisualizer 
-              isPlaying={playingSlotIndex !== null} 
-              activeSoundName={activeSoundName} 
-              activeColorTheme={activeColorTheme}
-            />
-          </div>
+      {/* Hardware Chassis Frame Container (Centrado 100% de forma impecable) */}
+      <div 
+        className="bg-gradient-to-b from-[#141824] via-[#0d1018] to-[#07090e] border border-[#232b3d] p-5 sm:p-6 rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.85),0_0_30px_rgba(6,182,212,0.12)] flex flex-col items-center relative overflow-hidden"
+        style={{ width: 'fit-content' }}
+      >
+        {/* Top Metallic Bevel Light */}
+        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-          {/* Console Header Bar */}
-          <div className="w-full flex items-center justify-between gap-4 mb-4">
-            <span className="text-xs font-mono font-bold text-slate-400 tracking-wider uppercase">
+        {/* Top Section: Master Out Equalizer Visualizer Screen */}
+        <div className="w-full mb-3.5">
+          <MasterOutVisualizer 
+            isPlaying={playingSlotIndex !== null} 
+            activeSoundName={activeSoundName} 
+            activeColorTheme={activeColorTheme}
+          />
+        </div>
+
+        {/* Console Header Bar */}
+        <div className="w-full flex items-center justify-between gap-4 mb-3.5 px-0.5">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#06b6d4]"></span>
+            <span className="text-xs font-mono font-extrabold text-slate-300 tracking-wider uppercase">
               PRO SOUNDBOARD CONSOLE
             </span>
-
-            {/* Mode Switch Buttons */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsEditMode(false)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  !isEditMode 
-                    ? 'bg-cyan-950/80 border border-cyan-500/80 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.3)]' 
-                    : 'bg-[#14161b] border border-[#22252e] text-slate-400 hover:text-white'
-                }`}
-              >
-                <Zap size={13} className={!isEditMode ? 'text-cyan-400' : ''} />
-                Reproducción
-              </button>
-
-              <button
-                onClick={() => setIsEditMode(true)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  isEditMode 
-                    ? 'bg-primary border border-primary text-white shadow-lg shadow-primary/20' 
-                    : 'bg-[#14161b] border border-[#22252e] text-slate-400 hover:text-white'
-                }`}
-              >
-                <SlidersHorizontal size={13} />
-                Configuración
-              </button>
-            </div>
           </div>
 
-          {/* Matrix Grid: Exacta Cuadrícula Fija 4 Filas x 5 Columnas de 74px x 74px */}
-          <div 
-            style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(5, 74px)', 
-              gridTemplateRows: 'repeat(4, 74px)', 
-              gap: '10px',
-              justifyContent: 'center' 
-            }}
-          >
-            {collection?.slots?.map((slot: SlotData) => {
-              const hasSound = Boolean(slot.soundId);
-              const isPlayingThis = playingSlotIndex === slot.slotIndex;
-              const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
+          {/* Mode Switch Buttons Pill */}
+          <div className="bg-[#07090e] border border-[#1b2333] p-1 rounded-xl flex gap-1 shadow-inner">
+            <button
+              onClick={() => setIsEditMode(false)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                !isEditMode 
+                  ? 'bg-cyan-950 border border-cyan-500/80 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.4)]' 
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Zap size={12} className={!isEditMode ? 'text-cyan-400' : ''} />
+              Reproducción
+            </button>
 
-              const padClass = hasSound 
-                ? currentTheme.padClass 
-                : 'border-2 border-[#242936] text-slate-500 bg-[#0f1116] hover:border-slate-500 hover:text-slate-300';
+            <button
+              onClick={() => setIsEditMode(true)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                isEditMode 
+                  ? 'bg-primary border border-primary text-white shadow-md shadow-primary/30' 
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <SlidersHorizontal size={12} />
+              Configuración
+            </button>
+          </div>
+        </div>
 
-              return (
-                <div
-                  key={slot.slotIndex}
-                  onClick={() => handleSlotClick(slot)}
-                  style={{ width: '74px', height: '74px' }}
-                  className={`group relative rounded-2xl flex flex-col justify-between p-1.5 transition-all duration-200 shadow-xl overflow-hidden select-none cursor-pointer ${padClass} ${
-                    isPlayingThis 
-                      ? 'ring-4 ring-white shadow-[0_0_25px_rgba(255,255,255,0.9)] scale-[0.95] z-10' 
-                      : 'hover:scale-[1.04]'
-                  } ${isEditMode ? 'ring-2 ring-primary/60' : ''}`}
-                >
-                  {/* Background Cover Image if configured */}
-                  {slot.customImageUrl ? (
-                    <div className="absolute inset-0 z-0">
-                      <img 
-                        src={slot.customImageUrl} 
-                        alt="" 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" 
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/20"></div>
-                    </div>
-                  ) : null}
+        {/* Matrix Grid: 5 Columnas x 4 Filas de Teclas Estilo 3D Stream Deck (76px x 76px) */}
+        <div 
+          style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(5, 76px)', 
+            gridTemplateRows: 'repeat(4, 76px)', 
+            gap: '10px',
+            justifyContent: 'center' 
+          }}
+        >
+          {collection?.slots?.map((slot: SlotData) => {
+            const hasSound = Boolean(slot.soundId);
+            const isPlayingThis = playingSlotIndex === slot.slotIndex;
+            const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
 
-                  {/* Top Row: Pad Number & Indicators */}
-                  <div className="w-full flex justify-between items-center z-10 leading-none">
-                    <span className="text-[9px] font-mono text-slate-400 font-bold drop-shadow">
-                      #{slot.slotIndex + 1}
-                    </span>
+            const padClass = hasSound 
+              ? currentTheme.padClass 
+              : 'border-2 border-[#1e2536] text-slate-500 bg-[#090b10] hover:border-slate-500 hover:text-slate-300';
 
-                    <div className="flex items-center gap-0.5">
-                      {/* Botón directo de edición en cada pad */}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenSlotModal(slot);
-                        }}
-                        className="p-0.5 rounded bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-300 opacity-0 group-hover:opacity-100 transition-all shadow"
-                        title="Configurar pad"
-                      >
-                        <Edit size={9} />
-                      </button>
-
-                      {isPlayingThis ? (
-                        <Volume2 size={11} className="text-white animate-bounce" />
-                      ) : hasSound ? (
-                        <Play size={8} className="text-slate-400 group-hover:text-white transition-colors" />
-                      ) : null}
-                    </div>
+            return (
+              <div
+                key={slot.slotIndex}
+                onClick={() => handleSlotClick(slot)}
+                style={{ width: '76px', height: '76px' }}
+                className={`group relative rounded-2xl border-2 flex flex-col justify-between p-1.5 transition-all duration-150 shadow-lg overflow-hidden select-none cursor-pointer active:scale-95 ${padClass} ${
+                  isPlayingThis 
+                    ? 'ring-4 ring-white shadow-[0_0_25px_rgba(255,255,255,0.95)] scale-[0.96] z-10' 
+                    : 'hover:-translate-y-0.5'
+                } ${isEditMode ? 'ring-2 ring-primary/80' : ''} before:absolute before:inset-x-0 before:top-0 before:h-1/2 before:bg-gradient-to-b before:from-white/10 before:to-transparent before:rounded-t-2xl pointer-events-auto`}
+              >
+                {/* Background Cover Image if configured */}
+                {slot.customImageUrl ? (
+                  <div className="absolute inset-0 z-0">
+                    <img 
+                      src={slot.customImageUrl} 
+                      alt="" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/20"></div>
                   </div>
+                ) : null}
 
-                  {/* Center Content: Icon Occupying Most of the Card Area */}
-                  <div className="my-auto z-10 flex items-center justify-center w-full">
-                    {!hasSound ? (
-                      <div className="w-7 h-7 rounded-full border border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
-                        <Plus size={14} />
-                      </div>
-                    ) : !slot.customImageUrl ? (
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 transition-all ${
-                        isPlayingThis 
-                          ? 'bg-white text-black border-white shadow-[0_0_15px_#ffffff] animate-pulse' 
-                          : currentTheme.badgeClass
-                      }`}>
-                        <Music size={18} />
-                      </div>
+                {/* Top Row: Pad Number & Indicators */}
+                <div className="w-full flex justify-between items-center z-10 leading-none">
+                  <span className="text-[9px] font-mono text-slate-400 font-bold drop-shadow">
+                    #{slot.slotIndex + 1}
+                  </span>
+
+                  <div className="flex items-center gap-0.5">
+                    {/* Botón directo de edición en cada pad */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenSlotModal(slot);
+                      }}
+                      className="p-0.5 rounded bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-300 opacity-0 group-hover:opacity-100 transition-all shadow"
+                      title="Configurar pad"
+                    >
+                      <Edit size={9} />
+                    </button>
+
+                    {isPlayingThis ? (
+                      <Volume2 size={11} className="text-white animate-bounce" />
+                    ) : hasSound ? (
+                      <Play size={8} className="text-slate-400 group-hover:text-white transition-colors" />
                     ) : null}
                   </div>
-
-                  {/* Bottom Label */}
-                  <div className="w-full z-10 text-center leading-none">
-                    <p className="text-[9px] font-extrabold text-white truncate drop-shadow-md tracking-tight">
-                      {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
-                    </p>
-                  </div>
-
-                  {/* Ripple Animation overlay when triggering audio */}
-                  {isPlayingThis && (
-                    <div className="absolute inset-0 z-20 bg-white/20 backdrop-blur-xs flex items-center justify-center animate-ping pointer-events-none"></div>
-                  )}
                 </div>
-              );
-            })}
-          </div>
+
+                {/* Center Content: Icon Badge Matching the Theme Color */}
+                <div className="my-auto z-10 flex items-center justify-center w-full">
+                  {!hasSound ? (
+                    <div className="w-7 h-7 rounded-full border border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
+                      <Plus size={14} />
+                    </div>
+                  ) : !slot.customImageUrl ? (
+                    <div className={`w-9.5 h-9.5 rounded-xl flex items-center justify-center border-2 transition-all ${
+                      isPlayingThis 
+                        ? 'bg-white text-black border-white shadow-[0_0_18px_#ffffff] animate-pulse' 
+                        : currentTheme.badgeClass
+                    }`}>
+                      <Music size={19} />
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Bottom Label */}
+                <div className="w-full z-10 text-center leading-none">
+                  <p className="text-[9px] font-extrabold text-white truncate drop-shadow-md tracking-tight">
+                    {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
+                  </p>
+                </div>
+
+                {/* Ripple Animation overlay when triggering audio */}
+                {isPlayingThis && (
+                  <div className="absolute inset-0 z-20 bg-white/20 backdrop-blur-xs flex items-center justify-center animate-ping pointer-events-none"></div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
