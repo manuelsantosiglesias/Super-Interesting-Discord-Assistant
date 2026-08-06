@@ -64,9 +64,19 @@ const themeConfig = {
   }
 };
 
+const equalizerThemeColors = {
+  cyan: { topCap: 'bg-cyan-200 shadow-[0_0_8px_#06b6d4]', bar: 'bg-gradient-to-t from-cyan-950 via-cyan-500 to-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.7)]', badge: 'bg-cyan-950/90 border-cyan-500/60 text-cyan-400', pill: 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400' },
+  emerald: { topCap: 'bg-emerald-200 shadow-[0_0_8px_#10b981]', bar: 'bg-gradient-to-t from-emerald-950 via-emerald-500 to-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.7)]', badge: 'bg-emerald-950/90 border-emerald-500/60 text-emerald-400', pill: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400' },
+  pink: { topCap: 'bg-pink-200 shadow-[0_0_8px_#ec4899]', bar: 'bg-gradient-to-t from-pink-950 via-pink-500 to-pink-300 shadow-[0_0_12px_rgba(236,72,153,0.7)]', badge: 'bg-pink-950/90 border-pink-500/60 text-pink-400', pill: 'bg-pink-500/15 border-pink-500/40 text-pink-400' },
+  gold: { topCap: 'bg-amber-200 shadow-[0_0_8px_#f59e0b]', bar: 'bg-gradient-to-t from-amber-950 via-amber-500 to-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.7)]', badge: 'bg-amber-950/90 border-amber-500/60 text-amber-400', pill: 'bg-amber-500/15 border-amber-500/40 text-amber-400' },
+  red: { topCap: 'bg-rose-200 shadow-[0_0_8px_#f43f5e]', bar: 'bg-gradient-to-t from-rose-950 via-rose-500 to-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.7)]', badge: 'bg-rose-950/90 border-rose-500/60 text-rose-400', pill: 'bg-rose-500/15 border-rose-500/40 text-rose-400' },
+  violet: { topCap: 'bg-violet-200 shadow-[0_0_8px_#8b5cf6]', bar: 'bg-gradient-to-t from-violet-950 via-violet-500 to-violet-300 shadow-[0_0_12px_rgba(139,92,246,0.7)]', badge: 'bg-violet-950/90 border-violet-500/60 text-violet-400', pill: 'bg-violet-500/15 border-violet-500/40 text-violet-400' }
+};
+
 // Componente Visualizador del Ecualizador Master Out
-const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: string | null }> = ({ isPlaying, activeSoundName }) => {
+const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: string | null; activeColorTheme?: 'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet' }> = ({ isPlaying, activeSoundName, activeColorTheme = 'cyan' }) => {
   const [heights, setHeights] = useState<number[]>(Array.from({ length: 44 }, () => 20));
+  const activeColor = isPlaying ? (equalizerThemeColors[activeColorTheme] || equalizerThemeColors.cyan) : equalizerThemeColors.cyan;
 
   useEffect(() => {
     let interval: any;
@@ -87,13 +97,13 @@ const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: strin
       {/* Visualizer Top Bar */}
       <div className="flex items-center justify-between mb-3 z-10 relative">
         <div className="flex items-center gap-2">
-          <span className="bg-cyan-950/90 border border-cyan-500/60 text-cyan-400 text-[10px] font-mono px-2.5 py-0.5 rounded-md font-bold tracking-widest uppercase shadow-[0_0_12px_rgba(6,182,212,0.4)]">
+          <span className={`border text-[10px] font-mono px-2.5 py-0.5 rounded-md font-bold tracking-widest uppercase shadow-md ${activeColor.badge}`}>
             MASTER OUT
           </span>
           {isPlaying && (
-            <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-500/15 border border-emerald-500/40 rounded-md">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider">REPRODUCIENDO</span>
+            <div className={`flex items-center gap-1.5 px-2.5 py-0.5 border rounded-md ${activeColor.pill}`}>
+              <span className="w-2 h-2 rounded-full bg-current animate-ping"></span>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider">REPRODUCIENDO</span>
             </div>
           )}
         </div>
@@ -118,7 +128,7 @@ const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: strin
             {/* Top Cap */}
             <div 
               className={`w-full h-0.5 rounded-xs mb-0.5 transition-all duration-75 ${
-                isPlaying ? 'bg-cyan-200 shadow-[0_0_8px_#06b6d4]' : 'bg-cyan-700/60'
+                isPlaying ? activeColor.topCap : 'bg-cyan-700/60'
               }`}
             ></div>
 
@@ -126,7 +136,7 @@ const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: strin
             <div 
               className={`w-full rounded-t-xs transition-all duration-100 ${
                 isPlaying 
-                  ? 'bg-gradient-to-t from-cyan-950 via-cyan-500 to-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.7)]' 
+                  ? activeColor.bar 
                   : 'bg-gradient-to-t from-cyan-950/40 via-cyan-900/40 to-cyan-800/50'
               }`}
               style={{ height: `${h}%` }}
@@ -148,6 +158,7 @@ export const CollectionsDeck: React.FC = () => {
   const [selectedSlotIndex, setSelectedSlotIndex] = useState<number | null>(null);
   const [playingSlotIndex, setPlayingSlotIndex] = useState<number | null>(null);
   const [activeSoundName, setActiveSoundName] = useState<string | null>(null);
+  const [activeColorTheme, setActiveColorTheme] = useState<'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet'>('cyan');
 
   // Form states del slot seleccionado
   const [slotSoundId, setSlotSoundId] = useState<string>('');
@@ -256,6 +267,7 @@ export const CollectionsDeck: React.FC = () => {
     try {
       setPlayingSlotIndex(slot.slotIndex);
       setActiveSoundName(displayName);
+      setActiveColorTheme(slot.colorTheme || 'cyan');
 
       await apiRequest(`/api/sounds/${slot.soundId}/quick-play`, { method: 'POST' });
     } catch (err: any) {
@@ -302,13 +314,14 @@ export const CollectionsDeck: React.FC = () => {
       <MasterOutVisualizer 
         isPlaying={playingSlotIndex !== null} 
         activeSoundName={activeSoundName} 
+        activeColorTheme={activeColorTheme}
       />
 
       {/* Console Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono font-bold text-slate-400 tracking-wider uppercase">
-            PRO SOUNDBOARD CONSOLE • 4X5 GRID
+            PRO SOUNDBOARD CONSOLE
           </span>
         </div>
 
@@ -323,7 +336,7 @@ export const CollectionsDeck: React.FC = () => {
             }`}
           >
             <Zap size={14} className={!isEditMode ? 'text-cyan-400' : ''} />
-            Performance Mode (Modo Reproducción)
+            Reproducción
           </button>
 
           <button
@@ -335,7 +348,7 @@ export const CollectionsDeck: React.FC = () => {
             }`}
           >
             <SlidersHorizontal size={14} />
-            Studio Config (Modo Configuración)
+            Configuración
           </button>
         </div>
       </div>
