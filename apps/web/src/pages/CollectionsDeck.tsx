@@ -31,13 +31,37 @@ interface SlotData {
   colorTheme: 'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet';
 }
 
-const themeStyles = {
-  cyan: 'border-2 border-cyan-400/90 text-cyan-300 bg-[#091522] shadow-[0_0_16px_rgba(6,182,212,0.4)] hover:border-cyan-300 hover:shadow-[0_0_25px_rgba(6,182,212,0.7)]',
-  emerald: 'border-2 border-emerald-400/90 text-emerald-300 bg-[#091a16] shadow-[0_0_16px_rgba(16,185,129,0.4)] hover:border-emerald-300 hover:shadow-[0_0_25px_rgba(16,185,129,0.7)]',
-  pink: 'border-2 border-pink-400/90 text-pink-300 bg-[#1c0c17] shadow-[0_0_16px_rgba(236,72,153,0.4)] hover:border-pink-300 hover:shadow-[0_0_25px_rgba(236,72,153,0.7)]',
-  gold: 'border-2 border-amber-400/90 text-amber-300 bg-[#1f1709] shadow-[0_0_16px_rgba(245,158,11,0.4)] hover:border-amber-300 hover:shadow-[0_0_25px_rgba(245,158,11,0.7)]',
-  red: 'border-2 border-rose-400/90 text-rose-300 bg-[#200b10] shadow-[0_0_16px_rgba(244,63,94,0.4)] hover:border-rose-300 hover:shadow-[0_0_25px_rgba(244,63,94,0.7)]',
-  violet: 'border-2 border-violet-400/90 text-violet-300 bg-[#150d22] shadow-[0_0_16px_rgba(139,92,246,0.4)] hover:border-violet-300 hover:shadow-[0_0_25px_rgba(139,92,246,0.7)]'
+const themeConfig = {
+  cyan: {
+    padClass: 'border-2 border-cyan-400 text-cyan-300 bg-[#091724] shadow-[0_0_14px_rgba(6,182,212,0.4)] hover:border-cyan-300 hover:shadow-[0_0_22px_rgba(6,182,212,0.7)]',
+    badgeClass: 'bg-[#092536] border-2 border-cyan-400 text-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.4)]',
+    iconColor: 'text-cyan-300'
+  },
+  emerald: {
+    padClass: 'border-2 border-emerald-400 text-emerald-300 bg-[#071c16] shadow-[0_0_14px_rgba(16,185,129,0.4)] hover:border-emerald-300 hover:shadow-[0_0_22px_rgba(16,185,129,0.7)]',
+    badgeClass: 'bg-[#073024] border-2 border-emerald-400 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.4)]',
+    iconColor: 'text-emerald-300'
+  },
+  pink: {
+    padClass: 'border-2 border-pink-400 text-pink-300 bg-[#210a1b] shadow-[0_0_14px_rgba(236,72,153,0.4)] hover:border-pink-300 hover:shadow-[0_0_22px_rgba(236,72,153,0.7)]',
+    badgeClass: 'bg-[#3b0f2e] border-2 border-pink-400 text-pink-300 shadow-[0_0_10px_rgba(236,72,153,0.4)]',
+    iconColor: 'text-pink-300'
+  },
+  gold: {
+    padClass: 'border-2 border-amber-400 text-amber-300 bg-[#211808] shadow-[0_0_14px_rgba(245,158,11,0.4)] hover:border-amber-300 hover:shadow-[0_0_22px_rgba(245,158,11,0.7)]',
+    badgeClass: 'bg-[#3b2a0c] border-2 border-amber-400 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.4)]',
+    iconColor: 'text-amber-300'
+  },
+  red: {
+    padClass: 'border-2 border-rose-400 text-rose-300 bg-[#240a11] shadow-[0_0_14px_rgba(244,63,94,0.4)] hover:border-rose-300 hover:shadow-[0_0_22px_rgba(244,63,94,0.7)]',
+    badgeClass: 'bg-[#400e1b] border-2 border-rose-400 text-rose-300 shadow-[0_0_10px_rgba(244,63,94,0.4)]',
+    iconColor: 'text-rose-300'
+  },
+  violet: {
+    padClass: 'border-2 border-violet-400 text-violet-300 bg-[#160c26] shadow-[0_0_14px_rgba(139,92,246,0.4)] hover:border-violet-300 hover:shadow-[0_0_22px_rgba(139,92,246,0.7)]',
+    badgeClass: 'bg-[#29134a] border-2 border-violet-400 text-violet-300 shadow-[0_0_10px_rgba(139,92,246,0.4)]',
+    iconColor: 'text-violet-300'
+  }
 };
 
 // Componente Visualizador del Ecualizador Master Out
@@ -316,9 +340,9 @@ export const CollectionsDeck: React.FC = () => {
         </div>
       </div>
 
-      {/* Matrix Grid: Cuadrícula 4 Filas x 5 Columnas Ultra-Compacta (~64px-75px por pad) */}
+      {/* Matrix Grid: Cuadrícula 4 Filas x 5 Columnas Super-Compacta (~50px-60px por pad) */}
       <div 
-        className="w-full max-w-[480px] sm:max-w-[540px] mx-auto"
+        className="w-full max-w-[360px] sm:max-w-[420px] mx-auto py-2"
         style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', 
@@ -328,8 +352,10 @@ export const CollectionsDeck: React.FC = () => {
         {collection?.slots?.map((slot: SlotData) => {
           const hasSound = Boolean(slot.soundId);
           const isPlayingThis = playingSlotIndex === slot.slotIndex;
-          const themeClass = hasSound 
-            ? themeStyles[slot.colorTheme] || themeStyles.cyan 
+          const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
+
+          const padClass = hasSound 
+            ? currentTheme.padClass 
             : 'border-2 border-[#242936] text-slate-500 bg-[#0f1116] hover:border-slate-500 hover:text-slate-300';
 
           return (
@@ -337,9 +363,9 @@ export const CollectionsDeck: React.FC = () => {
               key={slot.slotIndex}
               onClick={() => handleSlotClick(slot)}
               style={{ aspectRatio: '1 / 1' }}
-              className={`group relative rounded-xl flex flex-col justify-between p-1.5 transition-all duration-200 shadow-lg overflow-hidden select-none cursor-pointer w-full h-full ${themeClass} ${
+              className={`group relative rounded-xl flex flex-col justify-between p-1 sm:p-1.5 transition-all duration-200 shadow-lg overflow-hidden select-none cursor-pointer w-full h-full ${padClass} ${
                 isPlayingThis 
-                  ? 'ring-4 ring-white shadow-[0_0_25px_rgba(6,182,212,0.95)] scale-[0.96] z-10' 
+                  ? 'ring-4 ring-white shadow-[0_0_25px_rgba(255,255,255,0.9)] scale-[0.95] z-10' 
                   : 'hover:scale-[1.04]'
               } ${isEditMode ? 'ring-2 ring-primary/60' : ''}`}
             >
@@ -369,47 +395,47 @@ export const CollectionsDeck: React.FC = () => {
                       e.stopPropagation();
                       handleOpenSlotModal(slot);
                     }}
-                    className="p-0.5 rounded-md bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-300 opacity-0 group-hover:opacity-100 transition-all shadow-md"
+                    className="p-0.5 rounded bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-300 opacity-0 group-hover:opacity-100 transition-all shadow"
                     title="Configurar pad"
                   >
-                    <Edit size={10} />
+                    <Edit size={9} />
                   </button>
 
                   {isPlayingThis ? (
-                    <Volume2 size={11} className="text-cyan-400 animate-bounce" />
+                    <Volume2 size={10} className="text-white animate-bounce" />
                   ) : hasSound ? (
-                    <Play size={9} className="text-slate-400 group-hover:text-white transition-colors" />
+                    <Play size={8} className="text-slate-400 group-hover:text-white transition-colors" />
                   ) : null}
                 </div>
               </div>
 
-              {/* Center Content: Icon Occupying Most of the Card Area */}
+              {/* Center Content: Icon Badge Matching the Theme Color */}
               <div className="my-auto z-10 flex items-center justify-center w-full">
                 {!hasSound ? (
-                  <div className="w-8 h-8 rounded-full border border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
-                    <Plus size={16} />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
+                    <Plus size={14} />
                   </div>
                 ) : !slot.customImageUrl ? (
-                  <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center border-2 transition-all ${
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center border-2 transition-all ${
                     isPlayingThis 
-                      ? 'bg-cyan-500 text-white border-cyan-200 shadow-[0_0_20px_#06b6d4] animate-pulse' 
-                      : 'bg-[#0a1018] border-current shadow-md'
+                      ? 'bg-white text-black border-white shadow-[0_0_15px_#ffffff] animate-pulse' 
+                      : currentTheme.badgeClass
                   }`}>
-                    <Music size={22} />
+                    <Music size={18} />
                   </div>
                 ) : null}
               </div>
 
               {/* Bottom Label */}
               <div className="w-full z-10 text-center leading-none">
-                <p className="text-[10px] font-extrabold text-white truncate drop-shadow-md tracking-tight">
+                <p className="text-[9px] sm:text-[10px] font-extrabold text-white truncate drop-shadow-md tracking-tight">
                   {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
                 </p>
               </div>
 
               {/* Ripple Animation overlay when triggering audio */}
               {isPlayingThis && (
-                <div className="absolute inset-0 z-20 bg-cyan-500/25 backdrop-blur-xs flex items-center justify-center animate-ping pointer-events-none"></div>
+                <div className="absolute inset-0 z-20 bg-white/20 backdrop-blur-xs flex items-center justify-center animate-ping pointer-events-none"></div>
               )}
             </div>
           );
