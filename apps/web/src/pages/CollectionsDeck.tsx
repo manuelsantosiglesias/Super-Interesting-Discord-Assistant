@@ -310,149 +310,158 @@ export const CollectionsDeck: React.FC = () => {
         </div>
       </div>
 
-      {/* Top Section: Master Out Equalizer Visualizer Screen */}
-      <MasterOutVisualizer 
-        isPlaying={playingSlotIndex !== null} 
-        activeSoundName={activeSoundName} 
-        activeColorTheme={activeColorTheme}
-      />
+      {/* Stream Deck Console Frame Container (Centrado y Compacto) */}
+      <div className="flex flex-col items-center justify-center my-2">
+        <div 
+          className="bg-[#0a0c10] border-2 border-[#1c2230] p-5 sm:p-6 rounded-3xl shadow-2xl flex flex-col items-center"
+          style={{ width: 'fit-content', minWidth: '420px' }}
+        >
+          {/* Top Section: Master Out Equalizer Visualizer Screen */}
+          <div className="w-full mb-4">
+            <MasterOutVisualizer 
+              isPlaying={playingSlotIndex !== null} 
+              activeSoundName={activeSoundName} 
+              activeColorTheme={activeColorTheme}
+            />
+          </div>
 
-      {/* Console Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-mono font-bold text-slate-400 tracking-wider uppercase">
-            PRO SOUNDBOARD CONSOLE
-          </span>
-        </div>
+          {/* Console Header Bar */}
+          <div className="w-full flex items-center justify-between gap-4 mb-4">
+            <span className="text-xs font-mono font-bold text-slate-400 tracking-wider uppercase">
+              PRO SOUNDBOARD CONSOLE
+            </span>
 
-        {/* Mode Switch Buttons */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsEditMode(false)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              !isEditMode 
-                ? 'bg-cyan-950/70 border border-cyan-500/80 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]' 
-                : 'bg-[#14161b] border border-[#22252e] text-slate-400 hover:text-white'
-            }`}
-          >
-            <Zap size={14} className={!isEditMode ? 'text-cyan-400' : ''} />
-            Reproducción
-          </button>
+            {/* Mode Switch Buttons */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsEditMode(false)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  !isEditMode 
+                    ? 'bg-cyan-950/80 border border-cyan-500/80 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.3)]' 
+                    : 'bg-[#14161b] border border-[#22252e] text-slate-400 hover:text-white'
+                }`}
+              >
+                <Zap size={13} className={!isEditMode ? 'text-cyan-400' : ''} />
+                Reproducción
+              </button>
 
-          <button
-            onClick={() => setIsEditMode(true)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              isEditMode 
-                ? 'bg-primary border border-primary text-white shadow-lg shadow-primary/20' 
-                : 'bg-[#14161b] border border-[#22252e] text-slate-400 hover:text-white'
-            }`}
-          >
-            <SlidersHorizontal size={14} />
-            Configuración
-          </button>
-        </div>
-      </div>
-
-      {/* Matrix Grid: Cuadrícula 4 Filas x 5 Columnas Super-Compacta (~50px-60px por pad) */}
-      <div 
-        className="w-full max-w-[360px] sm:max-w-[420px] mx-auto py-2"
-        style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', 
-          gap: '8px' 
-        }}
-      >
-        {collection?.slots?.map((slot: SlotData) => {
-          const hasSound = Boolean(slot.soundId);
-          const isPlayingThis = playingSlotIndex === slot.slotIndex;
-          const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
-
-          const padClass = hasSound 
-            ? currentTheme.padClass 
-            : 'border-2 border-[#242936] text-slate-500 bg-[#0f1116] hover:border-slate-500 hover:text-slate-300';
-
-          return (
-            <div
-              key={slot.slotIndex}
-              onClick={() => handleSlotClick(slot)}
-              style={{ aspectRatio: '1 / 1' }}
-              className={`group relative rounded-xl flex flex-col justify-between p-1 sm:p-1.5 transition-all duration-200 shadow-lg overflow-hidden select-none cursor-pointer w-full h-full ${padClass} ${
-                isPlayingThis 
-                  ? 'ring-4 ring-white shadow-[0_0_25px_rgba(255,255,255,0.9)] scale-[0.95] z-10' 
-                  : 'hover:scale-[1.04]'
-              } ${isEditMode ? 'ring-2 ring-primary/60' : ''}`}
-            >
-              {/* Background Cover Image if configured */}
-              {slot.customImageUrl ? (
-                <div className="absolute inset-0 z-0">
-                  <img 
-                    src={slot.customImageUrl} 
-                    alt="" 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/20"></div>
-                </div>
-              ) : null}
-
-              {/* Top Row: Pad Number & Indicators */}
-              <div className="w-full flex justify-between items-center z-10 leading-none">
-                <span className="text-[9px] font-mono text-slate-400 font-bold drop-shadow">
-                  #{slot.slotIndex + 1}
-                </span>
-
-                <div className="flex items-center gap-0.5">
-                  {/* Botón directo de edición en cada pad */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenSlotModal(slot);
-                    }}
-                    className="p-0.5 rounded bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-300 opacity-0 group-hover:opacity-100 transition-all shadow"
-                    title="Configurar pad"
-                  >
-                    <Edit size={9} />
-                  </button>
-
-                  {isPlayingThis ? (
-                    <Volume2 size={10} className="text-white animate-bounce" />
-                  ) : hasSound ? (
-                    <Play size={8} className="text-slate-400 group-hover:text-white transition-colors" />
-                  ) : null}
-                </div>
-              </div>
-
-              {/* Center Content: Icon Badge Matching the Theme Color */}
-              <div className="my-auto z-10 flex items-center justify-center w-full">
-                {!hasSound ? (
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
-                    <Plus size={14} />
-                  </div>
-                ) : !slot.customImageUrl ? (
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center border-2 transition-all ${
-                    isPlayingThis 
-                      ? 'bg-white text-black border-white shadow-[0_0_15px_#ffffff] animate-pulse' 
-                      : currentTheme.badgeClass
-                  }`}>
-                    <Music size={18} />
-                  </div>
-                ) : null}
-              </div>
-
-              {/* Bottom Label */}
-              <div className="w-full z-10 text-center leading-none">
-                <p className="text-[9px] sm:text-[10px] font-extrabold text-white truncate drop-shadow-md tracking-tight">
-                  {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
-                </p>
-              </div>
-
-              {/* Ripple Animation overlay when triggering audio */}
-              {isPlayingThis && (
-                <div className="absolute inset-0 z-20 bg-white/20 backdrop-blur-xs flex items-center justify-center animate-ping pointer-events-none"></div>
-              )}
+              <button
+                onClick={() => setIsEditMode(true)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  isEditMode 
+                    ? 'bg-primary border border-primary text-white shadow-lg shadow-primary/20' 
+                    : 'bg-[#14161b] border border-[#22252e] text-slate-400 hover:text-white'
+                }`}
+              >
+                <SlidersHorizontal size={13} />
+                Configuración
+              </button>
             </div>
-          );
-        })}
+          </div>
+
+          {/* Matrix Grid: Exacta Cuadrícula Fija 4 Filas x 5 Columnas de 74px x 74px */}
+          <div 
+            style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(5, 74px)', 
+              gridTemplateRows: 'repeat(4, 74px)', 
+              gap: '10px',
+              justifyContent: 'center' 
+            }}
+          >
+            {collection?.slots?.map((slot: SlotData) => {
+              const hasSound = Boolean(slot.soundId);
+              const isPlayingThis = playingSlotIndex === slot.slotIndex;
+              const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
+
+              const padClass = hasSound 
+                ? currentTheme.padClass 
+                : 'border-2 border-[#242936] text-slate-500 bg-[#0f1116] hover:border-slate-500 hover:text-slate-300';
+
+              return (
+                <div
+                  key={slot.slotIndex}
+                  onClick={() => handleSlotClick(slot)}
+                  style={{ width: '74px', height: '74px' }}
+                  className={`group relative rounded-2xl flex flex-col justify-between p-1.5 transition-all duration-200 shadow-xl overflow-hidden select-none cursor-pointer ${padClass} ${
+                    isPlayingThis 
+                      ? 'ring-4 ring-white shadow-[0_0_25px_rgba(255,255,255,0.9)] scale-[0.95] z-10' 
+                      : 'hover:scale-[1.04]'
+                  } ${isEditMode ? 'ring-2 ring-primary/60' : ''}`}
+                >
+                  {/* Background Cover Image if configured */}
+                  {slot.customImageUrl ? (
+                    <div className="absolute inset-0 z-0">
+                      <img 
+                        src={slot.customImageUrl} 
+                        alt="" 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/20"></div>
+                    </div>
+                  ) : null}
+
+                  {/* Top Row: Pad Number & Indicators */}
+                  <div className="w-full flex justify-between items-center z-10 leading-none">
+                    <span className="text-[9px] font-mono text-slate-400 font-bold drop-shadow">
+                      #{slot.slotIndex + 1}
+                    </span>
+
+                    <div className="flex items-center gap-0.5">
+                      {/* Botón directo de edición en cada pad */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenSlotModal(slot);
+                        }}
+                        className="p-0.5 rounded bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-300 opacity-0 group-hover:opacity-100 transition-all shadow"
+                        title="Configurar pad"
+                      >
+                        <Edit size={9} />
+                      </button>
+
+                      {isPlayingThis ? (
+                        <Volume2 size={11} className="text-white animate-bounce" />
+                      ) : hasSound ? (
+                        <Play size={8} className="text-slate-400 group-hover:text-white transition-colors" />
+                      ) : null}
+                    </div>
+                  </div>
+
+                  {/* Center Content: Icon Occupying Most of the Card Area */}
+                  <div className="my-auto z-10 flex items-center justify-center w-full">
+                    {!hasSound ? (
+                      <div className="w-7 h-7 rounded-full border border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
+                        <Plus size={14} />
+                      </div>
+                    ) : !slot.customImageUrl ? (
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 transition-all ${
+                        isPlayingThis 
+                          ? 'bg-white text-black border-white shadow-[0_0_15px_#ffffff] animate-pulse' 
+                          : currentTheme.badgeClass
+                      }`}>
+                        <Music size={18} />
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {/* Bottom Label */}
+                  <div className="w-full z-10 text-center leading-none">
+                    <p className="text-[9px] font-extrabold text-white truncate drop-shadow-md tracking-tight">
+                      {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
+                    </p>
+                  </div>
+
+                  {/* Ripple Animation overlay when triggering audio */}
+                  {isPlayingThis && (
+                    <div className="absolute inset-0 z-20 bg-white/20 backdrop-blur-xs flex items-center justify-center animate-ping pointer-events-none"></div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Modal: Studio Config / Editar Pad (100% OPACO CON ESTILOS INLINE DE CORRECCIÓN) */}
