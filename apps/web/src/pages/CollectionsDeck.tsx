@@ -75,17 +75,16 @@ const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: strin
         </div>
 
         <div className="text-right">
-          <span className="text-xs font-mono text-cyan-300 font-semibold truncate max-w-[250px] block">
-            {activeSoundName ? `🎵 ${activeSoundName}` : 'STANDBY • ESPERANDO AUDIO'}
+          <span className="text-[10px] font-mono text-cyan-300 font-semibold truncate max-w-[200px] block">
+            {activeSoundName ? `🎵 ${activeSoundName}` : 'STANDBY'}
           </span>
         </div>
       </div>
 
       {/* Audio Spectrum Equalizer Bars Container */}
-      <div className="h-20 sm:h-24 flex items-end justify-between gap-[3px] px-1 overflow-hidden relative">
+      <div className="h-14 sm:h-16 flex items-end justify-between gap-[2px] px-1 overflow-hidden relative">
         {/* Background Grid Lines */}
         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-15">
-          <div className="border-b border-cyan-400"></div>
           <div className="border-b border-cyan-400"></div>
           <div className="border-b border-cyan-400"></div>
         </div>
@@ -94,8 +93,8 @@ const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: strin
           <div key={idx} className="flex-1 flex flex-col justify-end items-center h-full">
             {/* Top Cap */}
             <div 
-              className={`w-full h-1 rounded-xs mb-1 transition-all duration-75 ${
-                isPlaying ? 'bg-cyan-200 shadow-[0_0_10px_#06b6d4]' : 'bg-cyan-700/60'
+              className={`w-full h-0.5 rounded-xs mb-0.5 transition-all duration-75 ${
+                isPlaying ? 'bg-cyan-200 shadow-[0_0_8px_#06b6d4]' : 'bg-cyan-700/60'
               }`}
             ></div>
 
@@ -103,7 +102,7 @@ const MasterOutVisualizer: React.FC<{ isPlaying: boolean; activeSoundName: strin
             <div 
               className={`w-full rounded-t-xs transition-all duration-100 ${
                 isPlaying 
-                  ? 'bg-gradient-to-t from-cyan-950 via-cyan-500 to-cyan-300 shadow-[0_0_14px_rgba(6,182,212,0.7)]' 
+                  ? 'bg-gradient-to-t from-cyan-950 via-cyan-500 to-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.7)]' 
                   : 'bg-gradient-to-t from-cyan-950/40 via-cyan-900/40 to-cyan-800/50'
               }`}
               style={{ height: `${h}%` }}
@@ -317,13 +316,13 @@ export const CollectionsDeck: React.FC = () => {
         </div>
       </div>
 
-      {/* Matrix Grid: Cuadrícula 4 Filas x 5 Columnas Compacta */}
+      {/* Matrix Grid: Cuadrícula 4 Filas x 5 Columnas Ultra-Compacta (~64px-75px por pad) */}
       <div 
-        className="w-full max-w-[760px] mx-auto"
+        className="w-full max-w-[480px] sm:max-w-[540px] mx-auto"
         style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', 
-          gap: '12px' 
+          gap: '8px' 
         }}
       >
         {collection?.slots?.map((slot: SlotData) => {
@@ -338,10 +337,10 @@ export const CollectionsDeck: React.FC = () => {
               key={slot.slotIndex}
               onClick={() => handleSlotClick(slot)}
               style={{ aspectRatio: '1 / 1' }}
-              className={`group relative rounded-2xl flex flex-col justify-between p-2.5 sm:p-3 transition-all duration-200 shadow-xl overflow-hidden select-none cursor-pointer w-full h-full ${themeClass} ${
+              className={`group relative rounded-xl flex flex-col justify-between p-1.5 transition-all duration-200 shadow-lg overflow-hidden select-none cursor-pointer w-full h-full ${themeClass} ${
                 isPlayingThis 
-                  ? 'ring-4 ring-white shadow-[0_0_35px_rgba(6,182,212,0.95)] scale-[0.96] z-10' 
-                  : 'hover:scale-[1.03]'
+                  ? 'ring-4 ring-white shadow-[0_0_25px_rgba(6,182,212,0.95)] scale-[0.96] z-10' 
+                  : 'hover:scale-[1.04]'
               } ${isEditMode ? 'ring-2 ring-primary/60' : ''}`}
             >
               {/* Background Cover Image if configured */}
@@ -357,12 +356,12 @@ export const CollectionsDeck: React.FC = () => {
               ) : null}
 
               {/* Top Row: Pad Number & Indicators */}
-              <div className="w-full flex justify-between items-center z-10">
-                <span className="text-[10px] font-mono text-slate-400 font-bold drop-shadow">
+              <div className="w-full flex justify-between items-center z-10 leading-none">
+                <span className="text-[9px] font-mono text-slate-400 font-bold drop-shadow">
                   #{slot.slotIndex + 1}
                 </span>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   {/* Botón directo de edición en cada pad */}
                   <button
                     type="button"
@@ -370,40 +369,40 @@ export const CollectionsDeck: React.FC = () => {
                       e.stopPropagation();
                       handleOpenSlotModal(slot);
                     }}
-                    className="p-1 rounded-md bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-300 opacity-0 group-hover:opacity-100 transition-all shadow-md"
+                    className="p-0.5 rounded-md bg-darkbg/90 hover:bg-cyan-500 hover:text-white text-slate-300 opacity-0 group-hover:opacity-100 transition-all shadow-md"
                     title="Configurar pad"
                   >
-                    <Edit size={11} />
+                    <Edit size={10} />
                   </button>
 
                   {isPlayingThis ? (
-                    <Volume2 size={13} className="text-cyan-400 animate-bounce" />
+                    <Volume2 size={11} className="text-cyan-400 animate-bounce" />
                   ) : hasSound ? (
-                    <Play size={11} className="text-slate-400 group-hover:text-white transition-colors" />
+                    <Play size={9} className="text-slate-400 group-hover:text-white transition-colors" />
                   ) : null}
                 </div>
               </div>
 
-              {/* Center Content: Circular Icon Badge */}
+              {/* Center Content: Icon Occupying Most of the Card Area */}
               <div className="my-auto z-10 flex items-center justify-center w-full">
                 {!hasSound ? (
-                  <div className="w-9 h-9 rounded-full border border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
-                    <Plus size={18} />
+                  <div className="w-8 h-8 rounded-full border border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
+                    <Plus size={16} />
                   </div>
                 ) : !slot.customImageUrl ? (
-                  <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border-2 transition-all ${
+                  <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center border-2 transition-all ${
                     isPlayingThis 
                       ? 'bg-cyan-500 text-white border-cyan-200 shadow-[0_0_20px_#06b6d4] animate-pulse' 
                       : 'bg-[#0a1018] border-current shadow-md'
                   }`}>
-                    <Music size={20} />
+                    <Music size={22} />
                   </div>
                 ) : null}
               </div>
 
               {/* Bottom Label */}
-              <div className="w-full z-10 text-center">
-                <p className="text-[11px] sm:text-xs font-bold text-white truncate drop-shadow-md tracking-wide">
+              <div className="w-full z-10 text-center leading-none">
+                <p className="text-[10px] font-extrabold text-white truncate drop-shadow-md tracking-tight">
                   {slot.customLabel || slot.soundDisplayName || (isEditMode ? '+ Asignar' : 'Vacío')}
                 </p>
               </div>
