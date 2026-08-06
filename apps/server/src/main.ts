@@ -15,6 +15,7 @@ import userRoutes from './http/routes/users.js';
 import soundRoutes from './http/routes/sounds.js';
 import discordRoutes from './http/routes/discord.js';
 import auditRoutes from './http/routes/audit.js';
+import collectionRoutes from './http/routes/collections.js';
 import { AppError } from '@super-assistant/shared-kernel';
 
 async function startServer() {
@@ -146,6 +147,7 @@ async function startServer() {
   await fastify.register(soundRoutes, { container });
   await fastify.register(discordRoutes, { container });
   await fastify.register(auditRoutes, { container });
+  await fastify.register(collectionRoutes, { container });
 
   // 10. Conectar Bot de Discord
   if (container.discordBot) {
