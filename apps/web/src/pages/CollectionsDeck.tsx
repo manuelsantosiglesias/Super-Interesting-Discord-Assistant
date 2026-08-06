@@ -234,7 +234,14 @@ export const CollectionsDeck: React.FC = () => {
         </div>
 
         {/* Matrix Grid: Estricta Cuadrícula 4 Filas x 5 Columnas = 20 Botones */}
-        <div className="grid grid-cols-5 gap-3 sm:gap-4 max-w-4xl mx-auto">
+        <div 
+          className="w-full max-w-4xl mx-auto"
+          style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', 
+            gap: '16px' 
+          }}
+        >
           {collection?.slots?.map((slot: SlotData) => {
             const hasSound = Boolean(slot.soundId);
             const isTriggered = activeTriggerIndex === slot.slotIndex;
