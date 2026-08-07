@@ -423,18 +423,14 @@ export const CollectionsDeck: React.FC = () => {
               const isPlayingThis = playingSlotIndex === slot.slotIndex;
               const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
 
-              // En Modo Reproducción, los casilleros vacíos se muestran como huella discreta sin botón
+              // En Modo Reproducción, los casilleros vacíos son espaciadores totalmente limpios e invisibles
               if (!isEditMode && !hasSound) {
                 return (
                   <div
                     key={slot.slotIndex}
                     style={{ width: '94px', height: '94px' }}
-                    className="rounded-2xl border border-dashed border-[#1a2336] bg-[#05070a]/30 flex flex-col justify-between p-2 opacity-20 pointer-events-none select-none"
-                  >
-                    <span className="text-[9px] font-mono font-bold text-slate-600">
-                      #{slot.slotIndex + 1}
-                    </span>
-                  </div>
+                    className="pointer-events-none select-none"
+                  ></div>
                 );
               }
 
