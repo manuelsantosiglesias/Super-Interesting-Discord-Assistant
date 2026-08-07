@@ -4,11 +4,15 @@ export class UniqueEntityID {
   private value: string;
 
   constructor(id?: string) {
-    // Validar formato UUID si se proporciona
-    if (id && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
-      throw new Error(`Identificador UUID inválido: ${id}`);
+    if (id !== undefined && id !== null) {
+      const str = String(id).trim();
+      if (!str) {
+        throw new Error('Identificador no puede estar vacío');
+      }
+      this.value = str;
+    } else {
+      this.value = randomUUID();
     }
-    this.value = id || randomUUID();
   }
 
   public toString(): string {
