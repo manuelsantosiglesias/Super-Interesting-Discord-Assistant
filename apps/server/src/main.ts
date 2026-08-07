@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import { randomUUID } from 'crypto';
 import cookie from '@fastify/cookie';
+import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
@@ -34,7 +35,13 @@ async function startServer() {
     crossOriginEmbedderPolicy: config.app.environment === 'production'
   });
 
-  // 2. Configurar Cookies
+  // 2. Configurar CORS
+  await fastify.register(cors, {
+    origin: true,
+    credentials: true
+  });
+
+  // 3. Configurar Cookies
   await fastify.register(cookie);
 
   // 3. Configurar Rate Limit
