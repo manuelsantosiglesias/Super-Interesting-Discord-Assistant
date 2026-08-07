@@ -110,7 +110,7 @@ export const Sounds: React.FC = () => {
     };
   }, [audioObj]);
 
-  const handlePlayPreview = async (soundId: string) => {
+  const handlePlayPreview = (soundId: string) => {
     if (audioObj) {
       audioObj.pause();
     }
@@ -121,42 +121,28 @@ export const Sounds: React.FC = () => {
       return;
     }
 
-    try {
-      setPlayingId(soundId);
-      const audioUrl = `/api/sounds/${soundId}/audio`;
-      const response = await fetch(audioUrl, { credentials: 'include' });
-      if (!response.ok) {
-        throw new Error(`Servidor devolvió código HTTP ${response.status}`);
-      }
-      const rawBlob = await response.blob();
-      const mimeType = response.headers.get('content-type') || 'audio/mpeg';
-      const audioBlob = new Blob([rawBlob], { type: mimeType });
-      const objectUrl = URL.createObjectURL(audioBlob);
-      const newAudio = new Audio();
-      newAudio.src = objectUrl;
+    const audioUrl = `/api/sounds/${soundId}/audio`;
+    const newAudio = new Audio(audioUrl);
 
-      newAudio.onended = () => {
-        setPlayingId(null);
-        setAudioObj(null);
-        URL.revokeObjectURL(objectUrl);
-      };
-
-      newAudio.onerror = (e) => {
-        console.error('Error en el elemento de audio HTML5:', e);
-        alert('Formato de audio no compatible en este navegador.');
-        setPlayingId(null);
-        setAudioObj(null);
-        URL.revokeObjectURL(objectUrl);
-      };
-
-      setAudioObj(newAudio);
-      await newAudio.play();
-    } catch (err: any) {
-      console.error('Error al previsualizar sonido:', err);
-      alert(`No se pudo reproducir el sonido: ${err.message || 'Error de red'}`);
+    newAudio.onended = () => {
       setPlayingId(null);
       setAudioObj(null);
-    }
+    };
+
+    newAudio.onerror = (e) => {
+      console.error('Error al reproducir elemento audio:', e);
+      setPlayingId(null);
+      setAudioObj(null);
+    };
+
+    setAudioObj(newAudio);
+    setPlayingId(soundId);
+
+    newAudio.play().catch((err) => {
+      console.error('Error al iniciar reproduccion:', err);
+      setPlayingId(null);
+      setAudioObj(null);
+    });
   };
 
   const handleDownloadSound = async (soundId: string, filename: string) => {
