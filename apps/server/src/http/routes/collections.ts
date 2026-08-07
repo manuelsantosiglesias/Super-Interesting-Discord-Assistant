@@ -6,7 +6,8 @@ import { AppError } from '@super-assistant/shared-kernel';
 
 const CreateCollectionSchema = z.object({
   name: z.string().min(1).max(120),
-  description: z.string().max(500).optional().nullable()
+  description: z.string().max(500).optional().nullable(),
+  icon: z.string().optional().nullable()
 });
 
 const UpdateSlotSchema = z.object({
@@ -43,6 +44,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
       id: col.id,
       name: col.name,
       description: col.description,
+      icon: col.icon || '/iconos/sparkles.svg',
       createdBy: col.created_by,
       configuredSlotsCount: countMap.get(col.id) || 0,
       totalSlots: 20,
@@ -63,6 +65,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
         id: collectionId,
         name: body.name,
         description: body.description || null,
+        icon: body.icon || '/iconos/sparkles.svg',
         created_by: request.user!.id.toString(),
         created_at: now,
         updated_at: now
@@ -73,6 +76,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
       id: collectionId,
       name: body.name,
       description: body.description || null,
+      icon: body.icon || '/iconos/sparkles.svg',
       createdAt: now
     };
   });

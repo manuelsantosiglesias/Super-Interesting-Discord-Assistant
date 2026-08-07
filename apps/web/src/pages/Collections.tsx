@@ -7,16 +7,25 @@ import {
   Plus, 
   Trash2, 
   Sliders, 
-  Sparkles, 
   FolderPlus,
   ArrowRight
 } from 'lucide-react';
+
+const AVAILABLE_ICONS = [
+  { id: '/iconos/sparkles.svg', label: 'Destellos' },
+  { id: '/iconos/music.svg', label: 'Música' },
+  { id: '/iconos/fire.svg', label: 'Fuego' },
+  { id: '/iconos/game.svg', label: 'Gaming' },
+  { id: '/iconos/zap.svg', label: 'Rayo' },
+  { id: '/iconos/bot.svg', label: 'Bot' }
+];
 
 export const Collections: React.FC = () => {
   const queryClient = useQueryClient();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [selectedIcon, setSelectedIcon] = useState('/iconos/sparkles.svg');
 
   // 1. Cargar colecciones
   const { data: collections, isLoading } = useQuery({
@@ -54,7 +63,8 @@ export const Collections: React.FC = () => {
     if (!name.trim()) return;
     createMutation.mutate({
       name: name.trim(),
-      description: description.trim() || null
+      description: description.trim() || null,
+      icon: selectedIcon
     });
   };
 
@@ -71,10 +81,10 @@ export const Collections: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2.5">
             <LayoutGrid className="text-primary" size={26} />
-            Colecciones de Sonidos (Stream Deck)
+            Colecciones de Sonidos
           </h2>
           <p className="text-slate-400 text-sm mt-1">
-            Crea mesas virtuales interactivas estilo Elgato Stream Deck (20 botones) con reproducción rápida a un clic.
+            Crea mesas interactivas de reproducción de sonido.
           </p>
         </div>
 
@@ -101,8 +111,8 @@ export const Collections: React.FC = () => {
             >
               <div>
                 <div className="flex justify-between items-start mb-3">
-                  <div className="p-3 bg-primary/10 text-primary rounded-xl group-hover:bg-primary group-hover:text-white transition-all">
-                    <Sparkles size={22} />
+                  <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-all flex items-center justify-center w-12 h-12">
+                    <img src={col.icon || '/iconos/sparkles.svg'} alt={col.name} className="w-6 h-6 object-contain" />
                   </div>
                   <button
                     onClick={() => handleDelete(col.id, col.name)}
@@ -146,7 +156,7 @@ export const Collections: React.FC = () => {
           <div>
             <h3 className="text-lg font-bold text-white">No tienes ninguna colección creada</h3>
             <p className="text-slate-400 text-sm max-w-md mx-auto mt-1">
-              Crea tu primera mesa de botones interactiva tipo Stream Deck para organizar hasta 20 sonidos de reproducción inmediata.
+              Crea tu primera mesa interactiva de reproducción para organizar hasta 20 sonidos de reproducción inmediata.
             </p>
           </div>
           <button
@@ -193,6 +203,29 @@ export const Collections: React.FC = () => {
                   placeholder="Pequeña nota descriptiva sobre los sonidos incluidos..."
                   className="w-full bg-darkbg border border-darkborder focus:border-primary rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none resize-none"
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  Icono Distintivo
+                </label>
+                <div className="grid grid-cols-6 gap-2 bg-darkbg border border-darkborder p-3 rounded-xl">
+                  {AVAILABLE_ICONS.map((ico) => (
+                    <button
+                      key={ico.id}
+                      type="button"
+                      onClick={() => setSelectedIcon(ico.id)}
+                      className={`p-2.5 rounded-lg flex items-center justify-center border transition-all ${
+                        selectedIcon === ico.id
+                          ? 'bg-primary/20 border-primary shadow-lg shadow-primary/20 scale-105'
+                          : 'border-transparent hover:bg-darkborder/50'
+                      }`}
+                      title={ico.label}
+                    >
+                      <img src={ico.id} alt={ico.label} className="w-6 h-6 object-contain" />
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-darkborder">
