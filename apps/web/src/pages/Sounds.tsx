@@ -110,7 +110,7 @@ export const Sounds: React.FC = () => {
     };
   }, [audioObj]);
 
-  const handlePlayPreview = async (soundId: string) => {
+  const handlePlayPreview = (soundId: string) => {
     if (audioObj) {
       try { audioObj.pause(); } catch {}
     }
@@ -123,49 +123,24 @@ export const Sounds: React.FC = () => {
 
     setPlayingId(soundId);
     const audioUrl = `/api/sounds/${soundId}/audio`;
-
-    // Función auxiliar para reproducir vía Web Audio API (soporta Ogg Opus en todos los navegadores)
-    const playViaWebAudio = async () => {
-      try {
-        const response = await fetch(audioUrl, { credentials: 'include' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const arrayBuffer = await response.arrayBuffer();
-        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-        const ctx = new AudioCtx();
-        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-        const source = ctx.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(ctx.destination);
-        source.onended = () => {
-          setPlayingId(null);
-          setAudioObj(null);
-        };
-        source.start(0);
-        setAudioObj({ pause: () => { try { source.stop(); } catch {} } } as any);
-      } catch (err) {
-        console.error('Error Web Audio API:', err);
-        setPlayingId(null);
-        setAudioObj(null);
-      }
-    };
-
-    // Intentar primero con el elemento HTML5 Audio
     const newAudio = new Audio(audioUrl);
+
     newAudio.onended = () => {
       setPlayingId(null);
       setAudioObj(null);
     };
 
-    newAudio.onerror = () => {
-      console.warn('HTML5 Audio onerror disparado, probando Web Audio API...');
-      playViaWebAudio();
+    newAudio.onerror = (e) => {
+      console.error('Error al reproducir audio web:', e);
+      setPlayingId(null);
+      setAudioObj(null);
     };
 
     setAudioObj(newAudio);
-
     newAudio.play().catch((err) => {
-      console.warn('HTML5 Audio play() falló, probando Web Audio API...', err);
-      playViaWebAudio();
+      console.error('Autoplay error:', err);
+      setPlayingId(null);
+      setAudioObj(null);
     });
   };
 

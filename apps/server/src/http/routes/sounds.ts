@@ -211,7 +211,12 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
   // 7. Reproducir en navegador (HTTP Range)
   fastify.get('/api/sounds/:id/audio', async (request, reply) => {
     const params = z.object({ id: z.string() }).parse(request.params);
-    const filePath = await container.streamSound.execute(params.id, false);
+    let filePath: string;
+    try {
+      filePath = await container.streamSound.execute(params.id, true);
+    } catch {
+      filePath = await container.streamSound.execute(params.id, false);
+    }
     
     const sound = await container.getSound.execute(params.id);
     
@@ -220,16 +225,16 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       throw new AppError('AUTH_FORBIDDEN', 'No tienes permisos para escuchar este sonido desactivado.');
     }
 
-    const rangeHeader = request.headers.range;
     const stats = fs.statSync(filePath);
     const fileSize = stats.size;
+    const ext = path.extname(filePath).toLowerCase();
 
-    const contentType = sound.mimeType || (
-      filePath.endsWith('.mp3') ? 'audio/mpeg' :
-      filePath.endsWith('.wav') ? 'audio/wav' :
-      filePath.endsWith('.m4a') || filePath.endsWith('.mp4') ? 'audio/mp4' :
-      'audio/ogg'
-    );
+    const contentType = ext === '.mp3' ? 'audio/mpeg' :
+      ext === '.wav' ? 'audio/wav' :
+      ext === '.m4a' || ext === '.mp4' ? 'audio/mp4' :
+      sound.mimeType || 'audio/ogg';
+
+    const rangeHeader = request.headers.range;
 
     if (rangeHeader) {
       const parts = rangeHeader.replace(/bytes=/, "").split("-");
