@@ -150,29 +150,29 @@ export const Collections: React.FC = () => {
           Cargando colecciones...
         </div>
       ) : collections && collections.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,256px))] gap-6 justify-start">
           {collections.map((col: any) => (
             <div 
               key={col.id}
               onClick={() => navigate(`/collections/${col.id}`)}
-              className="bg-darkcard/40 backdrop-blur-md border border-white/10 hover:border-primary/50 p-6 rounded-3xl shadow-xl hover:shadow-2xl hover:shadow-primary/10 flex flex-col justify-between group transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden cursor-pointer aspect-square"
+              className="w-full h-[256px] max-w-[256px] bg-darkcard/40 backdrop-blur-md border border-white/10 hover:border-primary/50 p-5 rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-primary/10 flex flex-col justify-between group transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden cursor-pointer"
             >
               <div>
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-primary/10 rounded-2xl group-hover:bg-primary/20 transition-all flex items-center justify-center w-12 h-12 border border-primary/20">
-                    <img src={col.icon || '/iconos/sparkles.svg'} alt={col.name} className="w-6 h-6 object-contain" />
+                <div className="flex justify-between items-start mb-3">
+                  <div className="p-2.5 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-all flex items-center justify-center w-10 h-10 border border-primary/20">
+                    <img src={col.icon || '/iconos/sparkles.svg'} alt={col.name} className="w-5 h-5 object-contain" />
                   </div>
-                  <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleOpenEditModal(col);
                       }}
-                      className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                      className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
                       title="Editar colección"
                     >
-                      <Edit size={16} />
+                      <Edit size={15} />
                     </button>
                     <button
                       type="button"
@@ -180,26 +180,26 @@ export const Collections: React.FC = () => {
                         e.stopPropagation();
                         handleDelete(col.id, col.name);
                       }}
-                      className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
+                      className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
                       title="Eliminar colección"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={15} />
                     </button>
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
+                <h3 className="text-base font-bold text-white group-hover:text-primary transition-colors line-clamp-1">
                   {col.name}
                 </h3>
-                <p className="text-xs text-slate-400 mt-2 line-clamp-3 leading-relaxed">
+                <p className="text-xs text-slate-400 mt-1 line-clamp-3 leading-relaxed">
                   {col.description || 'Sin descripción adicional.'}
                 </p>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+              <div className="pt-3 border-t border-white/10 flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-                  <Sliders size={14} className="text-primary" />
-                  <span>{col.configuredSlotsCount} / {col.totalSlots} botones</span>
+                  <Sliders size={13} className="text-primary" />
+                  <span>{col.configuredSlotsCount} / {col.totalSlots}</span>
                 </div>
                 <span className="text-xs font-bold text-primary group-hover:translate-x-1 transition-transform flex items-center gap-1">
                   Entrar &rarr;
