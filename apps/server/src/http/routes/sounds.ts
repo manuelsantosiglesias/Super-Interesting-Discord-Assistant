@@ -415,6 +415,15 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       return;
     }
 
+    const botClientId = client.user?.id;
+    const isHumanMember = (m: any): boolean => {
+      if (!m) return false;
+      const memberId = m.id || m.user?.id;
+      if (botClientId && memberId === botClientId) return false;
+      if (m.user?.bot === true) return false;
+      return true;
+    };
+
     // A. DETERMINAR SERVIDOR INDICADO (GUILD)
     // 1. Servidor indicado en el body / localStorage
     let targetGuildId = body?.guildId || '';
@@ -439,7 +448,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
         let countInGuild = 0;
         for (const [, ch] of g.channels.cache) {
           if (ch.isVoiceBased()) {
-            countInGuild += ch.members.filter((m: any) => !m.user.bot).size;
+            countInGuild += ch.members.filter((m: any) => isHumanMember(m)).size;
           }
         }
         if (countInGuild > maxGuildHumans) {
@@ -466,7 +475,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
     const getChannelHumanCount = (chId: string): number => {
       const ch = guild.channels.cache.get(chId);
       if (ch && ch.isVoiceBased()) {
-        return ch.members.filter((m: any) => !m.user.bot).size;
+        return ch.members.filter((m: any) => isHumanMember(m)).size;
       }
       return 0;
     };
@@ -482,7 +491,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
 
       for (const [, ch] of guild.channels.cache) {
         if (ch.isVoiceBased()) {
-          const count = ch.members.filter((m: any) => !m.user.bot).size;
+          const count = ch.members.filter((m: any) => isHumanMember(m)).size;
           if (count > maxHumansInGuild) {
             maxHumansInGuild = count;
             bestChannelInGuild = ch.id;
