@@ -343,7 +343,7 @@ export const CollectionsDeck: React.FC = () => {
         <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
         {/* Top Section: Master Out Equalizer Visualizer Screen */}
-        <div className="w-full mb-5">
+        <div className="w-full mb-6">
           <MasterOutVisualizer 
             isPlaying={playingSlotIndex !== null} 
             activeSoundName={activeSoundName} 
@@ -351,8 +351,8 @@ export const CollectionsDeck: React.FC = () => {
           />
         </div>
 
-        {/* Console Header Bar (Con más espaciado inferior) */}
-        <div className="w-full flex items-center justify-between gap-4 mb-10 px-1">
+        {/* Console Header Bar (Espaciado simétrico idéntico de 24px arriba y abajo) */}
+        <div className="w-full flex items-center justify-between gap-4 mb-6 px-1">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#06b6d4] animate-pulse"></span>
             <span className="text-xs font-mono font-extrabold text-slate-200 tracking-widest uppercase">
@@ -441,7 +441,10 @@ export const CollectionsDeck: React.FC = () => {
 
                 {/* Top Row: Pad Number & Indicators */}
                 <div className="w-full flex justify-between items-center z-10 leading-none">
-                  <span className="text-[10px] font-mono text-slate-400 font-extrabold drop-shadow">
+                  <span 
+                    className="text-[10px] font-mono font-black drop-shadow-md transition-colors"
+                    style={{ color: hasSound ? currentTheme.colorHex : '#64748b' }}
+                  >
                     #{slot.slotIndex + 1}
                   </span>
 
