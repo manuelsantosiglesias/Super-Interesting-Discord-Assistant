@@ -37,14 +37,14 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     // Contar slots configurados por colección
     const counts = await container.db
       .selectFrom('sound_collection_items')
-      .select(['collection_id', container.db.fn.count<number>('id').as('configured_count')])
+      .select(['collection_id', container.db.fn.count('id').as('configured_count')])
       .groupBy('collection_id')
       .execute();
 
     const countMap = new Map<string, number>();
-    counts.forEach((c) => countMap.set(c.collection_id, Number(c.configured_count)));
+    counts.forEach((c: any) => countMap.set(c.collection_id, Number(c.configured_count)));
 
-    return collections.map((col) => ({
+    return collections.map((col: any) => ({
       id: col.id,
       name: col.name,
       description: col.description,
@@ -123,7 +123,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
       .execute();
 
     const itemsMap = new Map<number, any>();
-    rawItems.forEach((i) => itemsMap.set(i.slotIndex, i));
+    rawItems.forEach((i: any) => itemsMap.set(i.slotIndex, i));
 
     // Construir la matriz fija de 20 slots (0 a 19)
     const slots = Array.from({ length: 20 }, (_, idx) => {
