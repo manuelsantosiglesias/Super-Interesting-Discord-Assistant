@@ -413,17 +413,30 @@ export const CollectionsDeck: React.FC = () => {
             style={{ 
               display: 'grid', 
               gridTemplateColumns: 'repeat(5, 94px)', 
+              gridTemplateRows: 'repeat(4, 94px)',
               gap: '12px',
               justifyContent: 'center' 
             }}
           >
-            {(isEditMode 
-              ? collection?.slots 
-              : collection?.slots?.filter((s: SlotData) => Boolean(s.soundId))
-            )?.map((slot: SlotData) => {
+            {collection?.slots?.map((slot: SlotData) => {
               const hasSound = Boolean(slot.soundId);
               const isPlayingThis = playingSlotIndex === slot.slotIndex;
               const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
+
+              // En Modo Reproducción, los casilleros vacíos se muestran como huella discreta sin botón
+              if (!isEditMode && !hasSound) {
+                return (
+                  <div
+                    key={slot.slotIndex}
+                    style={{ width: '94px', height: '94px' }}
+                    className="rounded-2xl border border-dashed border-[#1a2336] bg-[#05070a]/30 flex flex-col justify-between p-2 opacity-20 pointer-events-none select-none"
+                  >
+                    <span className="text-[9px] font-mono font-bold text-slate-600">
+                      #{slot.slotIndex + 1}
+                    </span>
+                  </div>
+                );
+              }
 
             return (
               <div

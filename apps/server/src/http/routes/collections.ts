@@ -13,7 +13,7 @@ const UpdateSlotSchema = z.object({
   soundId: z.string().optional().nullable(),
   customLabel: z.string().max(120).optional().nullable(),
   customImageUrl: z.string().optional().nullable(),
-  colorTheme: z.enum(['emerald', 'cyan', 'pink', 'gold', 'red', 'violet']).default('emerald')
+  colorTheme: z.enum(['emerald', 'cyan', 'pink', 'gold', 'red', 'violet', 'blue', 'orange']).default('emerald')
 });
 
 export default async function collectionRoutes(fastify: FastifyInstance, options: { container: AppContainer }) {
