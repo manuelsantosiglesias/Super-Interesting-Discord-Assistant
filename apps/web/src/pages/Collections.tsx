@@ -137,6 +137,98 @@ export const Collections: React.FC = () => {
     }
   };
 
+  const systemCollections = collections ? collections.filter((c: any) => c.isSystem) : [];
+  const userCollections = collections ? collections.filter((c: any) => !c.isSystem) : [];
+
+  const renderCard = (col: any) => {
+    const themeKey = col.colorTheme && themeConfig[col.colorTheme] ? col.colorTheme : 'cyan';
+    const theme = themeConfig[themeKey];
+    const hex = theme.hex;
+
+    return (
+      <div 
+        key={col.id}
+        onClick={() => navigate(`/collections/${col.id}`)}
+        className="w-full h-[256px] max-w-[256px] bg-darkcard/30 backdrop-blur-md border rounded-3xl p-5 shadow-xl hover:shadow-2xl flex flex-col justify-between group transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden cursor-pointer neon-card-breathe"
+        style={{
+          '--card-glow-dim': `${hex}25`,
+          '--card-glow-bright': `${hex}70`,
+          '--card-border-dim': `${hex}45`,
+          '--card-border-bright': `${hex}bb`
+        } as React.CSSProperties}
+      >
+        {/* Header de la Tarjeta con Botones de Acción */}
+        <div className="flex justify-end items-center" onClick={(e) => e.stopPropagation()}>
+          {col.isSystem ? (
+            <span 
+              className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md border"
+              style={{ backgroundColor: `${hex}18`, borderColor: `${hex}50`, color: hex }}
+            >
+              Predeterminada
+            </span>
+          ) : (
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenEditModal(col);
+                }}
+                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                title="Editar colección"
+              >
+                <Edit size={15} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(col.id, col.name);
+                }}
+                className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+                title="Eliminar colección"
+              >
+                <Trash2 size={15} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Centro: Icono Grande Destacado y Textos */}
+        <div className="flex-1 flex flex-col items-center justify-center -mt-2 text-center">
+          <div 
+            className="w-16 h-16 rounded-2xl flex items-center justify-center p-3 mb-2 transition-transform group-hover:scale-110 duration-300 border"
+            style={{
+              backgroundColor: `${hex}18`,
+              borderColor: `${hex}60`,
+              boxShadow: `0 0 16px ${hex}40`
+            }}
+          >
+            <img src={col.icon || '/iconos/sparkles.svg'} alt={col.name} className="w-9 h-9 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
+          </div>
+
+          <h3 className="text-base font-bold text-white group-hover:scale-105 transition-transform line-clamp-1">
+            {col.name}
+          </h3>
+          <p className="text-xs text-slate-400 mt-1 line-clamp-2 px-2 leading-relaxed">
+            {col.description || 'Sin descripción adicional.'}
+          </p>
+        </div>
+
+        {/* Footer: Slots e Indicador Entrar */}
+        <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+            <Sliders size={13} style={{ color: hex }} />
+            <span>{col.configuredSlotsCount} / {col.totalSlots}</span>
+          </div>
+          <span className="text-xs font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1" style={{ color: hex }}>
+            Entrar &rarr;
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <style>{`
@@ -183,95 +275,38 @@ export const Collections: React.FC = () => {
           Cargando colecciones...
         </div>
       ) : collections && collections.length > 0 ? (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,256px))] gap-6 justify-start">
-          {collections.map((col: any) => {
-            const themeKey = col.colorTheme && themeConfig[col.colorTheme] ? col.colorTheme : 'cyan';
-            const theme = themeConfig[themeKey];
-            const hex = theme.hex;
-
-            return (
-              <div 
-                key={col.id}
-                onClick={() => navigate(`/collections/${col.id}`)}
-                className="w-full h-[256px] max-w-[256px] bg-darkcard/30 backdrop-blur-md border rounded-3xl p-5 shadow-xl hover:shadow-2xl flex flex-col justify-between group transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden cursor-pointer neon-card-breathe"
-                style={{
-                  '--card-glow-dim': `${hex}25`,
-                  '--card-glow-bright': `${hex}70`,
-                  '--card-border-dim': `${hex}45`,
-                  '--card-border-bright': `${hex}bb`
-                } as React.CSSProperties}
-              >
-                {/* Header de la Tarjeta con Botones de Acción */}
-                <div className="flex justify-end items-center" onClick={(e) => e.stopPropagation()}>
-                  {col.isSystem ? (
-                    <span 
-                      className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md border"
-                      style={{ backgroundColor: `${hex}18`, borderColor: `${hex}50`, color: hex }}
-                    >
-                      Sistema
-                    </span>
-                  ) : (
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenEditModal(col);
-                        }}
-                        className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
-                        title="Editar colección"
-                      >
-                        <Edit size={15} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(col.id, col.name);
-                        }}
-                        className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
-                        title="Eliminar colección"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Centro: Icono Grande Destacado y Textos */}
-                <div className="flex-1 flex flex-col items-center justify-center -mt-2 text-center">
-                  <div 
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center p-3 mb-2 transition-transform group-hover:scale-110 duration-300 border"
-                    style={{
-                      backgroundColor: `${hex}18`,
-                      borderColor: `${hex}60`,
-                      boxShadow: `0 0 16px ${hex}40`
-                    }}
-                  >
-                    <img src={col.icon || '/iconos/sparkles.svg'} alt={col.name} className="w-9 h-9 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
-                  </div>
-
-                  <h3 className="text-base font-bold text-white group-hover:scale-105 transition-transform line-clamp-1">
-                    {col.name}
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1 line-clamp-2 px-2 leading-relaxed">
-                    {col.description || 'Sin descripción adicional.'}
-                  </p>
-                </div>
-
-                {/* Footer: Slots e Indicador Entrar */}
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-                    <Sliders size={13} style={{ color: hex }} />
-                    <span>{col.configuredSlotsCount} / {col.totalSlots}</span>
-                  </div>
-                  <span className="text-xs font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1" style={{ color: hex }}>
-                    Entrar &rarr;
-                  </span>
-                </div>
+        <div className="space-y-8">
+          {/* Fila 1: Colecciones Predeterminadas del Sistema */}
+          {systemCollections.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                Colecciones Predeterminadas del Sistema
+              </h3>
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,256px))] gap-6 justify-start">
+                {systemCollections.map(renderCard)}
               </div>
-            );
-          })}
+            </div>
+          )}
+
+          {/* Fila 2+: Colecciones Creadas por los Usuarios */}
+          <div className="space-y-3 pt-6 border-t border-white/10">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Mis Colecciones Personalizadas
+            </h3>
+            {userCollections.length > 0 ? (
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,256px))] gap-6 justify-start">
+                {userCollections.map(renderCard)}
+              </div>
+            ) : (
+              <div className="bg-darkcard/30 border border-white/5 p-8 rounded-2xl text-center">
+                <p className="text-slate-400 text-xs">
+                  Aún no has creado colecciones personalizadas. ¡Crea una nueva con el botón de arriba!
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       ) : (
         <div className="bg-darkcard border border-darkborder p-12 rounded-2xl text-center space-y-4">
