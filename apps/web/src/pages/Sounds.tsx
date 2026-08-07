@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { apiRequest, BASE_URL } from '../api/client.js';
+import { apiRequest } from '../api/client.js';
 import { 
   Search, 
   Play, 
@@ -123,7 +123,7 @@ export const Sounds: React.FC = () => {
 
     try {
       setPlayingId(soundId);
-      const audioUrl = `${BASE_URL}/api/sounds/${soundId}/audio`;
+      const audioUrl = `/api/sounds/${soundId}/audio`;
       const response = await fetch(audioUrl, { credentials: 'include' });
       if (!response.ok) {
         throw new Error(`Respuesta HTTP ${response.status}`);
