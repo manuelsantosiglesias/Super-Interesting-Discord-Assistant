@@ -16,7 +16,8 @@ import {
   Plus,
   Download,
   Loader2,
-  Zap
+  Zap,
+  Star
 } from 'lucide-react';
 
 export const Sounds: React.FC = () => {
@@ -100,6 +101,18 @@ export const Sounds: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['sounds'] });
     }
   });
+
+  // Mutación: Alternar favorito (marcar/desmarcar estrella)
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: (soundId: string) => apiRequest(`/api/sounds/${soundId}/favorite`, { method: 'POST' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sounds'] });
+    }
+  });
+
+  const handleToggleFavorite = (soundId: string) => {
+    toggleFavoriteMutation.mutate(soundId);
+  };
 
   // Detener audio al desmontar
   useEffect(() => {
@@ -312,6 +325,7 @@ export const Sounds: React.FC = () => {
                     Duración <ArrowUpDown size={14} />
                   </button>
                 </th>
+                <th className="p-4">Reproducciones</th>
                 <th className="p-4">
                   <button onClick={() => handleSort('createdAt')} className="flex items-center gap-1 hover:text-white transition-colors">
                     Fecha Añadido <ArrowUpDown size={14} />
@@ -325,16 +339,43 @@ export const Sounds: React.FC = () => {
             <tbody className="divide-y divide-darkborder">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-500 text-sm">
+                  <td colSpan={8} className="p-8 text-center text-slate-500 text-sm">
                     Cargando sonidos...
                   </td>
                 </tr>
               ) : soundsRes?.items && soundsRes.items.length > 0 ? (
                 soundsRes.items.map((sound: any) => (
                   <tr key={sound.id} className="hover:bg-darkbg/10 text-sm text-slate-200">
-                    <td className="p-4 font-semibold text-white">{sound.displayName}</td>
+                    <td className="p-4 font-semibold text-white">
+                      <div className="flex items-center gap-2.5">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleFavorite(sound.id);
+                          }}
+                          className="transition-transform active:scale-125 focus:outline-none"
+                          title={sound.isFavorite ? 'Quitar de favoritos' : 'Marcar como favorito'}
+                        >
+                          <Star
+                            size={17}
+                            className={
+                              sound.isFavorite
+                                ? 'text-amber-400 fill-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]'
+                                : 'text-slate-500 hover:text-amber-300 transition-colors'
+                            }
+                          />
+                        </button>
+                        <span>{sound.displayName}</span>
+                      </div>
+                    </td>
                     <td className="p-4 font-mono text-xs text-slate-400">{sound.commandName}</td>
                     <td className="p-4 text-slate-400">{(sound.durationMs / 1000).toFixed(2)}s</td>
+                    <td className="p-4">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-950/70 border border-cyan-500/30 text-cyan-400 font-mono text-xs font-bold">
+                        ▶ {sound.playCount || 0}
+                      </span>
+                    </td>
                     <td className="p-4 text-slate-400 text-xs font-mono">
                       {sound.createdAt ? new Date(sound.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
                     </td>

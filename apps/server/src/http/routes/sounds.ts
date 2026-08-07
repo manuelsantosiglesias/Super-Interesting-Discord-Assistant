@@ -34,10 +34,38 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
 
   fastify.addHook('preHandler', fastify.authenticate);
 
-  // 1. Listar sonidos
+  // 1. Listar sonidos (con conteo de reproducciones y estado favorito)
   fastify.get('/api/sounds', async (request, reply) => {
     const query = SoundListQuerySchema.parse(request.query);
     const result = await container.listSounds.execute(query);
+
+    const soundIds = result.items.map((s) => s.id.toString());
+    const playCountMap = new Map<string, number>();
+    const favoriteSet = new Set<string>();
+
+    if (soundIds.length > 0) {
+      const counts = await container.db
+        .selectFrom('playback_events')
+        .select(['sound_id', (container.db.fn as any).count('id').as('play_count')])
+        .where('sound_id', 'in', soundIds)
+        .groupBy('sound_id')
+        .execute();
+
+      counts.forEach((c: any) => {
+        if (c.sound_id) playCountMap.set(c.sound_id, Number(c.play_count));
+      });
+
+      if (request.user) {
+        const favs = await container.db
+          .selectFrom('user_favorites')
+          .select('sound_id')
+          .where('user_id', '=', request.user.id.toString())
+          .where('sound_id', 'in', soundIds)
+          .execute();
+
+        favs.forEach((f: any) => favoriteSet.add(f.sound_id));
+      }
+    }
 
     return {
       items: result.items.map((s) => ({
@@ -54,10 +82,44 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
         isActive: s.isActive,
         uploadedBy: s.uploadedBy,
         createdAt: s.createdAt,
-        updatedAt: s.updatedAt
+        updatedAt: s.updatedAt,
+        playCount: playCountMap.get(s.id.toString()) || 0,
+        isFavorite: favoriteSet.has(s.id.toString())
       })),
       pagination: result.pagination
     };
+  });
+
+  // Alternar favorito para el usuario autenticado
+  fastify.post('/api/sounds/:id/favorite', async (request, reply) => {
+    const params = z.object({ id: z.string() }).parse(request.params);
+    const userId = request.user!.id.toString();
+
+    const existing = await container.db
+      .selectFrom('user_favorites')
+      .select('sound_id')
+      .where('user_id', '=', userId)
+      .where('sound_id', '=', params.id)
+      .executeTakeFirst();
+
+    if (existing) {
+      await container.db
+        .deleteFrom('user_favorites')
+        .where('user_id', '=', userId)
+        .where('sound_id', '=', params.id)
+        .execute();
+      return { isFavorite: false };
+    } else {
+      await container.db
+        .insertInto('user_favorites')
+        .values({
+          user_id: userId,
+          sound_id: params.id,
+          created_at: new Date()
+        })
+        .execute();
+      return { isFavorite: true };
+    }
   });
 
   // 2. Subir sonido (Multipart)
