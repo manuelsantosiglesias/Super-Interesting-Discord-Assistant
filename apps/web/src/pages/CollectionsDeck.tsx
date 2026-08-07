@@ -264,7 +264,9 @@ export const CollectionsDeck: React.FC = () => {
   };
 
   const handleSlotClick = async (slot: SlotData) => {
-    if (isEditMode) {
+    if (collection?.isSystem) {
+      if (!slot.soundId || !slot.soundIsActive) return;
+    } else if (isEditMode) {
       handleOpenSlotModal(slot);
       return;
     }
@@ -360,32 +362,38 @@ export const CollectionsDeck: React.FC = () => {
             </span>
           </div>
 
-          {/* Mode Switch Buttons Pill (Con más espacio vertical y horizontal) */}
-          <div className="bg-[#05070a] border border-[#1b2333] p-1.5 rounded-2xl flex gap-2 shadow-inner">
-            <button
-              onClick={() => setIsEditMode(false)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                !isEditMode 
-                  ? 'bg-cyan-950 border border-cyan-500/80 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.4)]' 
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Zap size={14} className={!isEditMode ? 'text-cyan-400' : ''} />
-              Reproducción
-            </button>
-
-            <button
-              onClick={() => setIsEditMode(true)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                isEditMode 
-                  ? 'bg-primary border border-primary text-white shadow-md shadow-primary/30' 
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <SlidersHorizontal size={14} />
-              Configuración
-            </button>
-          </div>
+          {/* Mode Switch Buttons Pill (Deshabilitado en colecciones del sistema) */}
+          {collection?.isSystem ? (
+            <div className="bg-[#05070a] border border-[#1b2333] px-3.5 py-2 rounded-2xl flex items-center gap-2 shadow-inner text-xs font-semibold text-slate-400">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span>Colección Predeterminada del Sistema (Solo Lectura)</span>
+            </div>
+          ) : (
+            <div className="bg-[#05070a] border border-[#1b2333] p-1.5 rounded-2xl flex gap-2 shadow-inner">
+              <button
+                onClick={() => setIsEditMode(false)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  !isEditMode 
+                    ? 'bg-cyan-950 border border-cyan-500/80 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.4)]' 
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Zap size={14} />
+                <span>Reproducción</span>
+              </button>
+              <button
+                onClick={() => setIsEditMode(true)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  isEditMode 
+                    ? 'bg-amber-950 border border-amber-500/80 text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.4)]' 
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Edit size={14} />
+                <span>Configuración</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Matrix Grid: 5 Columnas x 4 Filas de Teclas Ampliadas (94px x 94px) */}

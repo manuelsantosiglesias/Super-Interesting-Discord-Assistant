@@ -234,17 +234,19 @@ export const Collections: React.FC = () => {
       <style>{`
         @keyframes neonBreatheSlowCard {
           0%, 100% {
-            box-shadow: 0 0 12px var(--card-glow-dim), inset 0 0 8px var(--card-glow-dim);
+            box-shadow: 0 0 10px var(--card-glow-dim), inset 0 0 6px var(--card-glow-dim);
             border-color: var(--card-border-dim);
+            opacity: 0.9;
           }
           50% {
-            box-shadow: 0 0 22px var(--card-glow-bright), 0 0 35px var(--card-glow-bright), inset 0 0 15px var(--card-glow-bright);
+            box-shadow: 0 0 16px var(--card-glow-bright), inset 0 0 10px var(--card-glow-bright);
             border-color: var(--card-border-bright);
+            opacity: 1;
           }
         }
 
         .neon-card-breathe {
-          animation: neonBreatheSlowCard 20s ease-in-out infinite;
+          animation: neonBreatheSlowCard 20s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
       `}</style>
 
