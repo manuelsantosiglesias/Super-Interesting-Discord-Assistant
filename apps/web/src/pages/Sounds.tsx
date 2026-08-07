@@ -71,10 +71,9 @@ export const Sounds: React.FC = () => {
       }),
     onSuccess: () => {
       setShowDiscordModal(false);
-      alert('Sonido encolado en Discord correctamente.');
     },
     onError: (err: any) => {
-      alert(`Error al reproducir en Discord: ${err.message}`);
+      console.error('Error al reproducir en Discord:', err);
     }
   });
 
@@ -83,10 +82,9 @@ export const Sounds: React.FC = () => {
     mutationFn: (id: string) => apiRequest(`/api/sounds/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sounds'] });
-      alert('Sonido eliminado (lógicamente) de forma segura.');
     },
     onError: (err: any) => {
-      alert(`Error al eliminar: ${err.message}`);
+      console.error('Error al eliminar:', err);
     }
   });
 
@@ -181,7 +179,7 @@ export const Sounds: React.FC = () => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err: any) {
-      alert(`Error al descargar el sonido: ${err.message}`);
+      console.error('Error al descargar el sonido:', err);
     } finally {
       setDownloadingId(null);
     }
@@ -190,7 +188,14 @@ export const Sounds: React.FC = () => {
   const handleQuickPlay = async (soundId: string) => {
     try {
       setQuickPlayingId(soundId);
-      await apiRequest(`/api/sounds/${soundId}/quick-play`, { method: 'POST' });
+      const savedGuild = localStorage.getItem('lastSelectedGuildId');
+      const savedChannel = localStorage.getItem('lastSelectedChannelId');
+      const body = savedGuild && savedChannel ? { guildId: savedGuild, voiceChannelId: savedChannel } : undefined;
+
+      await apiRequest(`/api/sounds/${soundId}/quick-play`, {
+        method: 'POST',
+        body: body ? JSON.stringify(body) : undefined
+      });
     } catch (err: any) {
       console.error('Error al reproducir rápido:', err);
     } finally {

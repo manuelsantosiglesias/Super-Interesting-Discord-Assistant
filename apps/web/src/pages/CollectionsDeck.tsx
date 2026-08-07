@@ -283,7 +283,14 @@ export const CollectionsDeck: React.FC = () => {
       setActiveSoundName(displayName);
       setActiveColorTheme(slot.colorTheme || 'cyan');
 
-      await apiRequest(`/api/sounds/${slot.soundId}/quick-play`, { method: 'POST' });
+      const savedGuild = localStorage.getItem('lastSelectedGuildId');
+      const savedChannel = localStorage.getItem('lastSelectedChannelId');
+      const body = savedGuild && savedChannel ? { guildId: savedGuild, voiceChannelId: savedChannel } : undefined;
+
+      await apiRequest(`/api/sounds/${slot.soundId}/quick-play`, {
+        method: 'POST',
+        body: body ? JSON.stringify(body) : undefined
+      });
     } catch (err: any) {
       console.error('Error al reproducir desde mesa:', err);
     } finally {
