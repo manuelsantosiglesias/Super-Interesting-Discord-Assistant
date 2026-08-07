@@ -400,7 +400,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
     return { success: true };
   });
 
-  // 9. Reproducción rápida automática (prioriza canal guardado, activo o con miembros)
+  // 9. Reproducción rápida automática (prioriza canal con usuarios humanos, luego canal activo o fallback)
   fastify.post('/api/sounds/:id/quick-play', async (request, reply) => {
     const params = z.object({ id: z.string() }).parse(request.params);
     const body = z.object({
@@ -415,10 +415,33 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       return;
     }
 
-    let bestGuildId = body?.guildId || '';
-    let bestChannelId = body?.voiceChannelId || '';
+    let bestGuildId = '';
+    let bestChannelId = '';
+    let maxHumanMembers = 0;
 
-    // 1. Si no se especificaron canal/servidor explícitos, buscar canal donde el bot esté actualmente conectado
+    // 1. Prioridad absoluta: Buscar el canal de voz con MÁS usuarios humanos (ignorando bots)
+    for (const [, guild] of client.guilds.cache) {
+      for (const [, channel] of guild.channels.cache) {
+        if (channel.isVoiceBased()) {
+          const humanCount = channel.members.filter((m: any) => !m.user.bot).size;
+          if (humanCount > maxHumanMembers) {
+            maxHumanMembers = humanCount;
+            bestGuildId = guild.id;
+            bestChannelId = channel.id;
+          }
+        }
+      }
+    }
+
+    // 2. Si no hay ningún canal con usuarios humanos activos (maxHumanMembers === 0), usar el canal solicitado en el body/localStorage
+    if (!bestGuildId || !bestChannelId) {
+      if (body?.guildId && body?.voiceChannelId) {
+        bestGuildId = body.guildId;
+        bestChannelId = body.voiceChannelId;
+      }
+    }
+
+    // 3. Si aún no hay canal, buscar el canal donde el bot esté actualmente conectado
     if (!bestGuildId || !bestChannelId) {
       const activeQueues = container.queueManager?.getQueues ? container.queueManager.getQueues() : null;
       if (activeQueues) {
@@ -433,27 +456,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       }
     }
 
-    // 2. Buscar el canal de voz con más miembros en cualquiera de los servidores del bot
-    if (!bestGuildId || !bestChannelId) {
-      let maxMembers = -1;
-      for (const [, guild] of client.guilds.cache) {
-        for (const [, channel] of guild.channels.cache) {
-          if (channel.isVoiceBased()) {
-            const humanCount = channel.members.filter((m: any) => !m.user.bot).size;
-            const totalCount = channel.members.size;
-            const score = humanCount * 10 + totalCount;
-
-            if (score > maxMembers) {
-              maxMembers = score;
-              bestGuildId = guild.id;
-              bestChannelId = channel.id;
-            }
-          }
-        }
-      }
-    }
-
-    // 3. Fallback: primer canal de voz disponible en cualquier servidor del bot
+    // 4. Fallback final: primer canal de voz disponible en cualquier servidor del bot
     if (!bestGuildId || !bestChannelId) {
       for (const [, guild] of client.guilds.cache) {
         for (const [, channel] of guild.channels.cache) {
@@ -489,14 +492,15 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       action: 'SOUND_QUICK_PLAYED',
       entityType: 'Sound',
       entityId: params.id,
-      metadataJson: { guildId: bestGuildId, voiceChannelId: bestChannelId },
+      metadataJson: { guildId: bestGuildId, voiceChannelId: bestChannelId, humanMembers: maxHumanMembers },
       ipAddress: request.ip
     });
 
     return {
       success: true,
       guildId: bestGuildId,
-      voiceChannelId: bestChannelId
+      voiceChannelId: bestChannelId,
+      humanMembers: maxHumanMembers
     };
   });
 }
