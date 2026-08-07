@@ -152,7 +152,7 @@ export const Collections: React.FC = () => {
         }
 
         .neon-card-breathe {
-          animation: neonBreatheSlowCard 3.5s ease-in-out infinite;
+          animation: neonBreatheSlowCard 20s ease-in-out infinite;
         }
       `}</style>
 

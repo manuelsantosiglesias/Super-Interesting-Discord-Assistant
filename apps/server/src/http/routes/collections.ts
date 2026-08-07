@@ -18,6 +18,19 @@ const UpdateSlotSchema = z.object({
   colorTheme: z.enum(['emerald', 'cyan', 'pink', 'gold', 'red', 'violet', 'blue', 'orange']).default('emerald')
 });
 
+const COLOR_THEMES = ['emerald', 'cyan', 'pink', 'gold', 'red', 'violet', 'blue', 'orange'];
+
+const getRandomTheme = (idSeed?: string) => {
+  if (idSeed) {
+    let hash = 0;
+    for (let i = 0; i < idSeed.length; i++) {
+      hash = idSeed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return COLOR_THEMES[Math.abs(hash) % COLOR_THEMES.length];
+  }
+  return COLOR_THEMES[Math.floor(Math.random() * COLOR_THEMES.length)];
+};
+
 export default async function collectionRoutes(fastify: FastifyInstance, options: { container: AppContainer }) {
   const { container } = options;
 
@@ -45,8 +58,19 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
       .where('is_active', '=', 1)
       .execute();
 
+    // C. Contar ultimos sonidos añadidos (máximo 20)
+    const recentSounds = await container.db
+      .selectFrom('sounds')
+      .select(['id'])
+      .where('deleted_at', 'is', null)
+      .where('is_active', '=', 1)
+      .orderBy('created_at', 'desc')
+      .limit(20)
+      .execute();
+
     const favCount = Math.min(favs.length, 20);
     const top20Count = Math.min(allSounds.length, 20);
+    const recentCount = recentSounds.length;
 
     const systemCollections = [
       {
@@ -54,7 +78,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
         name: 'Mis Favoritos',
         description: 'Tus sonidos favoritos más escuchados (hasta 20).',
         icon: '/iconos/star.svg',
-        colorTheme: 'gold',
+        colorTheme: getRandomTheme('sys-fav-' + userId),
         isSystem: true,
         createdBy: 'SYSTEM',
         configuredSlotsCount: favCount,
@@ -67,10 +91,23 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
         name: 'Top 20 Más Reproducidos',
         description: 'Los 20 sonidos más escuchados de la plataforma.',
         icon: '/iconos/fire.svg',
-        colorTheme: 'pink',
+        colorTheme: getRandomTheme('sys-top-' + allSounds.length),
         isSystem: true,
         createdBy: 'SYSTEM',
         configuredSlotsCount: top20Count,
+        totalSlots: 20,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'system-recent',
+        name: 'Últimos Añadidos',
+        description: 'Los 20 sonidos más recientemente añadidos.',
+        icon: '/iconos/sparkles.svg',
+        colorTheme: getRandomTheme('sys-rec-' + recentCount),
+        isSystem: true,
+        createdBy: 'SYSTEM',
+        configuredSlotsCount: recentCount,
         totalSlots: 20,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -270,10 +307,51 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
         name: 'Top 20 Más Reproducidos',
         description: 'Los 20 sonidos más escuchados de la plataforma.',
         icon: '/iconos/fire.svg',
-        colorTheme: 'pink',
+        colorTheme: getRandomTheme('sys-top-' + allSounds.length),
         isSystem: true,
         createdBy: 'SYSTEM',
         configuredSlotsCount: top20.length,
+        totalSlots: 20,
+        slots
+      };
+    }
+
+    // C. Colección del sistema: Últimos Añadidos
+    if (params.id === 'system-recent') {
+      const recentSounds = await container.db
+        .selectFrom('sounds')
+        .select(['id', 'display_name', 'command_name', 'duration_ms', 'is_active'])
+        .where('deleted_at', 'is', null)
+        .where('is_active', '=', 1)
+        .orderBy('created_at', 'desc')
+        .limit(20)
+        .execute();
+
+      const slots = Array.from({ length: 20 }, (_, idx) => {
+        const s = recentSounds[idx];
+        return {
+          slotIndex: idx,
+          itemId: s ? `sys-rec-${s.id}` : null,
+          soundId: s ? s.id : null,
+          soundDisplayName: s ? s.display_name : null,
+          soundCommandName: s ? s.command_name : null,
+          soundDurationMs: s ? s.duration_ms : null,
+          soundIsActive: s ? Boolean(s.is_active) : true,
+          customLabel: null,
+          customImageUrl: null,
+          colorTheme: 'cyan'
+        };
+      });
+
+      return {
+        id: 'system-recent',
+        name: 'Últimos Añadidos',
+        description: 'Los 20 sonidos más recientemente añadidos.',
+        icon: '/iconos/sparkles.svg',
+        colorTheme: getRandomTheme('sys-rec-' + recentSounds.length),
+        isSystem: true,
+        createdBy: 'SYSTEM',
+        configuredSlotsCount: recentSounds.length,
         totalSlots: 20,
         slots
       };
