@@ -234,7 +234,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
           soundIsActive: s ? Boolean(s.soundIsActive) : true,
           customLabel: null,
           customImageUrl: null,
-          colorTheme: 'gold'
+          colorTheme: COLOR_THEMES[idx % COLOR_THEMES.length]
         };
       });
 
@@ -298,7 +298,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
           soundIsActive: s ? Boolean(s.is_active) : true,
           customLabel: null,
           customImageUrl: null,
-          colorTheme: 'pink'
+          colorTheme: COLOR_THEMES[idx % COLOR_THEMES.length]
         };
       });
 
@@ -339,7 +339,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
           soundIsActive: s ? Boolean(s.is_active) : true,
           customLabel: null,
           customImageUrl: null,
-          colorTheme: 'cyan'
+          colorTheme: COLOR_THEMES[idx % COLOR_THEMES.length]
         };
       });
 
