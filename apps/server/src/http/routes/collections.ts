@@ -220,7 +220,31 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     return { success: true };
   });
 
-  // 6. Eliminar colección completa (disponible para todos los usuarios)
+  // 6. Actualizar datos de colección (nombre, descripción, icono)
+  fastify.patch('/api/collections/:id', async (request, reply) => {
+    const params = z.object({ id: z.string() }).parse(request.params);
+    const body = z.object({
+      name: z.string().min(1).max(120).optional(),
+      description: z.string().max(500).optional().nullable(),
+      icon: z.string().optional().nullable()
+    }).parse(request.body);
+
+    const now = new Date();
+    const updatePayload: Record<string, any> = { updated_at: now };
+    if (body.name !== undefined) updatePayload.name = body.name;
+    if (body.description !== undefined) updatePayload.description = body.description;
+    if (body.icon !== undefined) updatePayload.icon = body.icon;
+
+    await container.db
+      .updateTable('sound_collections')
+      .set(updatePayload)
+      .where('id', '=', params.id)
+      .execute();
+
+    return { success: true };
+  });
+
+  // 7. Eliminar colección completa (disponible para todos los usuarios)
   fastify.delete('/api/collections/:id', async (request, reply) => {
     const params = z.object({ id: z.string() }).parse(request.params);
     await container.db

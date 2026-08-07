@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../api/client.js';
 import { 
   LayoutGrid, 
@@ -8,7 +8,7 @@ import {
   Trash2, 
   Sliders, 
   FolderPlus,
-  ArrowRight
+  Edit
 } from 'lucide-react';
 
 const AVAILABLE_ICONS = [
@@ -21,11 +21,21 @@ const AVAILABLE_ICONS = [
 ];
 
 export const Collections: React.FC = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // Estado para crear colección
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedIcon, setSelectedIcon] = useState('/iconos/sparkles.svg');
+
+  // Estado para editar colección
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingCol, setEditingCol] = useState<any>(null);
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editIcon, setEditIcon] = useState('/iconos/sparkles.svg');
 
   // 1. Cargar colecciones
   const { data: collections, isLoading } = useQuery({
@@ -50,6 +60,22 @@ export const Collections: React.FC = () => {
     }
   });
 
+  // Mutación: Editar colección
+  const updateMutation = useMutation({
+    mutationFn: ({ id, body }: { id: string; body: any }) => apiRequest(`/api/collections/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['collections'] });
+      setShowEditModal(false);
+      setEditingCol(null);
+    },
+    onError: (err: any) => {
+      alert(`Error al actualizar la colección: ${err.message}`);
+    }
+  });
+
   // Mutación: Eliminar colección
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiRequest(`/api/collections/${id}`, { method: 'DELETE' }),
@@ -65,6 +91,27 @@ export const Collections: React.FC = () => {
       name: name.trim(),
       description: description.trim() || null,
       icon: selectedIcon
+    });
+  };
+
+  const handleOpenEditModal = (col: any) => {
+    setEditingCol(col);
+    setEditName(col.name);
+    setEditDescription(col.description || '');
+    setEditIcon(col.icon || '/iconos/sparkles.svg');
+    setShowEditModal(true);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCol || !editName.trim()) return;
+    updateMutation.mutate({
+      id: editingCol.id,
+      body: {
+        name: editName.trim(),
+        description: editDescription.trim() || null,
+        icon: editIcon
+      }
     });
   };
 
@@ -97,53 +144,66 @@ export const Collections: React.FC = () => {
         </button>
       </div>
 
-      {/* Grid de Colecciones */}
+      {/* Grid de Colecciones estilo Clear Look & Cuadradas */}
       {isLoading ? (
         <div className="flex h-60 items-center justify-center text-slate-400">
           Cargando colecciones...
         </div>
       ) : collections && collections.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {collections.map((col: any) => (
             <div 
               key={col.id}
-              className="bg-darkcard border border-darkborder hover:border-primary/50 p-6 rounded-2xl shadow-xl flex flex-col justify-between group transition-all duration-200"
+              onClick={() => navigate(`/collections/${col.id}`)}
+              className="bg-darkcard/40 backdrop-blur-md border border-white/10 hover:border-primary/50 p-6 rounded-3xl shadow-xl hover:shadow-2xl hover:shadow-primary/10 flex flex-col justify-between group transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden cursor-pointer aspect-square"
             >
               <div>
-                <div className="flex justify-between items-start mb-3">
-                  <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-all flex items-center justify-center w-12 h-12">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="p-3 bg-primary/10 rounded-2xl group-hover:bg-primary/20 transition-all flex items-center justify-center w-12 h-12 border border-primary/20">
                     <img src={col.icon || '/iconos/sparkles.svg'} alt={col.name} className="w-6 h-6 object-contain" />
                   </div>
-                  <button
-                    onClick={() => handleDelete(col.id, col.name)}
-                    className="p-2 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-darkbg transition-all"
-                    title="Eliminar colección"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenEditModal(col);
+                      }}
+                      className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                      title="Editar colección"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(col.id, col.name);
+                      }}
+                      className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
+                      title="Eliminar colección"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
 
-                <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
                   {col.name}
                 </h3>
-                <p className="text-xs text-slate-400 mt-1 line-clamp-2 min-h-[32px]">
+                <p className="text-xs text-slate-400 mt-2 line-clamp-3 leading-relaxed">
                   {col.description || 'Sin descripción adicional.'}
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-darkborder/60 flex items-center justify-between">
+              <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-                  <Sliders size={14} className="text-slate-500" />
+                  <Sliders size={14} className="text-primary" />
                   <span>{col.configuredSlotsCount} / {col.totalSlots} botones</span>
                 </div>
-
-                <Link
-                  to={`/collections/${col.id}`}
-                  className="flex items-center gap-1.5 px-3.5 py-2 bg-darkbg border border-darkborder hover:border-primary text-xs font-semibold text-white rounded-xl transition-all"
-                >
-                  <span>Abrir Mesa</span>
-                  <ArrowRight size={14} />
-                </Link>
+                <span className="text-xs font-bold text-primary group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                  Entrar &rarr;
+                </span>
               </div>
             </div>
           ))}
@@ -187,7 +247,7 @@ export const Collections: React.FC = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  placeholder="Ej: Mesa Principal Stream, Memes de Discord..."
+                  placeholder="Ej: Mesa Principal, Memes de Discord..."
                   className="w-full bg-darkbg border border-darkborder focus:border-primary rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none"
                 />
               </div>
@@ -242,6 +302,87 @@ export const Collections: React.FC = () => {
                   className="px-4 py-2 bg-primary hover:bg-primaryhover disabled:opacity-40 text-white rounded-xl text-xs font-semibold shadow-lg shadow-primary/10"
                 >
                   {createMutation.isPending ? 'Creando...' : 'Crear Colección'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Editar Colección */}
+      {showEditModal && editingCol && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-darkcard border border-darkborder rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Edit size={20} className="text-primary" />
+              Editar Colección
+            </h3>
+
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  Nombre de la Colección
+                </label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  required
+                  placeholder="Ej: Mesa Principal, Efectos de Sonido..."
+                  className="w-full bg-darkbg border border-darkborder focus:border-primary rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  Descripción (Opcional)
+                </label>
+                <textarea
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  rows={3}
+                  placeholder="Pequeña nota descriptiva..."
+                  className="w-full bg-darkbg border border-darkborder focus:border-primary rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  Icono Distintivo
+                </label>
+                <div className="grid grid-cols-6 gap-2 bg-darkbg border border-darkborder p-3 rounded-xl">
+                  {AVAILABLE_ICONS.map((ico) => (
+                    <button
+                      key={ico.id}
+                      type="button"
+                      onClick={() => setEditIcon(ico.id)}
+                      className={`p-2.5 rounded-lg flex items-center justify-center border transition-all ${
+                        editIcon === ico.id
+                          ? 'bg-primary/20 border-primary shadow-lg shadow-primary/20 scale-105'
+                          : 'border-transparent hover:bg-darkborder/50'
+                      }`}
+                      title={ico.label}
+                    >
+                      <img src={ico.id} alt={ico.label} className="w-6 h-6 object-contain" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-darkborder">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 bg-darkbg hover:bg-darkborder border border-darkborder rounded-xl text-slate-300 hover:text-white text-xs font-semibold"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={!editName.trim() || updateMutation.isPending}
+                  className="px-4 py-2 bg-primary hover:bg-primaryhover disabled:opacity-40 text-white rounded-xl text-xs font-semibold shadow-lg shadow-primary/10"
+                >
+                  {updateMutation.isPending ? 'Guardando...' : 'Guardar Cambios'}
                 </button>
               </div>
             </form>
