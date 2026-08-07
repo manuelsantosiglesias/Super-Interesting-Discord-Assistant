@@ -351,8 +351,8 @@ export const CollectionsDeck: React.FC = () => {
           />
         </div>
 
-        {/* Console Header Bar */}
-        <div className="w-full flex items-center justify-between gap-4 mb-7 px-1">
+        {/* Console Header Bar (Con más espaciado inferior) */}
+        <div className="w-full flex items-center justify-between gap-4 mb-10 px-1">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#06b6d4] animate-pulse"></span>
             <span className="text-xs font-mono font-extrabold text-slate-200 tracking-widest uppercase">
