@@ -557,7 +557,7 @@ export const Sounds: React.FC = () => {
                   <option value="">Selecciona un canal de voz...</option>
                   {channels?.voiceChannels?.map((ch: any) => (
                     <option key={ch.id} value={ch.id}>
-                      🔊 {ch.name} ({ch.userCount ?? 0} {ch.userCount === 1 ? 'usuario' : 'usuarios'})
+                      🔊 {ch.name} ({ch.userCount ?? 0})
                     </option>
                   ))}
                 </select>

@@ -37,8 +37,8 @@ export default async function authRoutes(fastify: FastifyInstance, options: { co
       reply.setCookie(sessionCookieName, session.id.toString(), {
         path: '/',
         httpOnly: true,
-        sameSite: 'strict',
-        secure: container.config.security.secure_cookies,
+        sameSite: 'lax',
+        secure: false,
         maxAge: container.config.security.session_duration_hours * 60 * 60
       });
 
