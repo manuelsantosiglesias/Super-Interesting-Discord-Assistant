@@ -5,6 +5,7 @@ import {
   AudioPlayerStatus, 
   VoiceConnectionStatus, 
   getVoiceConnection,
+  getVoiceConnections,
   AudioPlayer,
   VoiceConnection
 } from '@discordjs/voice';
@@ -95,12 +96,16 @@ export class GuildVoiceQueue {
           this.connection = null;
         }
 
-        const existingVoiceConn = getVoiceConnection(this.discordGuildId);
-        if (existingVoiceConn && existingVoiceConn.state.status !== VoiceConnectionStatus.Destroyed) {
-          try {
-            existingVoiceConn.destroy();
-          } catch (e) {}
-        }
+        // Desconectar cualquier otra conexión activa de voz en Discord (incluso en otros servidores)
+        try {
+          for (const [gId, conn] of getVoiceConnections()) {
+            if (gId !== this.discordGuildId || conn.joinConfig?.channelId !== targetChannelId) {
+              if (conn.state.status !== VoiceConnectionStatus.Destroyed) {
+                conn.destroy();
+              }
+            }
+          }
+        } catch (e) {}
 
         const guild = (global as any).discordClient?.guilds.cache.get(this.discordGuildId);
         const adapterCreator = guild?.voiceAdapterCreator;
@@ -155,26 +160,27 @@ export class GuildVoiceQueue {
         });
       }
 
-      // 4. Crear recurso y ajustar volumen
-      const resource = createAudioResource(audioPath, { inlineVolume: true });
-      
-      const guildVol = guildConfig?.defaultVolume ?? 1.0;
-      const soundVol = sound.volume ?? 1.0;
-      const finalVolume = Math.min(Math.max(guildVol * soundVol, 0.0), 2.0);
-      
+      // 4. Crear recurso de audio y reproducir
+      const resource = createAudioResource(audioPath, {
+        inlineVolume: true
+      });
+
       if (resource.volume) {
-        resource.volume.setVolume(finalVolume);
+        const volumeFactor = (guildConfig?.defaultVolume ?? 1.0) * (sound.volume ?? 1.0);
+        resource.volume.setVolume(Math.min(Math.max(volumeFactor, 0.0), 2.0));
       }
 
-      // 5. Iniciar la reproducción
-      request.startPlayback();
-      await this.playbackEventRepo.update(request);
+      this.currentRequest.startPlayback();
+      await this.playbackEventRepo.update(this.currentRequest);
 
       this.player.play(resource);
 
-    } catch (error: any) {
-      request.failPlayback('DISCORD_VOICE_CONNECTION_FAILED', error.message || 'Error desconocido al conectar o reproducir.');
-      await this.playbackEventRepo.update(request);
+    } catch (err: any) {
+      console.error(`[GuildVoiceQueue ${this.discordGuildId}] Error al procesar audio:`, err);
+      if (this.currentRequest) {
+        this.currentRequest.failPlayback('PLAYBACK_FAILED', err.message || 'Error desconocido de reproducción');
+        await this.playbackEventRepo.update(this.currentRequest);
+      }
       await this.playNext();
     }
   }
@@ -196,17 +202,15 @@ export class GuildVoiceQueue {
 
     if (this.connection) {
       try {
-        if (this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
-          this.connection.destroy();
-        }
-      } catch (err) {}
+        this.connection.destroy();
+      } catch (e) {}
       this.connection = null;
     }
 
     if (this.player) {
       try {
-        this.player.stop(true);
-      } catch (err) {}
+        this.player.stop();
+      } catch (e) {}
       this.player = null;
     }
 
@@ -252,6 +256,15 @@ export class PlaybackQueueManager {
   ) {}
 
   public getOrCreateQueue(discordGuildId: string): GuildVoiceQueue {
+    // Desconectar activamente al bot de cualquier otro servidor antes de operar en el servidor indicado
+    for (const [gId, existingQueue] of this.queues.entries()) {
+      if (gId !== discordGuildId) {
+        try {
+          existingQueue.disconnect();
+        } catch (e) {}
+      }
+    }
+
     let queue = this.queues.get(discordGuildId);
     if (!queue) {
       queue = new GuildVoiceQueue(
