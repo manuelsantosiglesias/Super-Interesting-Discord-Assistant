@@ -7,7 +7,8 @@ import { AppError } from '@super-assistant/shared-kernel';
 const CreateCollectionSchema = z.object({
   name: z.string().min(1).max(120),
   description: z.string().max(500).optional().nullable(),
-  icon: z.string().optional().nullable()
+  icon: z.string().optional().nullable(),
+  colorTheme: z.enum(['emerald', 'cyan', 'pink', 'gold', 'red', 'violet', 'blue', 'orange']).default('cyan')
 });
 
 const UpdateSlotSchema = z.object({
@@ -45,6 +46,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
       name: col.name,
       description: col.description,
       icon: col.icon || '/iconos/sparkles.svg',
+      colorTheme: col.color_theme || 'cyan',
       createdBy: col.created_by,
       configuredSlotsCount: countMap.get(col.id) || 0,
       totalSlots: 20,
@@ -66,6 +68,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
         name: body.name,
         description: body.description || null,
         icon: body.icon || '/iconos/sparkles.svg',
+        color_theme: body.colorTheme || 'cyan',
         created_by: request.user!.id.toString(),
         created_at: now,
         updated_at: now
@@ -226,7 +229,8 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     const body = z.object({
       name: z.string().min(1).max(120).optional(),
       description: z.string().max(500).optional().nullable(),
-      icon: z.string().optional().nullable()
+      icon: z.string().optional().nullable(),
+      colorTheme: z.enum(['emerald', 'cyan', 'pink', 'gold', 'red', 'violet', 'blue', 'orange']).optional()
     }).parse(request.body);
 
     const now = new Date();
@@ -234,6 +238,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     if (body.name !== undefined) updatePayload.name = body.name;
     if (body.description !== undefined) updatePayload.description = body.description;
     if (body.icon !== undefined) updatePayload.icon = body.icon;
+    if (body.colorTheme !== undefined) updatePayload.color_theme = body.colorTheme;
 
     await container.db
       .updateTable('sound_collections')
