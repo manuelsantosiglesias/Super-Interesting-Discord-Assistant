@@ -23,15 +23,66 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
 
   fastify.addHook('preHandler', fastify.authenticate);
 
-  // 1. Listar todas las colecciones (disponible para todos los usuarios)
+  // 1. Listar todas las colecciones (incluyendo las colecciones virtuales del sistema por defecto)
   fastify.get('/api/collections', async (request, reply) => {
+    const userId = request.user!.id.toString();
+
+    // A. Contar favoritos del usuario (máximo 20)
+    const favs = await container.db
+      .selectFrom('user_favorites as f')
+      .innerJoin('sounds as s', 's.id', 'f.sound_id')
+      .select(['s.id', 's.display_name'])
+      .where('f.user_id', '=', userId)
+      .where('s.deleted_at', 'is', null)
+      .where('s.is_active', '=', 1)
+      .execute();
+
+    // B. Contar top 20 mas reproducidos de la plataforma
+    const allSounds = await container.db
+      .selectFrom('sounds')
+      .select(['id', 'display_name'])
+      .where('deleted_at', 'is', null)
+      .where('is_active', '=', 1)
+      .execute();
+
+    const favCount = Math.min(favs.length, 20);
+    const top20Count = Math.min(allSounds.length, 20);
+
+    const systemCollections = [
+      {
+        id: 'system-favorites',
+        name: 'Mis Favoritos',
+        description: 'Tus sonidos favoritos más escuchados (hasta 20).',
+        icon: '/iconos/star.svg',
+        colorTheme: 'gold',
+        isSystem: true,
+        createdBy: 'SYSTEM',
+        configuredSlotsCount: favCount,
+        totalSlots: 20,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'system-top20',
+        name: 'Top 20 Más Reproducidos',
+        description: 'Los 20 sonidos más escuchados de la plataforma.',
+        icon: '/iconos/fire.svg',
+        colorTheme: 'pink',
+        isSystem: true,
+        createdBy: 'SYSTEM',
+        configuredSlotsCount: top20Count,
+        totalSlots: 20,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ];
+
     const collections = await container.db
       .selectFrom('sound_collections')
       .selectAll()
       .orderBy('created_at', 'desc')
       .execute();
 
-    // Contar slots configurados por colección
     const counts = await container.db
       .selectFrom('sound_collection_items')
       .select(['collection_id', (container.db.fn as any).count('id').as('configured_count')])
@@ -41,18 +92,21 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     const countMap = new Map<string, number>();
     counts.forEach((c: any) => countMap.set(c.collection_id, Number(c.configured_count)));
 
-    return collections.map((col: any) => ({
+    const userCollections = collections.map((col: any) => ({
       id: col.id,
       name: col.name,
       description: col.description,
       icon: col.icon || '/iconos/sparkles.svg',
       colorTheme: col.color_theme || 'cyan',
+      isSystem: false,
       createdBy: col.created_by,
       configuredSlotsCount: countMap.get(col.id) || 0,
       totalSlots: 20,
       createdAt: col.created_at,
       updatedAt: col.updated_at
     }));
+
+    return [...systemCollections, ...userCollections];
   });
 
   // 2. Crear nueva colección (disponible para todos los usuarios)
@@ -87,6 +141,144 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
   // 3. Obtener detalle de colección + 20 slots de la mesa (disponible para todos los usuarios)
   fastify.get('/api/collections/:id', async (request, reply) => {
     const params = z.object({ id: z.string() }).parse(request.params);
+    const userId = request.user!.id.toString();
+
+    // A. Colección del sistema: Mis Favoritos
+    if (params.id === 'system-favorites') {
+      const favs = await container.db
+        .selectFrom('user_favorites as f')
+        .innerJoin('sounds as s', 's.id', 'f.sound_id')
+        .select([
+          's.id as soundId',
+          's.display_name as soundDisplayName',
+          's.command_name as soundCommandName',
+          's.duration_ms as soundDurationMs',
+          's.is_active as soundIsActive'
+        ])
+        .where('f.user_id', '=', userId)
+        .where('s.deleted_at', 'is', null)
+        .where('s.is_active', '=', 1)
+        .execute();
+
+      const favSoundIds = favs.map((f: any) => f.soundId);
+      const playCountMap = new Map<string, number>();
+
+      if (favSoundIds.length > 0) {
+        const counts = await container.db
+          .selectFrom('playback_events')
+          .select(['sound_id', (container.db.fn as any).count('id').as('play_count')])
+          .where('sound_id', 'in', favSoundIds)
+          .groupBy('sound_id')
+          .execute();
+
+        counts.forEach((c: any) => {
+          if (c.sound_id) playCountMap.set(c.sound_id, Number(c.play_count));
+        });
+      }
+
+      favs.sort((a: any, b: any) => {
+        const countA = playCountMap.get(a.soundId) || 0;
+        const countB = playCountMap.get(b.soundId) || 0;
+        if (countA !== countB) return countB - countA;
+        return a.soundDisplayName.localeCompare(b.soundDisplayName);
+      });
+
+      const topFavs = favs.slice(0, 20);
+
+      const slots = Array.from({ length: 20 }, (_, idx) => {
+        const s = topFavs[idx];
+        return {
+          slotIndex: idx,
+          itemId: s ? `sys-fav-${s.soundId}` : null,
+          soundId: s ? s.soundId : null,
+          soundDisplayName: s ? s.soundDisplayName : null,
+          soundCommandName: s ? s.soundCommandName : null,
+          soundDurationMs: s ? s.soundDurationMs : null,
+          soundIsActive: s ? Boolean(s.soundIsActive) : true,
+          customLabel: null,
+          customImageUrl: null,
+          colorTheme: 'gold'
+        };
+      });
+
+      return {
+        id: 'system-favorites',
+        name: 'Mis Favoritos',
+        description: 'Tus sonidos favoritos más escuchados (hasta 20).',
+        icon: '/iconos/star.svg',
+        colorTheme: 'gold',
+        isSystem: true,
+        createdBy: 'SYSTEM',
+        configuredSlotsCount: topFavs.length,
+        totalSlots: 20,
+        slots
+      };
+    }
+
+    // B. Colección del sistema: Top 20 Más Reproducidos
+    if (params.id === 'system-top20') {
+      const allSounds = await container.db
+        .selectFrom('sounds')
+        .select(['id', 'display_name', 'command_name', 'duration_ms', 'is_active'])
+        .where('deleted_at', 'is', null)
+        .where('is_active', '=', 1)
+        .execute();
+
+      const allIds = allSounds.map((s: any) => s.id);
+      const playCountMap = new Map<string, number>();
+
+      if (allIds.length > 0) {
+        const counts = await container.db
+          .selectFrom('playback_events')
+          .select(['sound_id', (container.db.fn as any).count('id').as('play_count')])
+          .where('sound_id', 'in', allIds)
+          .groupBy('sound_id')
+          .execute();
+
+        counts.forEach((c: any) => {
+          if (c.sound_id) playCountMap.set(c.sound_id, Number(c.play_count));
+        });
+      }
+
+      allSounds.sort((a: any, b: any) => {
+        const countA = playCountMap.get(a.id) || 0;
+        const countB = playCountMap.get(b.id) || 0;
+        if (countA !== countB) return countB - countA;
+        return a.display_name.localeCompare(b.display_name);
+      });
+
+      const top20 = allSounds.slice(0, 20);
+
+      const slots = Array.from({ length: 20 }, (_, idx) => {
+        const s = top20[idx];
+        return {
+          slotIndex: idx,
+          itemId: s ? `sys-top-${s.id}` : null,
+          soundId: s ? s.id : null,
+          soundDisplayName: s ? s.display_name : null,
+          soundCommandName: s ? s.command_name : null,
+          soundDurationMs: s ? s.duration_ms : null,
+          soundIsActive: s ? Boolean(s.is_active) : true,
+          customLabel: null,
+          customImageUrl: null,
+          colorTheme: 'pink'
+        };
+      });
+
+      return {
+        id: 'system-top20',
+        name: 'Top 20 Más Reproducidos',
+        description: 'Los 20 sonidos más escuchados de la plataforma.',
+        icon: '/iconos/fire.svg',
+        colorTheme: 'pink',
+        isSystem: true,
+        createdBy: 'SYSTEM',
+        configuredSlotsCount: top20.length,
+        totalSlots: 20,
+        slots
+      };
+    }
+
     const col = await container.db
       .selectFrom('sound_collections')
       .selectAll()
@@ -153,6 +345,10 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
       slotIndex: z.coerce.number().min(0).max(19)
     }).parse(request.params);
 
+    if (params.id.startsWith('system-')) {
+      throw new AppError('AUTH_FORBIDDEN', 'No se pueden modificar las colecciones del sistema.');
+    }
+
     const body = UpdateSlotSchema.parse(request.body);
     const now = new Date();
 
@@ -214,6 +410,10 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
       slotIndex: z.coerce.number().min(0).max(19)
     }).parse(request.params);
 
+    if (params.id.startsWith('system-')) {
+      throw new AppError('AUTH_FORBIDDEN', 'No se pueden vaciar los botones de las colecciones del sistema.');
+    }
+
     await container.db
       .deleteFrom('sound_collection_items')
       .where('collection_id', '=', params.id)
@@ -226,6 +426,11 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
   // 6. Actualizar datos de colección (nombre, descripción, icono)
   fastify.patch('/api/collections/:id', async (request, reply) => {
     const params = z.object({ id: z.string() }).parse(request.params);
+    
+    if (params.id.startsWith('system-')) {
+      throw new AppError('AUTH_FORBIDDEN', 'No se pueden editar las colecciones del sistema.');
+    }
+
     const body = z.object({
       name: z.string().min(1).max(120).optional(),
       description: z.string().max(500).optional().nullable(),
@@ -252,6 +457,11 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
   // 7. Eliminar colección completa (disponible para todos los usuarios)
   fastify.delete('/api/collections/:id', async (request, reply) => {
     const params = z.object({ id: z.string() }).parse(request.params);
+
+    if (params.id.startsWith('system-')) {
+      throw new AppError('AUTH_FORBIDDEN', 'No se pueden eliminar las colecciones del sistema.');
+    }
+
     await container.db
       .deleteFrom('sound_collections')
       .where('id', '=', params.id)

@@ -203,30 +203,39 @@ export const Collections: React.FC = () => {
               >
                 {/* Header de la Tarjeta con Botones de Acción */}
                 <div className="flex justify-end items-center" onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenEditModal(col);
-                      }}
-                      className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
-                      title="Editar colección"
+                  {col.isSystem ? (
+                    <span 
+                      className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md border"
+                      style={{ backgroundColor: `${hex}18`, borderColor: `${hex}50`, color: hex }}
                     >
-                      <Edit size={15} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(col.id, col.name);
-                      }}
-                      className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
-                      title="Eliminar colección"
-                    >
-                      <Trash2 size={15} />
-                    </button>
-                  </div>
+                      Sistema
+                    </span>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenEditModal(col);
+                        }}
+                        className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                        title="Editar colección"
+                      >
+                        <Edit size={15} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(col.id, col.name);
+                        }}
+                        className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+                        title="Eliminar colección"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Centro: Icono Grande Destacado y Textos */}
