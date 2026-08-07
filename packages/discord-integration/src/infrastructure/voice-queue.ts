@@ -117,6 +117,10 @@ export class GuildVoiceQueue {
           this.connection.subscribe(this.player);
         }
 
+        this.connection.on('stateChange', (oldState, newState) => {
+          console.log(`[VoiceConnection] ${this.discordGuildId}: ${oldState.status} -> ${newState.status}`);
+        });
+
         this.connection.on(VoiceConnectionStatus.Disconnected, async () => {
           try {
             this.clearQueue('DISCORD_MANUAL_DISCONNECT', 'El bot ha sido desconectado manualmente del canal de voz.');
@@ -129,6 +133,10 @@ export class GuildVoiceQueue {
         this.player = createAudioPlayer();
         this.connection.subscribe(this.player);
 
+        this.player.on('stateChange', (oldState, newState) => {
+          console.log(`[AudioPlayer] ${this.discordGuildId}: ${oldState.status} -> ${newState.status}`);
+        });
+
         this.player.on(AudioPlayerStatus.Idle, async () => {
           if (this.currentRequest) {
             this.currentRequest.completePlayback();
@@ -138,6 +146,7 @@ export class GuildVoiceQueue {
         });
 
         this.player.on('error', async (error) => {
+          console.error(`[AudioPlayer ERROR] ${this.discordGuildId}:`, error.message, error.stack);
           if (this.currentRequest) {
             this.currentRequest.failPlayback('PLAYBACK_ERROR', error.message);
             await this.playbackEventRepo.update(this.currentRequest);
