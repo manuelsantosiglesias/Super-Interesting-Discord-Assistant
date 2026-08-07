@@ -82,19 +82,43 @@ export class GuildVoiceQueue {
         throw new Error(`Archivo de audio no encontrado: ${audioPath}`);
       }
 
-      // 2. Unirse al canal de voz de Discord
-      if (!this.connection || this.connection.state.status === VoiceConnectionStatus.Destroyed) {
+      // 2. Unirse al canal de voz de Discord (o desconectar y cambiar de canal si el bot está en otro)
+      const currentChannelId = (this.connection as any)?.joinConfig?.channelId || (getVoiceConnection(this.discordGuildId) as any)?.joinConfig?.channelId;
+      const targetChannelId = request.voiceChannelId;
+      const isDifferentChannel = currentChannelId && currentChannelId !== targetChannelId;
+
+      if (!this.connection || this.connection.state.status === VoiceConnectionStatus.Destroyed || isDifferentChannel) {
+        if (this.connection && this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
+          try {
+            this.connection.destroy();
+          } catch (e) {}
+          this.connection = null;
+        }
+
+        const existingVoiceConn = getVoiceConnection(this.discordGuildId);
+        if (existingVoiceConn && existingVoiceConn.state.status !== VoiceConnectionStatus.Destroyed) {
+          try {
+            existingVoiceConn.destroy();
+          } catch (e) {}
+        }
+
+        const guild = (global as any).discordClient?.guilds.cache.get(this.discordGuildId);
+        const adapterCreator = guild?.voiceAdapterCreator;
+
         this.connection = joinVoiceChannel({
-          channelId: request.voiceChannelId,
+          channelId: targetChannelId,
           guildId: this.discordGuildId,
-          adapterCreator: (this.connection as any)?.adapterCreator || (global as any).discordClient?.guilds.cache.get(this.discordGuildId)?.voiceAdapterCreator,
+          adapterCreator,
           selfMute: false,
           selfDeaf: true
         });
 
+        if (this.player && this.connection) {
+          this.connection.subscribe(this.player);
+        }
+
         this.connection.on(VoiceConnectionStatus.Disconnected, async () => {
           try {
-            // Intentar reconectar o limpiar estado si es desconexión definitiva
             this.clearQueue('DISCORD_MANUAL_DISCONNECT', 'El bot ha sido desconectado manualmente del canal de voz.');
           } catch (err) {}
         });
