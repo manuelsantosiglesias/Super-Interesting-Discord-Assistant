@@ -126,11 +126,14 @@ export const Sounds: React.FC = () => {
       const audioUrl = `/api/sounds/${soundId}/audio`;
       const response = await fetch(audioUrl, { credentials: 'include' });
       if (!response.ok) {
-        throw new Error(`Respuesta HTTP ${response.status}`);
+        throw new Error(`Servidor devolvió código HTTP ${response.status}`);
       }
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      const newAudio = new Audio(objectUrl);
+      const rawBlob = await response.blob();
+      const mimeType = response.headers.get('content-type') || 'audio/mpeg';
+      const audioBlob = new Blob([rawBlob], { type: mimeType });
+      const objectUrl = URL.createObjectURL(audioBlob);
+      const newAudio = new Audio();
+      newAudio.src = objectUrl;
 
       newAudio.onended = () => {
         setPlayingId(null);
@@ -138,8 +141,9 @@ export const Sounds: React.FC = () => {
         URL.revokeObjectURL(objectUrl);
       };
 
-      newAudio.onerror = () => {
-        alert('Error al reproducir el archivo de sonido.');
+      newAudio.onerror = (e) => {
+        console.error('Error en el elemento de audio HTML5:', e);
+        alert('Formato de audio no compatible en este navegador.');
         setPlayingId(null);
         setAudioObj(null);
         URL.revokeObjectURL(objectUrl);
@@ -149,7 +153,7 @@ export const Sounds: React.FC = () => {
       await newAudio.play();
     } catch (err: any) {
       console.error('Error al previsualizar sonido:', err);
-      alert('Error al reproducir el sonido en el navegador. Intenta de nuevo.');
+      alert(`No se pudo reproducir el sonido: ${err.message || 'Error de red'}`);
       setPlayingId(null);
       setAudioObj(null);
     }

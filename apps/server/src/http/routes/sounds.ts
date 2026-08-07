@@ -224,6 +224,13 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
     const stats = fs.statSync(filePath);
     const fileSize = stats.size;
 
+    const contentType = sound.mimeType || (
+      filePath.endsWith('.mp3') ? 'audio/mpeg' :
+      filePath.endsWith('.wav') ? 'audio/wav' :
+      filePath.endsWith('.m4a') || filePath.endsWith('.mp4') ? 'audio/mp4' :
+      'audio/ogg'
+    );
+
     if (rangeHeader) {
       const parts = rangeHeader.replace(/bytes=/, "").split("-");
       const start = parseInt(parts[0], 10);
@@ -241,13 +248,13 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
         'Accept-Ranges': 'bytes',
         'Content-Length': chunksize,
-        'Content-Type': 'audio/ogg'
+        'Content-Type': contentType
       }).send(fileStream);
     } else {
       const fileStream = fs.createReadStream(filePath);
       reply.code(200).headers({
         'Content-Length': fileSize,
-        'Content-Type': 'audio/ogg',
+        'Content-Type': contentType,
         'Accept-Ranges': 'bytes'
       }).send(fileStream);
     }
