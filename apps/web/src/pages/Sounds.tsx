@@ -112,7 +112,10 @@ export const Sounds: React.FC = () => {
 
   const handlePlayPreview = (soundId: string) => {
     if (audioObj) {
-      try { audioObj.pause(); } catch {}
+      try {
+        audioObj.pause();
+        audioObj.currentTime = 0;
+      } catch {}
     }
 
     if (playingId === soundId) {
@@ -131,14 +134,17 @@ export const Sounds: React.FC = () => {
     };
 
     newAudio.onerror = (e) => {
-      console.error('Error al reproducir audio web:', e);
+      console.warn('Error al cargar audio web:', e);
       setPlayingId(null);
       setAudioObj(null);
     };
 
     setAudioObj(newAudio);
+
     newAudio.play().catch((err) => {
-      console.error('Autoplay error:', err);
+      if (err.name !== 'AbortError') {
+        console.error('Autoplay error:', err);
+      }
       setPlayingId(null);
       setAudioObj(null);
     });

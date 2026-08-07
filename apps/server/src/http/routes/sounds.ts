@@ -225,6 +225,10 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       throw new AppError('AUTH_FORBIDDEN', 'No tienes permisos para escuchar este sonido desactivado.');
     }
 
+    if (!fs.existsSync(filePath)) {
+      throw new AppError('NOT_FOUND', 'El archivo físico del sonido no existe.');
+    }
+
     const stats = fs.statSync(filePath);
     const fileSize = stats.size;
     const ext = path.extname(filePath).toLowerCase();
@@ -238,18 +242,28 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
 
     if (rangeHeader) {
       const parts = rangeHeader.replace(/bytes=/, "").split("-");
-      const start = parseInt(parts[0], 10);
-      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const start = parseInt(parts[0], 10) || 0;
+      let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
 
-      if (start >= fileSize || end >= fileSize) {
-        reply.code(416).header('Content-Range', `bytes */${fileSize}`).send();
-        return;
+      if (isNaN(end) || end >= fileSize) {
+        end = fileSize - 1;
+      }
+
+      if (start >= fileSize || start > end) {
+        return reply.code(416).headers({
+          'Content-Range': `bytes */${fileSize}`,
+          'Content-Type': contentType
+        }).send();
       }
 
       const chunksize = (end - start) + 1;
       const fileStream = fs.createReadStream(filePath, { start, end });
+      fileStream.on('error', (err) => {
+        container.logger.error('Error en stream de audio:', err);
+        try { reply.raw.destroy(); } catch {}
+      });
 
-      reply.code(206).headers({
+      return reply.code(206).headers({
         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
         'Accept-Ranges': 'bytes',
         'Content-Length': chunksize,
@@ -257,7 +271,12 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       }).send(fileStream);
     } else {
       const fileStream = fs.createReadStream(filePath);
-      reply.code(200).headers({
+      fileStream.on('error', (err) => {
+        container.logger.error('Error en stream completo:', err);
+        try { reply.raw.destroy(); } catch {}
+      });
+
+      return reply.code(200).headers({
         'Content-Length': fileSize,
         'Content-Type': contentType,
         'Accept-Ranges': 'bytes'
