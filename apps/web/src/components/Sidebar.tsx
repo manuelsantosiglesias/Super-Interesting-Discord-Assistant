@@ -25,7 +25,7 @@ export const Sidebar: React.FC = () => {
   const navItems = [
     { to: '/', label: 'Panel Principal', icon: Home, roles: ['ADMIN', 'USER'] },
     { to: '/sounds', label: 'Explorar Sonidos', icon: Music, roles: ['ADMIN', 'USER'] },
-    { to: '/collections', label: 'Colecciones (Stream Deck)', icon: LayoutGrid, roles: ['ADMIN'] },
+    { to: '/collections', label: 'Colecciones', icon: LayoutGrid, roles: ['ADMIN', 'USER'] },
     { to: '/sounds/new', label: 'Subir Sonido', icon: PlusCircle, roles: ['ADMIN', 'USER'] },
     { to: '/discord', label: 'Bot de Discord', icon: HelpCircle, roles: ['ADMIN', 'USER'] },
     { to: '/users', label: 'Usuarios', icon: Users, roles: ['ADMIN'] },

@@ -296,7 +296,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
     for (const [, guild] of client.guilds.cache) {
       for (const [, channel] of guild.channels.cache) {
         if (channel.isVoiceBased()) {
-          const humanCount = channel.members.filter((m) => !m.user.bot).size;
+          const humanCount = channel.members.filter((m: any) => !m.user.bot).size;
           if (humanCount > maxHumanMembers) {
             maxHumanMembers = humanCount;
             bestGuildId = guild.id;
@@ -306,10 +306,10 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       }
     }
 
-    // Si no hay usuarios en ningún canal, buscar el último canal donde el bot se unió/reprodujo
-    if (!bestChannelId) {
-      const queues = container.queueManager.getQueues();
-      for (const [guildId, queue] of queues) {
+    // 2. Si no hay ningún canal con usuarios humanos, buscar el último canal donde se haya reproducido sonido
+    if (!bestGuildId || !bestChannelId) {
+      const activeQueues = (container as any).queueManager?.getQueues ? (container as any).queueManager.getQueues() : [];
+      for (const [guildId, queue] of activeQueues) {
         const currentCh = queue.getCurrentChannel();
         if (currentCh) {
           bestGuildId = guildId;

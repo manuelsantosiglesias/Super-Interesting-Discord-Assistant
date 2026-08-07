@@ -21,13 +21,8 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
 
   fastify.addHook('preHandler', fastify.authenticate);
 
-  // 1. Listar todas las colecciones
+  // 1. Listar todas las colecciones (disponible para todos los usuarios)
   fastify.get('/api/collections', async (request, reply) => {
-    // Restringir inicialmente a ADMIN
-    if (request.user!.role !== 'ADMIN') {
-      throw new AppError('AUTH_FORBIDDEN', 'Acceso denegado. Solo administradores pueden gestionar colecciones por el momento.');
-    }
-
     const collections = await container.db
       .selectFrom('sound_collections')
       .selectAll()
@@ -37,7 +32,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     // Contar slots configurados por colección
     const counts = await container.db
       .selectFrom('sound_collection_items')
-      .select(['collection_id', container.db.fn.count('id').as('configured_count')])
+      .select(['collection_id', (container.db.fn as any).count('id').as('configured_count')])
       .groupBy('collection_id')
       .execute();
 
@@ -56,12 +51,8 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     }));
   });
 
-  // 2. Crear nueva colección
+  // 2. Crear nueva colección (disponible para todos los usuarios)
   fastify.post('/api/collections', async (request, reply) => {
-    if (request.user!.role !== 'ADMIN') {
-      throw new AppError('AUTH_FORBIDDEN', 'Acceso denegado.');
-    }
-
     const body = CreateCollectionSchema.parse(request.body);
     const collectionId = randomUUID();
     const now = new Date();
@@ -86,12 +77,8 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     };
   });
 
-  // 3. Obtener detalle de colección + 20 slots de la mesa
+  // 3. Obtener detalle de colección + 20 slots de la mesa (disponible para todos los usuarios)
   fastify.get('/api/collections/:id', async (request, reply) => {
-    if (request.user!.role !== 'ADMIN') {
-      throw new AppError('AUTH_FORBIDDEN', 'Acceso denegado.');
-    }
-
     const params = z.object({ id: z.string() }).parse(request.params);
     const col = await container.db
       .selectFrom('sound_collections')
@@ -152,12 +139,8 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     };
   });
 
-  // 4. Configurar/Actualizar un slot específico de la mesa (0 - 19)
+  // 4. Configurar/Actualizar un slot específico de la mesa (disponible para todos los usuarios)
   fastify.put('/api/collections/:id/slots/:slotIndex', async (request, reply) => {
-    if (request.user!.role !== 'ADMIN') {
-      throw new AppError('AUTH_FORBIDDEN', 'Acceso denegado.');
-    }
-
     const params = z.object({
       id: z.string(),
       slotIndex: z.coerce.number().min(0).max(19)
@@ -217,12 +200,8 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     return { success: true };
   });
 
-  // 5. Vaciar un slot
+  // 5. Vaciar un slot (disponible para todos los usuarios)
   fastify.delete('/api/collections/:id/slots/:slotIndex', async (request, reply) => {
-    if (request.user!.role !== 'ADMIN') {
-      throw new AppError('AUTH_FORBIDDEN', 'Acceso denegado.');
-    }
-
     const params = z.object({
       id: z.string(),
       slotIndex: z.coerce.number().min(0).max(19)
@@ -237,12 +216,8 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     return { success: true };
   });
 
-  // 6. Eliminar colección completa
+  // 6. Eliminar colección completa (disponible para todos los usuarios)
   fastify.delete('/api/collections/:id', async (request, reply) => {
-    if (request.user!.role !== 'ADMIN') {
-      throw new AppError('AUTH_FORBIDDEN', 'Acceso denegado.');
-    }
-
     const params = z.object({ id: z.string() }).parse(request.params);
     await container.db
       .deleteFrom('sound_collections')
