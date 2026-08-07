@@ -89,9 +89,12 @@ export class GuildVoiceQueue {
       const isDifferentChannel = currentChannelId && currentChannelId !== targetChannelId;
 
       if (!this.connection || this.connection.state.status === VoiceConnectionStatus.Destroyed || isDifferentChannel) {
-        if (this.connection && this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
+        if (this.connection) {
           try {
-            this.connection.destroy();
+            this.connection.removeAllListeners();
+            if (this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
+              this.connection.destroy();
+            }
           } catch (e) {}
           this.connection = null;
         }
@@ -100,9 +103,12 @@ export class GuildVoiceQueue {
         try {
           for (const [gId, conn] of getVoiceConnections()) {
             if (gId !== this.discordGuildId || conn.joinConfig?.channelId !== targetChannelId) {
-              if (conn.state.status !== VoiceConnectionStatus.Destroyed) {
-                conn.destroy();
-              }
+              try {
+                conn.removeAllListeners();
+                if (conn.state.status !== VoiceConnectionStatus.Destroyed) {
+                  conn.destroy();
+                }
+              } catch (e) {}
             }
           }
         } catch (e) {}
@@ -202,6 +208,7 @@ export class GuildVoiceQueue {
 
     if (this.connection) {
       try {
+        this.connection.removeAllListeners();
         this.connection.destroy();
       } catch (e) {}
       this.connection = null;
