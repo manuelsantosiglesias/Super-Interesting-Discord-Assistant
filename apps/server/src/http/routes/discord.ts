@@ -124,7 +124,11 @@ export default async function discordRoutes(fastify: FastifyInstance, options: {
 
     const voiceChannels = activeGuild.channels.cache
       .filter((c: any) => c.type === ChannelType.GuildVoice || c.type === ChannelType.GuildStageVoice)
-      .map((c: any) => ({ id: c.id, name: c.name }));
+      .map((c: any) => ({
+        id: c.id,
+        name: c.name,
+        userCount: c.members?.filter((m: any) => !m.user.bot).size || 0
+      }));
 
     return { textChannels, voiceChannels };
   });

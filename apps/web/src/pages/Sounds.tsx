@@ -207,13 +207,17 @@ export const Sounds: React.FC = () => {
   const handleOpenDiscordPlay = (soundId: string) => {
     setSelectedSoundId(soundId);
     setShowDiscordModal(true);
-    setSelectedGuildId('');
-    setSelectedChannelId('');
+    const savedGuild = localStorage.getItem('lastSelectedGuildId') || '';
+    const savedChannel = localStorage.getItem('lastSelectedChannelId') || '';
+    setSelectedGuildId(savedGuild);
+    setSelectedChannelId(savedChannel);
   };
 
   const handleDiscordPlaySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedSoundId || !selectedGuildId || !selectedChannelId) return;
+    localStorage.setItem('lastSelectedGuildId', selectedGuildId);
+    localStorage.setItem('lastSelectedChannelId', selectedChannelId);
     playDiscordMutation.mutate({
       soundId: selectedSoundId,
       guildId: selectedGuildId,
@@ -517,7 +521,12 @@ export const Sounds: React.FC = () => {
                 </label>
                 <select
                   value={selectedGuildId}
-                  onChange={(e) => { setSelectedGuildId(e.target.value); setSelectedChannelId(''); }}
+                  onChange={(e) => { 
+                    const val = e.target.value;
+                    setSelectedGuildId(val); 
+                    localStorage.setItem('lastSelectedGuildId', val);
+                    setSelectedChannelId(''); 
+                  }}
                   required
                   className="w-full bg-darkbg border border-darkborder focus:border-primary rounded-xl px-3 py-2.5 text-sm text-white placeholder-slate-500 outline-none"
                 >
@@ -536,14 +545,20 @@ export const Sounds: React.FC = () => {
                 </label>
                 <select
                   value={selectedChannelId}
-                  onChange={(e) => setSelectedChannelId(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedChannelId(val);
+                    localStorage.setItem('lastSelectedChannelId', val);
+                  }}
                   required
                   disabled={!selectedGuildId}
                   className="w-full bg-darkbg border border-darkborder focus:border-primary rounded-xl px-3 py-2.5 text-sm text-white placeholder-slate-500 outline-none disabled:opacity-40"
                 >
                   <option value="">Selecciona un canal de voz...</option>
                   {channels?.voiceChannels?.map((ch: any) => (
-                    <option key={ch.id} value={ch.id}>{ch.name}</option>
+                    <option key={ch.id} value={ch.id}>
+                      🔊 {ch.name} ({ch.userCount ?? 0} {ch.userCount === 1 ? 'usuario' : 'usuarios'})
+                    </option>
                   ))}
                 </select>
               </div>
