@@ -1,6 +1,6 @@
 {
   "name": "super-interesting-discord-assistant",
-  "version": "1.0.0",
+  "version": "0.6.4",
   "private": true,
   "engines": {
     "node": ">=22.0.0"
