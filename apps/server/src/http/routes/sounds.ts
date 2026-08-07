@@ -416,12 +416,17 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
     }
 
     const botClientId = client.user?.id;
-    const isHumanMember = (m: any): boolean => {
-      if (!m) return false;
-      const memberId = m.id || m.user?.id;
-      if (botClientId && memberId === botClientId) return false;
-      if (m.user?.bot === true) return false;
-      return true;
+    const getChannelHumanCount = (g: any, chId: string): number => {
+      if (!chId || !g || !g.voiceStates) return 0;
+      let count = 0;
+      for (const [memberId, vs] of g.voiceStates.cache) {
+        if (vs.channelId === chId) {
+          if (botClientId && memberId === botClientId) continue;
+          if (vs.member?.user?.bot === true) continue;
+          count++;
+        }
+      }
+      return count;
     };
 
     // A. DETERMINAR SERVIDOR INDICADO (GUILD)
@@ -448,7 +453,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
         let countInGuild = 0;
         for (const [, ch] of g.channels.cache) {
           if (ch.isVoiceBased()) {
-            countInGuild += ch.members.filter((m: any) => isHumanMember(m)).size;
+            countInGuild += getChannelHumanCount(g, ch.id);
           }
         }
         if (countInGuild > maxGuildHumans) {
@@ -472,15 +477,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
     // B. DETERMINAR CANAL DE VOZ DENTRO DEL SERVIDOR INDICADO
     let targetChannelId = body?.voiceChannelId || '';
 
-    const getChannelHumanCount = (chId: string): number => {
-      const ch = guild.channels.cache.get(chId);
-      if (ch && ch.isVoiceBased()) {
-        return ch.members.filter((m: any) => isHumanMember(m)).size;
-      }
-      return 0;
-    };
-
-    const indicatedHumanCount = targetChannelId ? getChannelHumanCount(targetChannelId) : 0;
+    const indicatedHumanCount = targetChannelId ? getChannelHumanCount(guild, targetChannelId) : 0;
 
     // Regla de negocio:
     // Si el canal indicado tiene personas (indicatedHumanCount > 0), reproducir en él.
@@ -491,7 +488,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
 
       for (const [, ch] of guild.channels.cache) {
         if (ch.isVoiceBased()) {
-          const count = ch.members.filter((m: any) => isHumanMember(m)).size;
+          const count = getChannelHumanCount(guild, ch.id);
           if (count > maxHumansInGuild) {
             maxHumansInGuild = count;
             bestChannelInGuild = ch.id;

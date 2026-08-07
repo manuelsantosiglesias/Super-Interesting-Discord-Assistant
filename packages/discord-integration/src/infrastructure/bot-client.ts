@@ -32,6 +32,7 @@ export function createDiscordBot(deps: BotClientDeps): Client {
     intents: [
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildVoiceStates,
+      GatewayIntentBits.GuildMembers,
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.MessageContent
     ]
