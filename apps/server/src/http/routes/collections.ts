@@ -76,7 +76,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
       {
         id: 'system-favorites',
         name: 'Mis Favoritos',
-        description: 'Tus sonidos favoritos más escuchados (hasta 20).',
+        description: 'Tus sonidos favoritos más escuchados.',
         icon: '/iconos/star.svg',
         colorTheme: getRandomTheme('sys-fav-' + userId),
         isSystem: true,
@@ -241,7 +241,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
       return {
         id: 'system-favorites',
         name: 'Mis Favoritos',
-        description: 'Tus sonidos favoritos más escuchados (hasta 20).',
+        description: 'Tus sonidos favoritos más escuchados.',
         icon: '/iconos/star.svg',
         colorTheme: 'gold',
         isSystem: true,
