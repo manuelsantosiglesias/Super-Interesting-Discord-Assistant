@@ -389,19 +389,41 @@ export const CollectionsDeck: React.FC = () => {
         </div>
 
         {/* Matrix Grid: 5 Columnas x 4 Filas de Teclas Ampliadas (94px x 94px) */}
-        <div 
-          style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(5, 94px)', 
-            gridTemplateRows: 'repeat(4, 94px)', 
-            gap: '12px',
-            justifyContent: 'center' 
-          }}
-        >
-          {collection?.slots?.map((slot: SlotData) => {
-            const hasSound = Boolean(slot.soundId);
-            const isPlayingThis = playingSlotIndex === slot.slotIndex;
-            const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
+        {!isEditMode && (!collection?.slots?.some((s: SlotData) => Boolean(s.soundId))) ? (
+          <div className="w-[518px] py-10 px-6 bg-[#07090d] border-2 border-dashed border-amber-500/40 rounded-2xl flex flex-col items-center justify-center text-center space-y-3 my-2">
+            <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+              <Settings2 size={24} />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-amber-300">No hay sonidos configurados</h4>
+              <p className="text-xs text-slate-400 mt-1 max-w-sm">
+                Esta mesa aún no tiene botones asignados. Cambia al modo <span className="text-white font-bold">"Configuración"</span> para añadir tus sonidos.
+              </p>
+            </div>
+            <button
+              onClick={() => setIsEditMode(true)}
+              className="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold rounded-xl text-xs shadow-lg shadow-amber-500/20 flex items-center gap-1.5 transition-all mt-1 cursor-pointer"
+            >
+              <SlidersHorizontal size={14} />
+              Ir a Configuración
+            </button>
+          </div>
+        ) : (
+          <div 
+            style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(5, 94px)', 
+              gap: '12px',
+              justifyContent: 'center' 
+            }}
+          >
+            {(isEditMode 
+              ? collection?.slots 
+              : collection?.slots?.filter((s: SlotData) => Boolean(s.soundId))
+            )?.map((slot: SlotData) => {
+              const hasSound = Boolean(slot.soundId);
+              const isPlayingThis = playingSlotIndex === slot.slotIndex;
+              const currentTheme = themeConfig[slot.colorTheme] || themeConfig.cyan;
 
             return (
               <div
@@ -517,6 +539,7 @@ export const CollectionsDeck: React.FC = () => {
             );
           })}
         </div>
+      )}
       </div>
 
       {/* Modal: Studio Config / Editar Pad (100% OPACO CON ESTILOS INLINE DE CORRECCIÓN) */}
