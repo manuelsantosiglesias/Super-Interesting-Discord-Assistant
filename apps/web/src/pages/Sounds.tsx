@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { apiRequest } from '../api/client.js';
+import { apiRequest, BASE_URL } from '../api/client.js';
 import { 
   Search, 
   Play, 
@@ -110,7 +110,7 @@ export const Sounds: React.FC = () => {
     };
   }, [audioObj]);
 
-  const handlePlayPreview = (soundId: string) => {
+  const handlePlayPreview = async (soundId: string) => {
     if (audioObj) {
       audioObj.pause();
     }
@@ -121,21 +121,38 @@ export const Sounds: React.FC = () => {
       return;
     }
 
-    const audioUrl = `/api/sounds/${soundId}/audio`;
-    const newAudio = new Audio(audioUrl);
-    newAudio.play().catch(() => {
-      alert('Error al reproducir. Tal vez no tienes permisos o el archivo no existe.');
+    try {
+      setPlayingId(soundId);
+      const audioUrl = `${BASE_URL}/api/sounds/${soundId}/audio`;
+      const response = await fetch(audioUrl, { credentials: 'include' });
+      if (!response.ok) {
+        throw new Error(`Respuesta HTTP ${response.status}`);
+      }
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const newAudio = new Audio(objectUrl);
+
+      newAudio.onended = () => {
+        setPlayingId(null);
+        setAudioObj(null);
+        URL.revokeObjectURL(objectUrl);
+      };
+
+      newAudio.onerror = () => {
+        alert('Error al reproducir el archivo de sonido.');
+        setPlayingId(null);
+        setAudioObj(null);
+        URL.revokeObjectURL(objectUrl);
+      };
+
+      setAudioObj(newAudio);
+      await newAudio.play();
+    } catch (err: any) {
+      console.error('Error al previsualizar sonido:', err);
+      alert('Error al reproducir el sonido en el navegador. Intenta de nuevo.');
       setPlayingId(null);
       setAudioObj(null);
-    });
-
-    setAudioObj(newAudio);
-    setPlayingId(soundId);
-
-    newAudio.onended = () => {
-      setPlayingId(null);
-      setAudioObj(null);
-    };
+    }
   };
 
   const handleDownloadSound = async (soundId: string, filename: string) => {
