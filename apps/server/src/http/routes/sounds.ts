@@ -12,7 +12,7 @@ const SoundListQuerySchema = z.object({
   active: z.preprocess((val) => val === 'true' || val === '1' ? true : val === 'false' || val === '0' ? false : undefined, z.boolean().optional()),
   page: z.coerce.number().min(1).default(1),
   pageSize: z.coerce.number().min(1).max(500).default(20),
-  sort: z.enum(['displayName', 'commandName', 'createdAt', 'durationMs', 'sizeBytes']).default('createdAt'),
+  sort: z.enum(['displayName', 'commandName', 'createdAt', 'durationMs', 'sizeBytes', 'playCount']).default('playCount'),
   direction: z.enum(['asc', 'desc']).default('desc')
 });
 
@@ -37,7 +37,10 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
   // 1. Listar sonidos (con conteo de reproducciones y estado favorito)
   fastify.get('/api/sounds', async (request, reply) => {
     const query = SoundListQuerySchema.parse(request.query);
-    const result = await container.listSounds.execute(query);
+    const result = await container.listSounds.execute({
+      ...query,
+      sort: (query.sort === 'playCount' ? 'createdAt' : query.sort) as any
+    });
 
     const soundIds = result.items.map((s) => s.id.toString());
     const playCountMap = new Map<string, number>();
@@ -67,25 +70,51 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       }
     }
 
+    let sortedItems = result.items.map((s) => ({
+      id: s.id.toString(),
+      displayName: s.displayName,
+      commandName: s.commandName.toValue(),
+      description: s.description,
+      originalFilename: s.originalFilename,
+      storageFilename: s.storageFilename,
+      mimeType: s.mimeType,
+      sizeBytes: s.sizeBytes,
+      durationMs: s.durationMs,
+      volume: s.volume,
+      isActive: s.isActive,
+      uploadedBy: s.uploadedBy,
+      createdAt: s.createdAt,
+      updatedAt: s.updatedAt,
+      playCount: playCountMap.get(s.id.toString()) || 0,
+      isFavorite: favoriteSet.has(s.id.toString())
+    }));
+
+    // Regla: Favoritos primero siempre, y luego por la columna elegida (por defecto reproducciones desc)
+    sortedItems.sort((a, b) => {
+      // 1. Prioridad Favoritos
+      if (a.isFavorite && !b.isFavorite) return -1;
+      if (!a.isFavorite && b.isFavorite) return 1;
+
+      // 2. Criterio de columna seleccionada
+      const sortKey = query.sort as keyof typeof a;
+      let valA: any = a[sortKey] ?? 0;
+      let valB: any = b[sortKey] ?? 0;
+
+      if (typeof valA === 'string') {
+        valA = valA.toLowerCase();
+        valB = (valB || '').toString().toLowerCase();
+      } else if (valA instanceof Date) {
+        valA = new Date(valA).getTime();
+        valB = new Date(valB).getTime();
+      }
+
+      if (valA < valB) return query.direction === 'asc' ? -1 : 1;
+      if (valA > valB) return query.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
     return {
-      items: result.items.map((s) => ({
-        id: s.id.toString(),
-        displayName: s.displayName,
-        commandName: s.commandName.toValue(),
-        description: s.description,
-        originalFilename: s.originalFilename,
-        storageFilename: s.storageFilename,
-        mimeType: s.mimeType,
-        sizeBytes: s.sizeBytes,
-        durationMs: s.durationMs,
-        volume: s.volume,
-        isActive: s.isActive,
-        uploadedBy: s.uploadedBy,
-        createdAt: s.createdAt,
-        updatedAt: s.updatedAt,
-        playCount: playCountMap.get(s.id.toString()) || 0,
-        isFavorite: favoriteSet.has(s.id.toString())
-      })),
+      items: sortedItems,
       pagination: result.pagination
     };
   });

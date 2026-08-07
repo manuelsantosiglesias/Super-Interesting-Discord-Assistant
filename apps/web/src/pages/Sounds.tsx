@@ -26,7 +26,7 @@ export const Sounds: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(100);
-  const [sort, setSort] = useState<'displayName' | 'commandName' | 'createdAt' | 'durationMs'>('createdAt');
+  const [sort, setSort] = useState<string>('playCount');
   const [direction, setDirection] = useState<'asc' | 'desc'>('desc');
   
   // Reproductor Web
@@ -325,7 +325,11 @@ export const Sounds: React.FC = () => {
                     Duración <ArrowUpDown size={14} />
                   </button>
                 </th>
-                <th className="p-4">Reproducciones</th>
+                <th className="p-4">
+                  <button onClick={() => handleSort('playCount')} className="flex items-center gap-1 hover:text-white transition-colors">
+                    Reproducciones <ArrowUpDown size={14} />
+                  </button>
+                </th>
                 <th className="p-4">
                   <button onClick={() => handleSort('createdAt')} className="flex items-center gap-1 hover:text-white transition-colors">
                     Fecha Añadido <ArrowUpDown size={14} />
