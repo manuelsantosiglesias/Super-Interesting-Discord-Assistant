@@ -200,7 +200,7 @@ export class GuildVoiceQueue {
 
   private async startDisconnectTimeout(): Promise<void> {
     const guildConfig = await this.guildRepo.findByDiscordGuildId(this.discordGuildId);
-    const leaveAfterMs = (guildConfig?.leaveAfterSeconds ?? 15) * 1000;
+    const leaveAfterMs = (guildConfig?.leaveAfterSeconds ?? 240) * 1000;
 
     this.disconnectTimer = setTimeout(() => {
       this.disconnect();
