@@ -192,23 +192,30 @@ export const CollectionsDeck: React.FC = () => {
     enabled: !!id
   });
 
-  // 2. Cargar todos los sonidos disponibles (hasta 1000)
+  // 2. Cargar todos los sonidos activos disponibles
   const { data: soundsData } = useQuery({
     queryKey: ['all-sounds-selector'],
-    queryFn: () => apiRequest('/api/sounds?pageSize=1000&sort=displayName&direction=asc'),
+    queryFn: () => apiRequest('/api/sounds?pageSize=500&active=true&sort=displayName&direction=asc'),
     enabled: selectedSlotIndex !== null
   });
 
+  // Extraer lista cruda de sonidos sin importar la forma de la respuesta
+  const rawSoundsList = React.useMemo(() => {
+    if (Array.isArray(soundsData)) return soundsData;
+    if (Array.isArray(soundsData?.items)) return soundsData.items;
+    return [];
+  }, [soundsData]);
+
   // Filtrar sonidos en tiempo real por búsqueda
   const filteredSounds = React.useMemo(() => {
-    if (!soundsData?.items) return [];
-    if (!soundSearch.trim()) return soundsData.items;
+    if (!rawSoundsList.length) return [];
+    if (!soundSearch.trim()) return rawSoundsList;
     const query = soundSearch.toLowerCase().trim();
-    return soundsData.items.filter((s: any) => 
+    return rawSoundsList.filter((s: any) => 
       (s.displayName && s.displayName.toLowerCase().includes(query)) || 
       (s.commandName && s.commandName.toLowerCase().includes(query))
     );
-  }, [soundsData, soundSearch]);
+  }, [rawSoundsList, soundSearch]);
 
   const handlePreviewSoundInModal = (e: React.MouseEvent, soundId: string) => {
     e.stopPropagation();
@@ -666,7 +673,7 @@ export const CollectionsDeck: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-cyan-400 uppercase tracking-wider">
-                    Sonido Asignado ({filteredSounds.length} de {soundsData?.items?.length || 0})
+                    Sonido Asignado ({filteredSounds.length} de {rawSoundsList.length})
                   </label>
                   {slotSoundId && (
                     <button
