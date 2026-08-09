@@ -7,6 +7,7 @@ import {
   Plus, 
   Settings2, 
   Play, 
+  Pause,
   Trash2, 
   Image as ImageIcon,
   Check,
@@ -15,7 +16,8 @@ import {
   Edit,
   SlidersHorizontal,
   Volume2,
-  X
+  X,
+  Search
 } from 'lucide-react';
 
 interface SlotData {
@@ -178,6 +180,11 @@ export const CollectionsDeck: React.FC = () => {
   const [slotImageUrl, setSlotImageUrl] = useState<string>('');
   const [slotColorTheme, setSlotColorTheme] = useState<'emerald' | 'cyan' | 'pink' | 'gold' | 'red' | 'violet' | 'blue' | 'orange'>('cyan');
 
+  // Estados del Buscador y Reproductor de Vista Previa en el Modal
+  const [soundSearch, setSoundSearch] = useState('');
+  const [previewSoundId, setPreviewSoundId] = useState<string | null>(null);
+  const [previewAudioObj, setPreviewAudioObj] = useState<HTMLAudioElement | null>(null);
+
   // 1. Cargar detalles de la colección y sus 20 slots
   const { data: collection, isLoading } = useQuery({
     queryKey: ['collection-detail', id],
@@ -185,12 +192,50 @@ export const CollectionsDeck: React.FC = () => {
     enabled: !!id
   });
 
-  // 2. Cargar todos los sonidos disponibles para el selector del modal de edición
+  // 2. Cargar todos los sonidos disponibles (hasta 1000)
   const { data: soundsData } = useQuery({
     queryKey: ['all-sounds-selector'],
-    queryFn: () => apiRequest('/api/sounds?pageSize=500&sort=displayName&direction=asc'),
+    queryFn: () => apiRequest('/api/sounds?pageSize=1000&sort=displayName&direction=asc'),
     enabled: selectedSlotIndex !== null
   });
+
+  // Filtrar sonidos en tiempo real por búsqueda
+  const filteredSounds = React.useMemo(() => {
+    if (!soundsData?.items) return [];
+    if (!soundSearch.trim()) return soundsData.items;
+    const query = soundSearch.toLowerCase().trim();
+    return soundsData.items.filter((s: any) => 
+      (s.displayName && s.displayName.toLowerCase().includes(query)) || 
+      (s.commandName && s.commandName.toLowerCase().includes(query))
+    );
+  }, [soundsData, soundSearch]);
+
+  const handlePreviewSoundInModal = (e: React.MouseEvent, soundId: string) => {
+    e.stopPropagation();
+    if (previewAudioObj) {
+      try { previewAudioObj.pause(); } catch {}
+    }
+    if (previewSoundId === soundId) {
+      setPreviewSoundId(null);
+      setPreviewAudioObj(null);
+      return;
+    }
+    setPreviewSoundId(soundId);
+    const audio = new Audio(`/api/sounds/${soundId}/audio`);
+    audio.onended = () => {
+      setPreviewSoundId(null);
+      setPreviewAudioObj(null);
+    };
+    audio.onerror = () => {
+      setPreviewSoundId(null);
+      setPreviewAudioObj(null);
+    };
+    setPreviewAudioObj(audio);
+    audio.play().catch(() => {
+      setPreviewSoundId(null);
+      setPreviewAudioObj(null);
+    });
+  };
 
   // Mutación: Guardar slot
   const saveSlotMutation = useMutation({
@@ -202,6 +247,11 @@ export const CollectionsDeck: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['collection-detail', id] });
       setSelectedSlotIndex(null);
+      if (previewAudioObj) {
+        try { previewAudioObj.pause(); } catch {}
+      }
+      setPreviewSoundId(null);
+      setPreviewAudioObj(null);
     },
     onError: (err: any) => {
       alert(`Error al guardar el botón: ${err.message}`);
@@ -215,6 +265,11 @@ export const CollectionsDeck: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['collection-detail', id] });
       setSelectedSlotIndex(null);
+      if (previewAudioObj) {
+        try { previewAudioObj.pause(); } catch {}
+      }
+      setPreviewSoundId(null);
+      setPreviewAudioObj(null);
     }
   });
 
@@ -224,6 +279,12 @@ export const CollectionsDeck: React.FC = () => {
     setSlotLabel(slot.customLabel || '');
     setSlotImageUrl(slot.customImageUrl || '');
     setSlotColorTheme(slot.colorTheme || 'cyan');
+    setSoundSearch('');
+    if (previewAudioObj) {
+      try { previewAudioObj.pause(); } catch {}
+    }
+    setPreviewSoundId(null);
+    setPreviewAudioObj(null);
   };
 
   const handleSaveSlot = (e: React.FormEvent) => {
@@ -601,24 +662,119 @@ export const CollectionsDeck: React.FC = () => {
             </div>
 
             <form onSubmit={handleSaveSlot} className="space-y-5">
-              {/* Selector de Sonido */}
+              {/* Selector de Sonido Interactivo con Buscador y Vista Previa */}
               <div>
-                <label className="block text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">
-                  Sonido Asignado
-                </label>
-                <select
-                  value={slotSoundId}
-                  onChange={(e) => setSlotSoundId(e.target.value)}
-                  style={{ backgroundColor: '#0b0d13', color: '#ffffff', borderColor: '#282f42' }}
-                  className="w-full border focus:border-cyan-500 rounded-xl px-4 py-3 text-sm outline-none cursor-pointer"
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-bold text-cyan-400 uppercase tracking-wider">
+                    Sonido Asignado ({filteredSounds.length} de {soundsData?.items?.length || 0})
+                  </label>
+                  {slotSoundId && (
+                    <button
+                      type="button"
+                      onClick={() => setSlotSoundId('')}
+                      className="text-[11px] font-semibold text-rose-400 hover:text-rose-300 hover:underline"
+                    >
+                      Quitar Sonido (Pad Vacío)
+                    </button>
+                  )}
+                </div>
+
+                {/* Input de Búsqueda */}
+                <div className="relative mb-2.5">
+                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    value={soundSearch}
+                    onChange={(e) => setSoundSearch(e.target.value)}
+                    placeholder="Buscar sonido por nombre o comando..."
+                    style={{ backgroundColor: '#0b0d13', color: '#ffffff', borderColor: '#282f42' }}
+                    className="w-full border focus:border-cyan-500 rounded-xl pl-10 pr-8 py-2.5 text-xs placeholder-slate-500 outline-none transition-all"
+                  />
+                  {soundSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setSoundSearch('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Lista Escroleable de Tarjetas de Sonidos */}
+                <div 
+                  className="space-y-1.5 max-h-56 overflow-y-auto pr-1 rounded-xl p-1.5 border border-[#232a3b]"
+                  style={{ backgroundColor: '#090b10' }}
                 >
-                  <option value="" style={{ backgroundColor: '#12151e', color: '#ffffff' }}>-- Sin sonido (Pad vacío) --</option>
-                  {soundsData?.items?.map((s: any) => (
-                    <option key={s.id} value={s.id} style={{ backgroundColor: '#12151e', color: '#ffffff' }}>
-                      {s.displayName} ({s.commandName}) - {(s.durationMs / 1000).toFixed(1)}s
-                    </option>
-                  ))}
-                </select>
+                  {/* Opción: Pad Vacío */}
+                  <div
+                    onClick={() => setSlotSoundId('')}
+                    className={`p-2.5 rounded-lg border text-xs cursor-pointer flex items-center justify-between transition-all ${
+                      !slotSoundId 
+                        ? 'bg-cyan-950/80 border-cyan-500/80 text-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.2)]' 
+                        : 'bg-[#121622] border-[#1e2536] text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                    }`}
+                  >
+                    <span className="font-semibold italic">-- Sin sonido (Pad vacío) --</span>
+                    {!slotSoundId && <Check size={16} className="text-cyan-400" />}
+                  </div>
+
+                  {filteredSounds.length === 0 ? (
+                    <div className="p-4 text-center text-xs text-slate-500">
+                      No se encontraron sonidos que coincidan con "{soundSearch}".
+                    </div>
+                  ) : (
+                    filteredSounds.map((s: any) => {
+                      const isSelected = slotSoundId === s.id;
+                      const isPreviewing = previewSoundId === s.id;
+
+                      return (
+                        <div
+                          key={s.id}
+                          onClick={() => {
+                            setSlotSoundId(s.id);
+                            if (!slotLabel.trim()) {
+                              setSlotLabel(s.displayName);
+                            }
+                          }}
+                          className={`p-2.5 rounded-lg border text-xs cursor-pointer flex items-center justify-between gap-3 transition-all ${
+                            isSelected 
+                              ? 'bg-cyan-950/90 border-cyan-500 text-white font-bold shadow-[0_0_12px_rgba(6,182,212,0.3)]' 
+                              : 'bg-[#111520] border-[#1d2435] text-slate-300 hover:bg-[#171d2c] hover:border-slate-600 hover:text-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            {/* Botón de Previsualización de Audio */}
+                            <button
+                              type="button"
+                              onClick={(e) => handlePreviewSoundInModal(e, s.id)}
+                              className={`p-1.5 rounded-md border shrink-0 transition-all ${
+                                isPreviewing 
+                                  ? 'bg-cyan-500 text-black border-cyan-300 shadow-[0_0_8px_#06b6d4]' 
+                                  : 'bg-[#1c2232] border-[#2c364c] text-slate-300 hover:text-white hover:border-cyan-400'
+                              }`}
+                              title={isPreviewing ? 'Detener vista previa' : 'Escuchar vista previa'}
+                            >
+                              {isPreviewing ? <Pause size={12} className="fill-current" /> : <Play size={12} className="fill-current" />}
+                            </button>
+
+                            <div className="truncate min-w-0">
+                              <span className="font-bold text-white block truncate">{s.displayName}</span>
+                              <span className="text-[10px] text-cyan-400/80 font-mono">!{s.commandName}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[10px] text-slate-400 font-mono bg-[#171c2b] px-2 py-0.5 rounded border border-[#242c3f]">
+                              {(s.durationMs / 1000).toFixed(1)}s
+                            </span>
+                            {isSelected && <Check size={16} className="text-cyan-400 shrink-0" />}
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
 
               {/* Etiqueta Personalizada */}

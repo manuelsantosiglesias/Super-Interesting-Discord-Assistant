@@ -137,6 +137,13 @@ export class GuildVoiceQueue {
             this.clearQueue('DISCORD_MANUAL_DISCONNECT', 'El bot ha sido desconectado manualmente del canal de voz.');
           } catch (err) {}
         });
+
+        this.connection.on('error', (error) => {
+          console.error(`[VoiceConnection ERROR] ${this.discordGuildId}:`, error.message);
+          try {
+            this.clearQueue('DISCORD_VOICE_ERROR', error.message);
+          } catch (err) {}
+        });
       }
 
       // 3. Crear reproductor de audio

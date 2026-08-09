@@ -228,12 +228,10 @@ async function startServer() {
 
   process.on('uncaughtException', (err) => {
     logger.error('Excepción no capturada (uncaughtException):', err);
-    shutdown('UNCAUGHT_EXCEPTION');
   });
 
   process.on('unhandledRejection', (reason, promise) => {
     logger.error('Promesa no capturada (unhandledRejection):', { reason, promise });
-    shutdown('UNHANDLED_REJECTION');
   });
 }
 

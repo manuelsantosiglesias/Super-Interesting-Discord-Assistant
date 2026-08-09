@@ -179,13 +179,20 @@ export class KyselySoundRepository implements SoundRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await this.db
-      .updateTable('sounds')
-      .set({
-        deleted_at: new Date()
-      })
-      .where('id', '=', id)
-      .execute();
+    const sound = await this.findById(id);
+    if (sound) {
+      sound.delete();
+      await this.update(sound);
+    } else {
+      const now = new Date();
+      await this.db
+        .updateTable('sounds')
+        .set({
+          deleted_at: now
+        })
+        .where('id', '=', id)
+        .execute();
+    }
   }
 
   async physicalDelete(id: string): Promise<void> {

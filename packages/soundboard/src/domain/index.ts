@@ -126,6 +126,13 @@ export class Sound extends Entity<SoundProps> {
   public delete(now: Date = new Date()): void {
     this.props.deletedAt = now;
     this.props.updatedAt = now;
+    const currentCmd = this.props.commandName.toValue();
+    if (!currentCmd.includes('_del_')) {
+      const suffix = `_del_${now.getTime()}`;
+      const maxLen = 64 - suffix.length;
+      const baseCmd = currentCmd.length > maxLen ? currentCmd.slice(0, maxLen) : currentCmd;
+      this.props.commandName = new SoundCommandName(`${baseCmd}${suffix}`);
+    }
   }
 
   public restore(): void {

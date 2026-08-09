@@ -102,7 +102,7 @@ export const Sounds: React.FC = () => {
 
   // Mutación: Alternar favorito (marcar/desmarcar estrella)
   const toggleFavoriteMutation = useMutation({
-    mutationFn: (soundId: string) => apiRequest(`/api/sounds/${soundId}/favorite`, { method: 'POST' }),
+    mutationFn: (soundId: string) => apiRequest(`/api/sounds/${soundId}/favorite`, { method: 'POST', body: '{}' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sounds'] });
     }

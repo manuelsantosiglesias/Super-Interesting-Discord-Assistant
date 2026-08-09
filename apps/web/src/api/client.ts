@@ -27,7 +27,7 @@ export async function apiRequest<T = any>(
     ...options.headers,
   };
 
-  if (!(options.body instanceof FormData) && !options.headers['Content-Type']) {
+  if (options.body !== undefined && !(options.body instanceof FormData) && !(options.headers as any)?.['Content-Type']) {
     (options.headers as any)['Content-Type'] = 'application/json';
   }
 
