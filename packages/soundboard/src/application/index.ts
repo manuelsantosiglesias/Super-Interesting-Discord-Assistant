@@ -31,6 +31,7 @@ export class UploadSound {
     displayName: string;
     commandName: string;
     description: string | null;
+    iconUrl?: string | null;
     volume: number;
     uploadedBy: string;
   }): Promise<Sound> {
@@ -100,6 +101,7 @@ export class UploadSound {
         displayName: input.displayName.trim() || commandNameVO.toValue(),
         commandName: commandNameVO,
         description: input.description,
+        iconUrl: input.iconUrl || null,
         originalFilename: input.originalFilename,
         storageFilename: oggStoredFilename,
         originalStorageFilename: originalStoredFilename,
@@ -166,6 +168,7 @@ export class UpdateSound {
     displayName?: string;
     commandName?: string;
     description?: string | null;
+    iconUrl?: string | null;
     volume?: number;
     isActive?: boolean;
   }): Promise<Sound> {
@@ -189,6 +192,7 @@ export class UpdateSound {
       displayName: input.displayName,
       commandName: commandNameVO,
       description: input.description,
+      iconUrl: input.iconUrl,
       volume: input.volume,
       isActive: input.isActive
     });

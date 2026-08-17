@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../api/client.js';
-import { ArrowLeft, Upload, Check, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Upload, Check, AlertCircle, Image as ImageIcon } from 'lucide-react';
+import { SoundIcon } from '../components/SoundIcon.js';
+import { IconPickerModal } from '../components/IconPickerModal.js';
 
 export const SoundsNew: React.FC = () => {
   const navigate = useNavigate();
@@ -10,6 +12,9 @@ export const SoundsNew: React.FC = () => {
   const [description, setDescription] = useState('');
   const [volume, setVolume] = useState(1.0);
   const [file, setFile] = useState<File | null>(null);
+
+  const [iconUrl, setIconUrl] = useState<string | null>(null);
+  const [showIconPicker, setShowIconPicker] = useState(false);
 
   // Validaciones y estados
   const [commandAvailable, setCommandAvailable] = useState<boolean | null>(null);
@@ -95,6 +100,7 @@ export const SoundsNew: React.FC = () => {
     formData.append('displayName', displayName);
     formData.append('commandName', commandName.trim().toLowerCase());
     formData.append('description', description);
+    if (iconUrl) formData.append('iconUrl', iconUrl);
     formData.append('volume', volume.toString());
 
     // Usar XMLHttpRequest para poder monitorizar el progreso de subida
@@ -247,6 +253,32 @@ export const SoundsNew: React.FC = () => {
             />
           </div>
 
+          {/* Icon Selector */}
+          <div>
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              Icono de la Canción / Sonido
+            </label>
+            <div className="flex items-center gap-3 p-3 bg-darkbg border border-darkborder rounded-2xl">
+              <SoundIcon src={iconUrl} alt={displayName || 'Icono'} size="lg" />
+              <div className="flex-1">
+                <span className="block text-xs font-semibold text-white">
+                  {iconUrl ? 'Icono Personalizado Seleccionado' : 'Icono por Defecto (/iconos/music.svg)'}
+                </span>
+                <span className="block text-[11px] text-slate-400">
+                  Puedes elegir un meme o icono estándar para mostrar en la lista y en colecciones.
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowIconPicker(true)}
+                className="px-4 py-2 bg-primary/20 border border-primary/40 hover:bg-primary text-primary hover:text-white rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+              >
+                <ImageIcon size={14} />
+                {iconUrl ? 'Cambiar Icono' : 'Elegir Icono'}
+              </button>
+            </div>
+          </div>
+
           {/* Volume Slider */}
           <div>
             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
@@ -305,6 +337,17 @@ export const SoundsNew: React.FC = () => {
 
         </form>
       </div>
+
+      <IconPickerModal
+        isOpen={showIconPicker}
+        onClose={() => setShowIconPicker(false)}
+        onSelectIcon={(selected) => {
+          setIconUrl(selected);
+          setShowIconPicker(false);
+        }}
+        currentIconUrl={iconUrl}
+        soundName={displayName || 'Nuevo Sonido'}
+      />
     </div>
   );
 };
