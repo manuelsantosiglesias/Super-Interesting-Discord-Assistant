@@ -15,6 +15,7 @@ import { Audit } from './pages/Audit.js';
 import { Settings } from './pages/Settings.js';
 import { Collections } from './pages/Collections.js';
 import { CollectionsDeck } from './pages/CollectionsDeck.js';
+import { Memes } from './pages/Memes.js';
 import './index.css';
 
 const queryClient = new QueryClient({
@@ -43,6 +44,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="/sounds/:id" element={<SoundsEdit />} />
               <Route path="/collections" element={<Collections />} />
               <Route path="/collections/:id" element={<CollectionsDeck />} />
+              <Route path="/memes" element={<Memes />} />
               <Route path="/discord" element={<DiscordConfig />} />
               <Route path="/users" element={<Users />} />
               <Route path="/audit" element={<Audit />} />

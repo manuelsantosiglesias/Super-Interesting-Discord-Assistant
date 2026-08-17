@@ -50,6 +50,7 @@ export interface SoundProps {
   displayName: string;
   commandName: SoundCommandName;
   description: string | null;
+  iconUrl: string | null;
   originalFilename: string;
   storageFilename: string;
   originalStorageFilename: string | null;
@@ -68,7 +69,9 @@ export interface SoundProps {
 
 export class Sound extends Entity<SoundProps> {
   static create(
-    props: Omit<SoundProps, 'normalizedFormat' | 'isActive' | 'createdAt' | 'updatedAt' | 'deletedAt'>, 
+    props: Omit<SoundProps, 'normalizedFormat' | 'isActive' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
+      iconUrl?: string | null;
+    }, 
     id?: UniqueEntityID
   ): Sound {
     if (props.volume < 0 || props.volume > 2) {
@@ -77,6 +80,7 @@ export class Sound extends Entity<SoundProps> {
     const now = new Date();
     return new Sound({
       ...props,
+      iconUrl: props.iconUrl || null,
       normalizedFormat: 'ogg',
       isActive: true,
       createdAt: now,
@@ -88,6 +92,7 @@ export class Sound extends Entity<SoundProps> {
   get displayName(): string { return this.props.displayName; }
   get commandName(): SoundCommandName { return this.props.commandName; }
   get description(): string | null { return this.props.description; }
+  get iconUrl(): string | null { return this.props.iconUrl; }
   get originalFilename(): string { return this.props.originalFilename; }
   get storageFilename(): string { return this.props.storageFilename; }
   get originalStorageFilename(): string | null { return this.props.originalStorageFilename; }
@@ -107,6 +112,7 @@ export class Sound extends Entity<SoundProps> {
     displayName?: string;
     commandName?: SoundCommandName;
     description?: string | null;
+    iconUrl?: string | null;
     volume?: number;
     isActive?: boolean;
   }): void {
@@ -117,6 +123,7 @@ export class Sound extends Entity<SoundProps> {
     if (props.displayName !== undefined) this.props.displayName = props.displayName;
     if (props.commandName !== undefined) this.props.commandName = props.commandName;
     if (props.description !== undefined) this.props.description = props.description;
+    if (props.iconUrl !== undefined) this.props.iconUrl = props.iconUrl;
     if (props.volume !== undefined) this.props.volume = props.volume;
     if (props.isActive !== undefined) this.props.isActive = props.isActive;
     

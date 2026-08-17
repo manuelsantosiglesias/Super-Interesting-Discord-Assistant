@@ -20,12 +20,15 @@ import {
   Search
 } from 'lucide-react';
 
+import { SoundIcon } from '../components/SoundIcon.js';
+
 interface SlotData {
   slotIndex: number;
   itemId: string | null;
   soundId: string | null;
   soundDisplayName: string | null;
   soundCommandName: string | null;
+  soundIconUrl?: string | null;
   soundDurationMs: number | null;
   soundIsActive: boolean;
   customLabel: string | null;
@@ -217,8 +220,7 @@ export const CollectionsDeck: React.FC = () => {
     );
   }, [rawSoundsList, soundSearch]);
 
-  const handlePreviewSoundInModal = (e: React.MouseEvent, soundId: string) => {
-    e.stopPropagation();
+  const handlePreviewSound = (soundId: string, volumeMultiplier: number = 1.0) => {
     if (previewAudioObj) {
       try { previewAudioObj.pause(); } catch {}
     }
@@ -229,6 +231,24 @@ export const CollectionsDeck: React.FC = () => {
     }
     setPreviewSoundId(soundId);
     const audio = new Audio(`/api/sounds/${soundId}/audio`);
+    const targetVol = typeof volumeMultiplier === 'number' && !isNaN(volumeMultiplier) ? volumeMultiplier : 1.0;
+
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass) {
+        const ctx = new AudioContextClass();
+        const source = ctx.createMediaElementSource(audio);
+        const gainNode = ctx.createGain();
+        gainNode.gain.value = targetVol;
+        source.connect(gainNode);
+        gainNode.connect(ctx.destination);
+      } else {
+        audio.volume = Math.min(Math.max(targetVol, 0.0), 1.0);
+      }
+    } catch {
+      audio.volume = Math.min(Math.max(targetVol, 0.0), 1.0);
+    }
+
     audio.onended = () => {
       setPreviewSoundId(null);
       setPreviewAudioObj(null);
@@ -433,7 +453,7 @@ export const CollectionsDeck: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#06b6d4] animate-pulse"></span>
             <span className="text-xs font-mono font-extrabold text-slate-200 tracking-widest uppercase">
-              POLLOPERAS MESA DE MEZCLAS
+              MESA DE MEZCLAS
             </span>
           </div>
 
@@ -541,8 +561,8 @@ export const CollectionsDeck: React.FC = () => {
                   hasSound ? currentTheme.padBg : 'bg-[#090b10] hover:border-slate-500'
                 } ${isEditMode ? 'ring-2 ring-primary/80' : ''} before:absolute before:inset-x-0 before:top-0 before:h-1/2 before:bg-gradient-to-b before:from-white/15 before:to-transparent before:rounded-t-2xl pointer-events-auto`}
               >
-                {/* Background Cover Image if configured */}
-                {slot.customImageUrl ? (
+                {/* Background Cover Image only if configured AND no soundIconUrl */}
+                {slot.customImageUrl && !slot.soundIconUrl ? (
                   <div className="absolute inset-0 z-0">
                     <img 
                       src={slot.customImageUrl} 
@@ -584,13 +604,17 @@ export const CollectionsDeck: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Center Content: Icon Badge Matching the Theme Color (Con suficiente espacio) */}
+                {/* Center Content: Sound Icon -> Custom Image -> Default Music Badge */}
                 <div className="my-auto z-10 flex items-center justify-center w-full">
                   {!hasSound ? (
                     <div className="w-8 h-8 rounded-full border-2 border-dashed border-slate-600 text-slate-500 flex items-center justify-center group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all">
                       <Plus size={16} />
                     </div>
-                  ) : !slot.customImageUrl ? (
+                  ) : slot.soundIconUrl ? (
+                    <SoundIcon src={slot.soundIconUrl} alt={slot.soundDisplayName || 'Sonido'} size="md" />
+                  ) : slot.customImageUrl ? (
+                    <SoundIcon src={slot.customImageUrl} alt={slot.soundDisplayName || 'Sonido'} size="md" />
+                  ) : (
                     <div 
                       style={{ 
                         borderColor: currentTheme.colorHex,
@@ -603,7 +627,7 @@ export const CollectionsDeck: React.FC = () => {
                     >
                       <Music size={22} style={{ color: isPlayingThis ? '#000000' : currentTheme.colorHex }} />
                     </div>
-                  ) : null}
+                  )}
                 </div>
 
                 {/* Bottom Label (2 líneas ajustadas con ellipsis ...) */}
@@ -754,7 +778,10 @@ export const CollectionsDeck: React.FC = () => {
                             {/* Botón de Previsualización de Audio */}
                             <button
                               type="button"
-                              onClick={(e) => handlePreviewSoundInModal(e, s.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePreviewSound(s.id, s.volume);
+                              }}
                               className={`p-1.5 rounded-md border shrink-0 transition-all ${
                                 isPreviewing 
                                   ? 'bg-cyan-500 text-black border-cyan-300 shadow-[0_0_8px_#06b6d4]' 
