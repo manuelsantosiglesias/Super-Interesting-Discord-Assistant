@@ -7,11 +7,14 @@ import {
   getVoiceConnection,
   getVoiceConnections,
   AudioPlayer,
-  VoiceConnection
+  VoiceConnection,
+  StreamType
 } from '@discordjs/voice';
 import { PlaybackRequest, PlaybackEventRepository } from '../domain/index.js';
 import { SoundRepository } from '@super-assistant/soundboard';
 import { GuildConfigurationRepository } from '@super-assistant/guild-management';
+import ffmpegPath from 'ffmpeg-static';
+import { spawn } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -174,13 +177,34 @@ export class GuildVoiceQueue {
       }
 
       // 4. Crear recurso de audio y reproducir
-      const resource = createAudioResource(audioPath, {
-        inlineVolume: true
-      });
+      let resource;
+      const rawVolumeFactor = (guildConfig?.defaultVolume ?? 1.0) * (sound.volume ?? 1.0);
+      const volumeFactor = Math.min(Math.max(rawVolumeFactor, 0.0), 2.0);
 
-      if (resource.volume) {
-        const volumeFactor = (guildConfig?.defaultVolume ?? 1.0) * (sound.volume ?? 1.0);
-        resource.volume.setVolume(Math.min(Math.max(volumeFactor, 0.0), 2.0));
+      if (Math.abs(volumeFactor - 1.0) > 0.02) {
+        // Usar FFmpeg stream para aplicar el filtro de volumen exacto (0.0x a 2.0x)
+        const ffmpegExe = (ffmpegPath as any)?.path || (ffmpegPath as unknown as string) || 'ffmpeg';
+        const ffmpegArgs = [
+          '-y',
+          '-i', audioPath,
+          '-filter:a', `volume=${volumeFactor.toFixed(2)}`,
+          '-acodec', 'libopus',
+          '-b:a', '128k',
+          '-ar', '48000',
+          '-ac', '2',
+          '-f', 'ogg',
+          'pipe:1'
+        ];
+        const proc = spawn(ffmpegExe, ffmpegArgs, { stdio: ['ignore', 'pipe', 'ignore'] });
+        resource = createAudioResource(proc.stdout, {
+          inputType: StreamType.OggOpus,
+          inlineVolume: false
+        });
+      } else {
+        resource = createAudioResource(audioPath, {
+          inputType: StreamType.OggOpus,
+          inlineVolume: false
+        });
       }
 
       this.currentRequest.startPlayback();
@@ -200,7 +224,7 @@ export class GuildVoiceQueue {
 
   private async startDisconnectTimeout(): Promise<void> {
     const guildConfig = await this.guildRepo.findByDiscordGuildId(this.discordGuildId);
-    const leaveAfterMs = (guildConfig?.leaveAfterSeconds ?? 240) * 1000;
+    const leaveAfterMs = (guildConfig?.leaveAfterSeconds ?? 900) * 1000;
 
     this.disconnectTimer = setTimeout(() => {
       this.disconnect();

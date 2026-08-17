@@ -17,8 +17,11 @@ import {
   Download,
   Loader2,
   Zap,
-  Star
+  Star,
+  Image as ImageIcon
 } from 'lucide-react';
+import { SoundIcon } from '../components/SoundIcon.js';
+import { IconPickerModal } from '../components/IconPickerModal.js';
 
 export const Sounds: React.FC = () => {
   const queryClient = useQueryClient();
@@ -34,6 +37,19 @@ export const Sounds: React.FC = () => {
   const [audioObj, setAudioObj] = useState<HTMLAudioElement | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [quickPlayingId, setQuickPlayingId] = useState<string | null>(null);
+
+  // Modal para asociar icono
+  const [iconPickerState, setIconPickerState] = useState<{
+    isOpen: boolean;
+    soundId: string | null;
+    soundName: string;
+    currentIconUrl: string | null;
+  }>({
+    isOpen: false,
+    soundId: null,
+    soundName: '',
+    currentIconUrl: null
+  });
 
   // Reproducción remota en Discord
   const [showDiscordModal, setShowDiscordModal] = useState(false);
@@ -100,6 +116,38 @@ export const Sounds: React.FC = () => {
     }
   });
 
+  // Mutación: Asociar / Cambiar icono del sonido
+  const updateIconMutation = useMutation({
+    mutationFn: ({ soundId, iconUrl }: { soundId: string; iconUrl: string | null }) =>
+      apiRequest(`/api/sounds/${soundId}/icon`, {
+        method: 'POST',
+        body: JSON.stringify({ iconUrl })
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sounds'] });
+      queryClient.invalidateQueries({ queryKey: ['collections'] });
+      queryClient.invalidateQueries({ queryKey: ['collection'] });
+      setIconPickerState({ isOpen: false, soundId: null, soundName: '', currentIconUrl: null });
+    },
+    onError: (err: any) => {
+      console.error('Error al asociar icono:', err);
+    }
+  });
+
+  const handleOpenIconPicker = (soundId: string, soundName: string, currentIconUrl: string | null) => {
+    setIconPickerState({
+      isOpen: true,
+      soundId,
+      soundName,
+      currentIconUrl
+    });
+  };
+
+  const handleSaveIcon = (iconUrl: string | null) => {
+    if (!iconPickerState.soundId) return;
+    updateIconMutation.mutate({ soundId: iconPickerState.soundId, iconUrl });
+  };
+
   // Mutación: Alternar favorito (marcar/desmarcar estrella)
   const toggleFavoriteMutation = useMutation({
     mutationFn: (soundId: string) => apiRequest(`/api/sounds/${soundId}/favorite`, { method: 'POST', body: '{}' }),
@@ -121,7 +169,7 @@ export const Sounds: React.FC = () => {
     };
   }, [audioObj]);
 
-  const handlePlayPreview = (soundId: string) => {
+  const handlePlayPreview = (soundId: string, volumeMultiplier: number = 1.0) => {
     if (audioObj) {
       try {
         audioObj.pause();
@@ -138,6 +186,23 @@ export const Sounds: React.FC = () => {
     setPlayingId(soundId);
     const audioUrl = `/api/sounds/${soundId}/audio`;
     const newAudio = new Audio(audioUrl);
+    const targetVol = typeof volumeMultiplier === 'number' && !isNaN(volumeMultiplier) ? volumeMultiplier : 1.0;
+
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass) {
+        const ctx = new AudioContextClass();
+        const source = ctx.createMediaElementSource(newAudio);
+        const gainNode = ctx.createGain();
+        gainNode.gain.value = targetVol;
+        source.connect(gainNode);
+        gainNode.connect(ctx.destination);
+      } else {
+        newAudio.volume = Math.min(Math.max(targetVol, 0.0), 1.0);
+      }
+    } catch {
+      newAudio.volume = Math.min(Math.max(targetVol, 0.0), 1.0);
+    }
 
     newAudio.onended = () => {
       setPlayingId(null);
@@ -375,6 +440,7 @@ export const Sounds: React.FC = () => {
                             }
                           />
                         </button>
+                        <SoundIcon src={sound.iconUrl} alt={sound.displayName} size="md" />
                         <span>{sound.displayName}</span>
                       </div>
                     </td>
@@ -415,9 +481,9 @@ export const Sounds: React.FC = () => {
                       <div className="flex items-center gap-2">
                         {/* 1. Play Web Preview */}
                         <button
-                          onClick={() => handlePlayPreview(sound.id)}
+                          onClick={() => handlePlayPreview(sound.id, sound.volume)}
                           className="p-2 bg-darkbg border border-darkborder hover:border-primary text-slate-300 hover:text-white rounded-lg transition-all"
-                          title="Previsualizar en Navegador"
+                          title={`Previsualizar en Navegador (${(sound.volume ?? 1.0).toFixed(2)}x)`}
                         >
                           {playingId === sound.id ? <Pause size={16} /> : <Play size={16} />}
                         </button>
@@ -448,6 +514,15 @@ export const Sounds: React.FC = () => {
                           title={sound.isActive ? 'Seleccionar servidor y canal de voz para reproducir' : 'Sonido desactivado'}
                         >
                           <Volume2 size={16} />
+                        </button>
+
+                        {/* 3.5 Asociar/Cambiar Icono (Cualquier Usuario) */}
+                        <button
+                          onClick={() => handleOpenIconPicker(sound.id, sound.displayName, sound.iconUrl)}
+                          className="p-2 bg-darkbg border border-darkborder hover:border-emerald-500 text-slate-300 hover:text-emerald-400 rounded-lg transition-all"
+                          title="Asociar o cambiar icono del sonido"
+                        >
+                          <ImageIcon size={16} />
                         </button>
 
                         {/* 4. Edit */}
@@ -620,6 +695,16 @@ export const Sounds: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Modal de selección de icono */}
+      <IconPickerModal
+        isOpen={iconPickerState.isOpen}
+        onClose={() => setIconPickerState({ isOpen: false, soundId: null, soundName: '', currentIconUrl: null })}
+        onSelectIcon={handleSaveIcon}
+        currentIconUrl={iconPickerState.currentIconUrl}
+        soundName={iconPickerState.soundName}
+        isSaving={updateIconMutation.isPending}
+      />
     </div>
   );
 };

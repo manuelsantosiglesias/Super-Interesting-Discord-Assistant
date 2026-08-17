@@ -11,13 +11,22 @@ import {
   Edit
 } from 'lucide-react';
 
+import { SoundIcon } from '../components/SoundIcon.js';
+
 const AVAILABLE_ICONS = [
   { id: '/iconos/sparkles.svg', label: 'Destellos' },
   { id: '/iconos/music.svg', label: 'Música' },
   { id: '/iconos/fire.svg', label: 'Fuego' },
   { id: '/iconos/game.svg', label: 'Gaming' },
   { id: '/iconos/zap.svg', label: 'Rayo' },
-  { id: '/iconos/bot.svg', label: 'Bot' }
+  { id: '/iconos/bot.svg', label: 'Bot' },
+  { id: '/memes/gato.jpg', label: 'Gato Meme' },
+  { id: '/memes/smile.jpg', label: 'Smile' },
+  { id: '/memes/kevin.png', label: 'Kevin' },
+  { id: '/memes/luis.png', label: 'Luis' },
+  { id: '/memes/xocas.jpg', label: 'Xocas' },
+  { id: '/memes/rage-quit-meme-4.jpg', label: 'Rage Quit' },
+  { id: '/memes/streamer.png', label: 'Streamer' }
 ];
 
 const themeConfig: Record<string, { hex: string; name: string }> = {
@@ -56,12 +65,9 @@ export const Collections: React.FC = () => {
     queryFn: () => apiRequest('/api/collections')
   });
 
-  // Mutación: Crear colección
+  // 2. Mutación: Crear nueva colección
   const createMutation = useMutation({
-    mutationFn: (body: any) => apiRequest('/api/collections', {
-      method: 'POST',
-      body: JSON.stringify(body)
-    }),
+    mutationFn: (body: any) => apiRequest('/api/collections', { method: 'POST', body: JSON.stringify(body) }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['collections'] });
       setShowCreateModal(false);
@@ -72,6 +78,16 @@ export const Collections: React.FC = () => {
       alert(`Error al crear la colección: ${err.message}`);
     }
   });
+
+  // Cargar lista dinámica de iconos
+  const { data: remoteIcons } = useQuery({
+    queryKey: ['custom-icons'],
+    queryFn: () => apiRequest('/api/icons')
+  });
+
+  const availableIcons = remoteIcons && remoteIcons.length > 0
+    ? remoteIcons.map((i: any) => ({ id: i.url, label: i.name }))
+    : AVAILABLE_ICONS;
 
   // Mutación: Editar colección
   const updateMutation = useMutation({
@@ -196,16 +212,7 @@ export const Collections: React.FC = () => {
 
         {/* Centro: Icono Grande Destacado y Textos */}
         <div className="flex-1 flex flex-col items-center justify-center -mt-2 text-center">
-          <div 
-            className="w-16 h-16 rounded-2xl flex items-center justify-center p-3 mb-2 transition-transform group-hover:scale-110 duration-300 border"
-            style={{
-              backgroundColor: `${hex}18`,
-              borderColor: `${hex}60`,
-              boxShadow: `0 0 16px ${hex}40`
-            }}
-          >
-            <img src={col.icon || '/iconos/sparkles.svg'} alt={col.name} className="w-9 h-9 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
-          </div>
+            <SoundIcon src={col.icon} alt={col.name} size="xl" />
 
           <h3 className="text-base font-bold text-white group-hover:scale-105 transition-transform line-clamp-1">
             {col.name}
@@ -391,8 +398,8 @@ export const Collections: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
                   Icono Distintivo
                 </label>
-                <div className="grid grid-cols-6 gap-2 bg-darkbg border border-darkborder p-3 rounded-xl">
-                  {AVAILABLE_ICONS.map((ico) => (
+                <div className="grid grid-cols-6 gap-2 bg-darkbg border border-darkborder p-3 rounded-xl max-h-40 overflow-y-auto custom-scrollbar">
+                  {availableIcons.map((ico: any) => (
                     <button
                       key={ico.id}
                       type="button"
@@ -404,7 +411,7 @@ export const Collections: React.FC = () => {
                       }`}
                       title={ico.label}
                     >
-                      <img src={ico.id} alt={ico.label} className="w-6 h-6 object-contain" />
+                      <SoundIcon src={ico.id} alt={ico.label} size="md" />
                     </button>
                   ))}
                 </div>
@@ -492,8 +499,8 @@ export const Collections: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
                   Icono Distintivo
                 </label>
-                <div className="grid grid-cols-6 gap-2 bg-darkbg border border-darkborder p-3 rounded-xl">
-                  {AVAILABLE_ICONS.map((ico) => (
+                <div className="grid grid-cols-6 gap-2 bg-darkbg border border-darkborder p-3 rounded-xl max-h-40 overflow-y-auto custom-scrollbar">
+                  {availableIcons.map((ico: any) => (
                     <button
                       key={ico.id}
                       type="button"
@@ -505,7 +512,7 @@ export const Collections: React.FC = () => {
                       }`}
                       title={ico.label}
                     >
-                      <img src={ico.id} alt={ico.label} className="w-6 h-6 object-contain" />
+                      <SoundIcon src={ico.id} alt={ico.label} size="md" />
                     </button>
                   ))}
                 </div>

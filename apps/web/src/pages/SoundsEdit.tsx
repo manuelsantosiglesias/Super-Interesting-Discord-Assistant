@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '../api/client.js';
-import { ArrowLeft, Check, AlertCircle, Download, Loader2 } from 'lucide-react';
+import { ArrowLeft, Check, AlertCircle, Download, Loader2, Image as ImageIcon } from 'lucide-react';
+import { SoundIcon } from '../components/SoundIcon.js';
+import { IconPickerModal } from '../components/IconPickerModal.js';
 
 export const SoundsEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [displayName, setDisplayName] = useState('');
   const [commandName, setCommandName] = useState('');
   const [description, setDescription] = useState('');
+  const [iconUrl, setIconUrl] = useState<string | null>(null);
+  const [showIconPicker, setShowIconPicker] = useState(false);
   const [volume, setVolume] = useState(1.0);
   const [isActive, setIsActive] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -33,6 +38,7 @@ export const SoundsEdit: React.FC = () => {
       setDisplayName(sound.displayName);
       setCommandName(sound.commandName);
       setDescription(sound.description || '');
+      setIconUrl(sound.iconUrl || null);
       setVolume(sound.volume);
       setIsActive(sound.isActive);
     }
@@ -73,7 +79,8 @@ export const SoundsEdit: React.FC = () => {
       body: JSON.stringify(body)
     }),
     onSuccess: () => {
-      alert('Sonido actualizado correctamente.');
+      queryClient.invalidateQueries({ queryKey: ['sounds'] });
+      queryClient.invalidateQueries({ queryKey: ['collections'] });
       navigate('/sounds');
     },
     onError: (err: any) => {
@@ -117,6 +124,7 @@ export const SoundsEdit: React.FC = () => {
       displayName,
       commandName: commandName.trim().toLowerCase(),
       description: description || null,
+      iconUrl,
       volume,
       isActive
     });
@@ -231,6 +239,32 @@ export const SoundsEdit: React.FC = () => {
             />
           </div>
 
+          {/* Icon Selector */}
+          <div>
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              Icono de la Canción / Sonido
+            </label>
+            <div className="flex items-center gap-3 p-3 bg-darkbg border border-darkborder rounded-2xl">
+              <SoundIcon src={iconUrl} alt={displayName || 'Icono'} size="lg" />
+              <div className="flex-1">
+                <span className="block text-xs font-semibold text-white">
+                  {iconUrl ? 'Icono Personalizado Seleccionado' : 'Icono por Defecto (/iconos/music.svg)'}
+                </span>
+                <span className="block text-[11px] text-slate-400">
+                  Puedes elegir un meme o icono estándar para mostrar en la lista y en colecciones.
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowIconPicker(true)}
+                className="px-4 py-2 bg-primary/20 border border-primary/40 hover:bg-primary text-primary hover:text-white rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+              >
+                <ImageIcon size={14} />
+                {iconUrl ? 'Cambiar Icono' : 'Elegir Icono'}
+              </button>
+            </div>
+          </div>
+
           {/* Volume Slider */}
           <div>
             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
@@ -288,6 +322,17 @@ export const SoundsEdit: React.FC = () => {
 
         </form>
       </div>
+
+      <IconPickerModal
+        isOpen={showIconPicker}
+        onClose={() => setShowIconPicker(false)}
+        onSelectIcon={(selected) => {
+          setIconUrl(selected);
+          setShowIconPicker(false);
+        }}
+        currentIconUrl={iconUrl}
+        soundName={displayName || 'Editar Sonido'}
+      />
     </div>
   );
 };

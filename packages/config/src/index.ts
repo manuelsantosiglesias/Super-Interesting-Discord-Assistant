@@ -31,7 +31,7 @@ export const ConfigSchema = z.object({
     bot_token: z.string().optional(),
     public_key: z.string().optional(),
     default_prefix: z.string().default('-sbdb'),
-    leave_channel_after_seconds: z.coerce.number().default(240),
+    leave_channel_after_seconds: z.coerce.number().default(900),
     register_slash_commands_on_start: z.preprocess((val) => val === 'true' || val === '1' || val === true, z.boolean()).default(true),
   }),
   security: z.object({

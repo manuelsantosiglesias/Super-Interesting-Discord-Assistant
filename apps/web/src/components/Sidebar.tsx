@@ -10,7 +10,8 @@ import {
   FileText, 
   LogOut,
   HelpCircle,
-  LayoutGrid
+  LayoutGrid,
+  Image as ImageIcon
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -27,6 +28,7 @@ export const Sidebar: React.FC = () => {
     { to: '/sounds', label: 'Explorar Sonidos', icon: Music, roles: ['ADMIN', 'USER'] },
     { to: '/sounds/new', label: 'Añadir Sonido', icon: PlusCircle, roles: ['ADMIN', 'USER'] },
     { to: '/collections', label: 'Colecciones', icon: LayoutGrid, roles: ['ADMIN', 'USER'] },
+    { to: '/memes', label: 'Memes', icon: ImageIcon, roles: ['ADMIN', 'USER'] },
     { to: '/discord', label: 'Bot de Discord', icon: HelpCircle, roles: ['ADMIN', 'USER'] },
     { to: '/users', label: 'Usuarios', icon: Users, roles: ['ADMIN'] },
     { to: '/audit', label: 'Auditoría', icon: FileText, roles: ['ADMIN'] },

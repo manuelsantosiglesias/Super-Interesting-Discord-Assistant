@@ -189,6 +189,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
           's.id as soundId',
           's.display_name as soundDisplayName',
           's.command_name as soundCommandName',
+          's.icon_url as soundIconUrl',
           's.duration_ms as soundDurationMs',
           's.is_active as soundIsActive'
         ])
@@ -230,6 +231,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
           soundId: s ? s.soundId : null,
           soundDisplayName: s ? s.soundDisplayName : null,
           soundCommandName: s ? s.soundCommandName : null,
+          soundIconUrl: s ? s.soundIconUrl : null,
           soundDurationMs: s ? s.soundDurationMs : null,
           soundIsActive: s ? Boolean(s.soundIsActive) : true,
           customLabel: null,
@@ -256,7 +258,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     if (params.id === 'system-top20') {
       const allSounds = await container.db
         .selectFrom('sounds')
-        .select(['id', 'display_name', 'command_name', 'duration_ms', 'is_active'])
+        .select(['id', 'display_name', 'command_name', 'icon_url', 'duration_ms', 'is_active'])
         .where('deleted_at', 'is', null)
         .where('is_active', '=', 1)
         .execute();
@@ -294,6 +296,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
           soundId: s ? s.id : null,
           soundDisplayName: s ? s.display_name : null,
           soundCommandName: s ? s.command_name : null,
+          soundIconUrl: s ? s.icon_url : null,
           soundDurationMs: s ? s.duration_ms : null,
           soundIsActive: s ? Boolean(s.is_active) : true,
           customLabel: null,
@@ -320,7 +323,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
     if (params.id === 'system-recent') {
       const recentSounds = await container.db
         .selectFrom('sounds')
-        .select(['id', 'display_name', 'command_name', 'duration_ms', 'is_active'])
+        .select(['id', 'display_name', 'command_name', 'icon_url', 'duration_ms', 'is_active'])
         .where('deleted_at', 'is', null)
         .where('is_active', '=', 1)
         .orderBy('created_at', 'desc')
@@ -335,6 +338,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
           soundId: s ? s.id : null,
           soundDisplayName: s ? s.display_name : null,
           soundCommandName: s ? s.command_name : null,
+          soundIconUrl: s ? s.icon_url : null,
           soundDurationMs: s ? s.duration_ms : null,
           soundIsActive: s ? Boolean(s.is_active) : true,
           customLabel: null,
@@ -380,6 +384,7 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
         's.id as soundId',
         's.display_name as soundDisplayName',
         's.command_name as soundCommandName',
+        's.icon_url as soundIconUrl',
         's.duration_ms as soundDurationMs',
         's.is_active as soundIsActive'
       ])
@@ -398,11 +403,12 @@ export default async function collectionRoutes(fastify: FastifyInstance, options
         soundId: existing?.soundId || null,
         soundDisplayName: existing?.soundDisplayName || null,
         soundCommandName: existing?.soundCommandName || null,
+        soundIconUrl: existing?.soundIconUrl || null,
         soundDurationMs: existing?.soundDurationMs || null,
         soundIsActive: existing?.soundIsActive !== undefined ? Boolean(existing.soundIsActive) : true,
         customLabel: existing?.customLabel || null,
         customImageUrl: existing?.customImageUrl || null,
-        colorTheme: existing?.colorTheme || 'emerald'
+        colorTheme: existing?.colorTheme || COLOR_THEMES[idx % COLOR_THEMES.length]
       };
     });
 

@@ -17,7 +17,7 @@ export const DiscordConfig: React.FC = () => {
   // Estados del formulario del servidor seleccionado
   const [commandPrefix, setCommandPrefix] = useState('');
   const [defaultVolume, setDefaultVolume] = useState(1.0);
-  const [leaveAfterSeconds, setLeaveAfterSeconds] = useState(15);
+  const [leaveAfterSeconds, setLeaveAfterSeconds] = useState(900);
   const [maxQueueSize, setMaxQueueSize] = useState(10);
   const [userCooldownSeconds, setUserCooldownSeconds] = useState(2);
   const [isEnabled, setIsEnabled] = useState(true);

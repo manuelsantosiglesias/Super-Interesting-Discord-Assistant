@@ -20,6 +20,7 @@ const SoundUpdateSchema = z.object({
   displayName: z.string().optional(),
   commandName: z.string().optional(),
   description: z.string().nullable().optional(),
+  iconUrl: z.string().nullable().optional(),
   volume: z.coerce.number().min(0.0).max(2.0).optional(),
   isActive: z.preprocess((val) => val === 'true' || val === '1' || val === true, z.boolean()).optional()
 });
@@ -75,6 +76,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       displayName: s.displayName,
       commandName: s.commandName.toValue(),
       description: s.description,
+      iconUrl: s.iconUrl,
       originalFilename: s.originalFilename,
       storageFilename: s.storageFilename,
       mimeType: s.mimeType,
@@ -188,6 +190,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       const displayName = fields.displayName || originalFilename;
       const commandName = fields.commandName || '';
       const description = fields.description || null;
+      const iconUrl = fields.iconUrl || null;
       const volume = fields.volume ? parseFloat(fields.volume) : 1.0;
 
       const sound = await container.uploadSound.execute({
@@ -196,6 +199,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
         displayName,
         commandName,
         description,
+        iconUrl,
         volume,
         uploadedBy: request.user!.id.toString()
       });
@@ -214,6 +218,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
         id: sound.id.toString(),
         displayName: sound.displayName,
         commandName: sound.commandName.toValue(),
+        iconUrl: sound.iconUrl,
         sizeBytes: sound.sizeBytes,
         durationMs: sound.durationMs
       });
@@ -242,6 +247,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       displayName: sound.displayName,
       commandName: sound.commandName.toValue(),
       description: sound.description,
+      iconUrl: sound.iconUrl,
       originalFilename: sound.originalFilename,
       sizeBytes: sound.sizeBytes,
       durationMs: sound.durationMs,
@@ -261,6 +267,7 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       displayName: body.displayName,
       commandName: body.commandName,
       description: body.description,
+      iconUrl: body.iconUrl,
       volume: body.volume,
       isActive: body.isActive
     });
@@ -278,8 +285,33 @@ export default async function soundRoutes(fastify: FastifyInstance, options: { c
       id: sound.id.toString(),
       displayName: sound.displayName,
       commandName: sound.commandName.toValue(),
+      description: sound.description,
+      iconUrl: sound.iconUrl,
+      volume: sound.volume,
       isActive: sound.isActive
     };
+  });
+
+  // 5.1 Cambiar icono de un sonido (Cualquier usuario autenticado)
+  fastify.post('/api/sounds/:id/icon', async (request, reply) => {
+    const params = z.object({ id: z.string() }).parse(request.params);
+    const body = z.object({ iconUrl: z.string().nullable() }).parse(request.body);
+
+    const sound = await container.updateSound.execute({
+      id: params.id,
+      iconUrl: body.iconUrl
+    });
+
+    await container.writeAuditEvent.execute({
+      userId: request.user!.id.toString(),
+      action: 'SOUND_ICON_UPDATED',
+      entityType: 'Sound',
+      entityId: sound.id.toString(),
+      metadataJson: { iconUrl: sound.iconUrl },
+      ipAddress: request.ip
+    });
+
+    return { success: true, id: sound.id.toString(), iconUrl: sound.iconUrl };
   });
 
   // 6. Eliminar sonido (lógico)
