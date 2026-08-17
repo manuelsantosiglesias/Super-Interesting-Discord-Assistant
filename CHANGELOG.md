@@ -4,7 +4,16 @@ Todas las modificaciones notables realizadas en la aplicación **Super Interesti
 
 ---
 
-## [v0.6.4] - 2026-08-07 🚀 (Versión Actual)
+## [v0.7.0] - 2026-08-17 🖼️ (Versión Actual)
+### 🖼️ Asociación de Iconos a Canciones y Gestión de Memes
+- **Iconos Personalizados por Sonido/Canción**: Posibilidad de asociar iconos y memes personalizados a cualquier sonido desde la tabla del explorador y vistas de creación/edición de sonidos.
+- **Sección Dedicada `/memes`**: Nueva sección de navegación independiente **"Memes"** en el menú lateral para subir, visualizar en miniatura, renombrar, recategorizar y eliminar imágenes/memes.
+- **Jerarquía de Iconos en Colecciones**: Priorización de renderizado en las mesas de mezcla: se muestra en primer lugar el icono del sonido asociado, si no tiene se utiliza la imagen personalizada del pad, y como fallback el badge neón predeterminado.
+- **Servidor Estático y Solución Multipart**: Resolutor de directorio raíz (`getRootWorkspaceDir()`) y servidor de archivos en `/memes/:filename` para servir al instante cualquier imagen subida sin error 404.
+- **Selectores de Categoría Rediseñados**: Reemplazo de controles nativos HTML por selecciones interactiva estilo Segmented Pill en modo oscuro con contadores dinámicos.
+- **Aumento del Tiempo de Conexión del Bot**: Extensión del tiempo de auto-desconexión del bot en canales de voz de Discord de 4 minutos a 15 minutos (`15m` / `900s`).
+
+## [v0.6.4] - 2026-08-07 🚀
 ### 🎨 Mejoras en Colecciones del Sistema & Animación Neón
 - **Colores Intercalados en Slots de Sistema**: Los 20 casilleros dentro de las colecciones predeterminadas alternan su color neón siguiendo de forma estricta la secuencia de los 8 temas (`emerald`, `cyan`, `pink`, `gold`, `red`, `violet`, `blue`, `orange`).
 - **Pulsación Neón Sutil (20s)**: Se suavizó la animación de las tarjetas a un ciclo armónico de 20 segundos con la curva `cubic-bezier(0.4, 0, 0.6, 1)`.
